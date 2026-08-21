@@ -16,6 +16,7 @@
       {
         "aria-required-children": "off"
       }
-    ]
+    ],
+    "button-type": "off"
   }
 }
