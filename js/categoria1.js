@@ -1,1669 +1,816 @@
-/* ============================================================
-   SUBLIMARTS — INDEX / SUBLIMACIÓN
-   JavaScript principal
+document.addEventListener("DOMContentLoaded", () => {
+    "use strict";
 
-   Incluye:
-   - Hero carrusel con autoplay
-   - Carruseles horizontales
-   - Carrusel de información
-   - Menú mobile
-   - Submenús acordeón
-   - Animaciones reveal
-   - Navegación suave
-   - Soporte táctil
-   - Navegación mediante teclado
-   ============================================================ */
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
+    /* =========================================================
+       HEADER / MENÚ
+       ========================================================= */
 
-/* ============================================================
-   1. CARRUSEL HORIZONTAL
-   ============================================================ */
+    const menuButton = $("#botonMenuMobile");
+    const menu = $("#menuPrincipal");
+    const overlay = $("#menuOverlay");
+    const dropdown = $(".menu-con-desplegable");
+    const dropdownButton = $(".enlace-menu-desplegable");
 
-class Carrusel {
-    constructor(contenedorId, pistaId, opciones = {}) {
-        this.contenedor = document.getElementById(contenedorId);
+    const closeMenu = () => {
+        if (!menu || !menuButton) return;
 
-        if (!this.contenedor) {
-            return;
-        }
+        menu.classList.remove("activo");
+        menuButton.setAttribute("aria-expanded", "false");
 
-        this.pista = document.getElementById(pistaId);
-        this.vista = this.contenedor.querySelector(".carrusel-vista");
+        document.body.classList.remove("menu-abierto");
 
-        this.btnAnterior = this.contenedor.querySelector(
-            ".carrusel-flecha-anterior"
+        overlay?.classList.remove("activo");
+    };
+
+    menuButton?.addEventListener("click", () => {
+        const open =
+            menuButton.getAttribute("aria-expanded") === "true";
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            String(!open)
         );
 
-        this.btnSiguiente = this.contenedor.querySelector(
-            ".carrusel-flecha-siguiente"
+        menu?.classList.toggle("activo", !open);
+
+        overlay?.classList.toggle(
+            "activo",
+            !open
         );
 
-        if (!this.pista || !this.vista) {
-            return;
-        }
-
-        this.slides = Array.from(this.pista.children);
-
-        this.opciones = {
-            visiblesDesktop: opciones.visiblesDesktop || 4,
-            visiblesTablet: opciones.visiblesTablet || 3,
-            visiblesMobile: opciones.visiblesMobile || 1,
-            gap: opciones.gap || 20,
-            ...opciones
-        };
-
-        this.esMobile = window.innerWidth <= 768;
-        this.anchoSlide = 0;
-
-        this.init();
-    }
-
-
-    /* --------------------------------------------------------
-       Inicialización
-       -------------------------------------------------------- */
-
-    init() {
-        if (this.slides.length === 0) {
-            return;
-        }
-
-        this.calcularDimensiones();
-        this.bindEventos();
-        this.actualizarBotones();
-    }
-
-
-    /* --------------------------------------------------------
-       Calcular dimensiones
-       -------------------------------------------------------- */
-
-    calcularDimensiones() {
-        if (!this.vista) {
-            return;
-        }
-
-        /*
-         * MOBILE
-         * Cada elemento ocupa prácticamente todo el ancho.
-         */
-
-        if (this.esMobile) {
-            this.anchoSlide = this.vista.offsetWidth;
-
-            this.slides.forEach((slide) => {
-                slide.style.width = "100%";
-            });
-
-            return;
-        }
-
-
-        /*
-         * TABLET / DESKTOP
-         */
-
-        const gap = this.opciones.gap;
-
-        const visibles =
-            window.innerWidth <= 1024
-                ? this.opciones.visiblesTablet
-                : this.opciones.visiblesDesktop;
-
-        const anchoDisponible = this.vista.offsetWidth;
-
-        const anchoSlide =
-            (
-                anchoDisponible -
-                gap * (visibles - 1)
-            ) / visibles;
-
-        this.anchoSlide = anchoSlide;
-
-        this.slides.forEach((slide) => {
-            slide.style.width = `${anchoSlide}px`;
-        });
-    }
-
-
-    /* --------------------------------------------------------
-       Eventos
-       -------------------------------------------------------- */
-
-    bindEventos() {
-
-        /*
-         * Botón anterior
-         */
-
-        if (this.btnAnterior) {
-            this.btnAnterior.addEventListener("click", () => {
-                this.desplazar(-1);
-            });
-        }
-
-
-        /*
-         * Botón siguiente
-         */
-
-        if (this.btnSiguiente) {
-            this.btnSiguiente.addEventListener("click", () => {
-                this.desplazar(1);
-            });
-        }
-
-
-        /*
-         * Actualizar botones cuando se desplaza
-         */
-
-        this.vista.addEventListener(
-            "scroll",
-            () => {
-                if (!this.esMobile) {
-                    this.actualizarBotones();
-                }
-            },
-            {
-                passive: true
-            }
+        document.body.classList.toggle(
+            "menu-abierto",
+            !open
         );
+    });
 
+    overlay?.addEventListener(
+        "click",
+        closeMenu
+    );
 
-        /*
-         * Navegación mediante teclado
-         */
+    $$(".enlace-menu", menu).forEach(link => {
+        link.addEventListener(
+            "click",
+            closeMenu
+        );
+    });
 
-        this.contenedor.addEventListener("keydown", (evento) => {
+    dropdownButton?.addEventListener(
+        "click",
+        () => {
 
-            if (evento.key === "ArrowLeft") {
-                evento.preventDefault();
-                this.desplazar(-1);
+            if (window.innerWidth > 768) {
+                return;
             }
 
-            if (evento.key === "ArrowRight") {
-                evento.preventDefault();
-                this.desplazar(1);
-            }
-        });
+            const active =
+                dropdown.classList.toggle("activo");
 
-
-        /*
-         * Responsive
-         */
-
-        let resizeTimer;
-
-        window.addEventListener("resize", () => {
-
-            clearTimeout(resizeTimer);
-
-            resizeTimer = setTimeout(() => {
-
-                this.esMobile = window.innerWidth <= 768;
-
-                this.calcularDimensiones();
-
-                this.actualizarBotones();
-
-            }, 250);
-        });
-    }
-
-
-    /* --------------------------------------------------------
-       Desplazar carrusel
-       -------------------------------------------------------- */
-
-    desplazar(direccion) {
-
-        if (!this.vista) {
-            return;
-        }
-
-        const paso = this.anchoSlide + this.opciones.gap;
-
-        const nuevoScroll =
-            this.vista.scrollLeft +
-            direccion * paso;
-
-        this.vista.scrollTo({
-            left: nuevoScroll,
-            behavior: "smooth"
-        });
-    }
-
-
-    /* --------------------------------------------------------
-       Actualizar botones
-       -------------------------------------------------------- */
-
-    actualizarBotones() {
-
-        if (
-            !this.btnAnterior ||
-            !this.btnSiguiente ||
-            !this.vista
-        ) {
-            return;
-        }
-
-        const scrollActual = this.vista.scrollLeft;
-
-        const anchoTotal = this.pista.scrollWidth;
-
-        const anchoVista = this.vista.clientWidth;
-
-        this.btnAnterior.disabled =
-            scrollActual <= 5;
-
-        this.btnSiguiente.disabled =
-            scrollActual >=
-            anchoTotal - anchoVista - 10;
-    }
-}
-
-
-/* ============================================================
-   2. HERO CARRUSEL
-   ============================================================ */
-
-class HeroCarrusel {
-
-    constructor(
-        seccionId,
-        pistaId,
-        indicadoresId,
-        opciones = {}
-    ) {
-
-        this.seccion =
-            document.getElementById(seccionId);
-
-        this.pista =
-            document.getElementById(pistaId);
-
-        this.indicadoresContenedor =
-            document.getElementById(indicadoresId);
-
-        if (!this.seccion || !this.pista) {
-            return;
-        }
-
-        this.slides =
-            Array.from(
-                this.pista.querySelectorAll(".hero-slide")
+            dropdownButton.setAttribute(
+                "aria-expanded",
+                String(active)
             );
-
-        this.indicadores =
-            this.indicadoresContenedor
-                ? Array.from(
-                    this.indicadoresContenedor.querySelectorAll(
-                        ".hero-indicador"
-                    )
-                )
-                : [];
-
-        this.indice = 0;
-
-        this.intervalo =
-            opciones.intervalo || 5000;
-
-        this.temporizador = null;
-
-        this.reducirMovimiento =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            ).matches;
-
-        this.touchInicioX = 0;
-        this.touchInicioY = 0;
-
-        this.touchDeltaX = 0;
-        this.touchDeltaY = 0;
-
-        this.tracking = false;
-
-        this.init();
-    }
+        }
+    );
 
 
-    /* --------------------------------------------------------
-       Inicializar
-       -------------------------------------------------------- */
+    /* =========================================================
+       HERO
+       ========================================================= */
 
-    init() {
+    const heroSlides =
+        $$(".hero-slide");
 
-        if (this.slides.length <= 1) {
+    const heroDots =
+        $$(".hero-indicador");
+
+    let heroIndex = 0;
+
+    let heroTimer = null;
+
+
+    const showHero = index => {
+
+        if (!heroSlides.length) {
             return;
         }
 
+        heroIndex =
+            (index + heroSlides.length) %
+            heroSlides.length;
 
-        /*
-         * Indicadores
-         */
 
-        this.indicadores.forEach(
-            (indicador, indice) => {
-
-                indicador.addEventListener(
-                    "click",
-                    () => {
-
-                        this.irSlide(indice);
-
-                        this.reiniciarAutoplay();
-                    }
-                );
-            }
-        );
-
-
-        /*
-         * Pausar al pasar el mouse
-         */
-
-        this.seccion.addEventListener(
-            "mouseenter",
-            () => {
-                this.detenerAutoplay();
-            }
-        );
-
-        this.seccion.addEventListener(
-            "mouseleave",
-            () => {
-                this.reiniciarAutoplay();
-            }
-        );
-
-
-        /*
-         * Pausar cuando recibe foco
-         */
-
-        this.seccion.addEventListener(
-            "focusin",
-            () => {
-                this.detenerAutoplay();
-            }
-        );
-
-        this.seccion.addEventListener(
-            "focusout",
-            () => {
-                this.reiniciarAutoplay();
-            }
-        );
-
-
-        /*
-         * TOUCH START
-         */
-
-        this.seccion.addEventListener(
-            "touchstart",
-            (evento) => {
-
-                this.touchInicioX =
-                    evento.touches[0].clientX;
-
-                this.touchInicioY =
-                    evento.touches[0].clientY;
-
-                this.touchDeltaX = 0;
-                this.touchDeltaY = 0;
-
-                this.tracking = true;
-
-                this.detenerAutoplay();
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        /*
-         * TOUCH MOVE
-         */
-
-        this.seccion.addEventListener(
-            "touchmove",
-            (evento) => {
-
-                if (!this.tracking) {
-                    return;
-                }
-
-                this.touchDeltaX =
-                    evento.touches[0].clientX -
-                    this.touchInicioX;
-
-                this.touchDeltaY =
-                    evento.touches[0].clientY -
-                    this.touchInicioY;
-
-
-                /*
-                 * Detectar swipe horizontal
-                 */
-
-                if (
-                    Math.abs(this.touchDeltaX) >
-                    Math.abs(this.touchDeltaY)
-                ) {
-
-                    evento.preventDefault();
-                }
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /*
-         * TOUCH END
-         */
-
-        this.seccion.addEventListener(
-            "touchend",
-            () => {
-
-                if (!this.tracking) {
-                    return;
-                }
-
-                this.tracking = false;
-
-                const umbral = 50;
-
-
-                if (this.touchDeltaX < -umbral) {
-
-                    this.navegar(1);
-
-                } else if (this.touchDeltaX > umbral) {
-
-                    this.navegar(-1);
-                }
-
-
-                this.touchDeltaX = 0;
-                this.touchDeltaY = 0;
-
-                this.reiniciarAutoplay();
-            }
-        );
-
-
-        /*
-         * Mostrar primer slide
-         */
-
-        this.mostrarSlide(this.indice);
-
-
-        /*
-         * Autoplay
-         */
-
-        if (!this.reducirMovimiento) {
-            this.iniciarAutoplay();
-        }
-    }
-
-
-    /* --------------------------------------------------------
-       Navegar
-       -------------------------------------------------------- */
-
-    navegar(direccion) {
-
-        this.irSlide(
-            this.indice + direccion
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Ir a slide específico
-       -------------------------------------------------------- */
-
-    irSlide(nuevoIndice) {
-
-        this.indice =
-            (
-                nuevoIndice +
-                this.slides.length
-            ) %
-            this.slides.length;
-
-        this.mostrarSlide(
-            this.indice
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Mostrar slide
-       -------------------------------------------------------- */
-
-    mostrarSlide(indice) {
-
-        this.slides.forEach(
-            (slide, posicion) => {
+        heroSlides.forEach(
+            (slide, i) => {
 
                 slide.classList.toggle(
                     "activo",
-                    posicion === indice
+                    i === heroIndex
                 );
+
             }
         );
 
 
-        this.indicadores.forEach(
-            (indicador, posicion) => {
+        heroDots.forEach(
+            (dot, i) => {
 
-                indicador.classList.toggle(
+                dot.classList.toggle(
                     "activo",
-                    posicion === indice
+                    i === heroIndex
                 );
+
             }
         );
-    }
+    };
 
 
-    /* --------------------------------------------------------
-       Autoplay
-       -------------------------------------------------------- */
+    const startHero = () => {
 
-    iniciarAutoplay() {
+        if (heroSlides.length < 2) {
+            return;
+        }
 
-        this.detenerAutoplay();
+        clearInterval(heroTimer);
 
-        this.temporizador =
+        heroTimer =
             setInterval(
                 () => {
-                    this.navegar(1);
+                    showHero(
+                        heroIndex + 1
+                    );
                 },
-                this.intervalo
+                6000
             );
-    }
+    };
 
 
-    detenerAutoplay() {
+    heroDots.forEach(
+        (dot, i) => {
 
-        if (this.temporizador) {
+            dot.addEventListener(
+                "click",
+                () => {
 
-            clearInterval(
-                this.temporizador
+                    showHero(i);
+
+                    startHero();
+
+                }
             );
 
-            this.temporizador = null;
         }
-    }
+    );
 
 
-    reiniciarAutoplay() {
+    showHero(0);
 
-        this.detenerAutoplay();
-
-        if (!this.reducirMovimiento) {
-            this.iniciarAutoplay();
-        }
-    }
-}
+    startHero();
 
 
-/* ============================================================
-   3. CARRUSEL DE INFORMACIÓN
-   ============================================================ */
+    /* =========================================================
+       CARRUSEL: ¿QUÉ ES?
+       ========================================================= */
 
-class CarruselInfo {
+    const infoSlides =
+        $$(".info-slide");
 
-    constructor(id) {
+    const infoDots =
+        $$(".info-indicador");
 
-        this.carrusel =
-            document.getElementById(id);
+    const infoPrev =
+        $(".info-carrusel-flecha.anterior");
 
-        if (!this.carrusel) {
+    const infoNext =
+        $(".info-carrusel-flecha.siguiente");
+
+    let infoIndex = 0;
+
+
+    const showInfo = index => {
+
+        if (!infoSlides.length) {
             return;
         }
 
-        this.slides =
-            Array.from(
-                this.carrusel.querySelectorAll(
-                    ".info-slide"
-                )
-            );
+        infoIndex =
+            (index + infoSlides.length) %
+            infoSlides.length;
 
-        this.indicadores =
-            Array.from(
-                this.carrusel.querySelectorAll(
-                    ".info-indicador"
-                )
-            );
 
-        this.btnAnterior =
-            this.carrusel.querySelector(
-                ".info-carrusel-flecha.anterior"
-            );
-
-        this.btnSiguiente =
-            this.carrusel.querySelector(
-                ".info-carrusel-flecha.siguiente"
-            );
-
-        this.indice = 0;
-
-        this.touchInicioX = 0;
-        this.touchDeltaX = 0;
-
-        this.init();
-    }
-
-
-    /* --------------------------------------------------------
-       Inicializar
-       -------------------------------------------------------- */
-
-    init() {
-
-        if (this.slides.length === 0) {
-            return;
-        }
-
-
-        /*
-         * Botón anterior
-         */
-
-        if (this.btnAnterior) {
-
-            this.btnAnterior.addEventListener(
-                "click",
-                () => {
-                    this.navegar(-1);
-                }
-            );
-        }
-
-
-        /*
-         * Botón siguiente
-         */
-
-        if (this.btnSiguiente) {
-
-            this.btnSiguiente.addEventListener(
-                "click",
-                () => {
-                    this.navegar(1);
-                }
-            );
-        }
-
-
-        /*
-         * Indicadores
-         */
-
-        this.indicadores.forEach(
-            (indicador, indice) => {
-
-                indicador.addEventListener(
-                    "click",
-                    () => {
-                        this.irSlide(indice);
-                    }
-                );
-            }
-        );
-
-
-        /*
-         * Teclado
-         */
-
-        this.carrusel.addEventListener(
-            "keydown",
-            (evento) => {
-
-                if (
-                    evento.key === "ArrowLeft"
-                ) {
-
-                    evento.preventDefault();
-
-                    this.navegar(-1);
-                }
-
-
-                if (
-                    evento.key === "ArrowRight"
-                ) {
-
-                    evento.preventDefault();
-
-                    this.navegar(1);
-                }
-            }
-        );
-
-
-        /*
-         * Touch start
-         */
-
-        this.carrusel.addEventListener(
-            "touchstart",
-            (evento) => {
-
-                this.touchInicioX =
-                    evento.touches[0].clientX;
-
-                this.touchDeltaX = 0;
-            },
-            {
-                passive: true
-            }
-        );
-
-
-        /*
-         * Touch move
-         */
-
-        this.carrusel.addEventListener(
-            "touchmove",
-            (evento) => {
-
-                this.touchDeltaX =
-                    evento.touches[0].clientX -
-                    this.touchInicioX;
-
-                if (
-                    Math.abs(
-                        this.touchDeltaX
-                    ) > 10
-                ) {
-
-                    evento.preventDefault();
-                }
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /*
-         * Touch end
-         */
-
-        this.carrusel.addEventListener(
-            "touchend",
-            () => {
-
-                const umbral = 50;
-
-
-                if (
-                    this.touchDeltaX <
-                    -umbral
-                ) {
-
-                    this.navegar(1);
-
-                } else if (
-                    this.touchDeltaX >
-                    umbral
-                ) {
-
-                    this.navegar(-1);
-                }
-
-
-                this.touchDeltaX = 0;
-            }
-        );
-
-
-        /*
-         * Mostrar inicial
-         */
-
-        this.mostrarSlide(
-            this.indice
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Navegar
-       -------------------------------------------------------- */
-
-    navegar(direccion) {
-
-        this.irSlide(
-            this.indice + direccion
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Ir a slide
-       -------------------------------------------------------- */
-
-    irSlide(nuevoIndice) {
-
-        this.indice =
-            (
-                nuevoIndice +
-                this.slides.length
-            ) %
-            this.slides.length;
-
-        this.mostrarSlide(
-            this.indice
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Mostrar slide
-       -------------------------------------------------------- */
-
-    mostrarSlide(indice) {
-
-        this.slides.forEach(
-            (slide, posicion) => {
+        infoSlides.forEach(
+            (slide, i) => {
 
                 slide.classList.toggle(
                     "activo",
-                    posicion === indice
+                    i === infoIndex
                 );
+
             }
         );
 
 
-        this.indicadores.forEach(
-            (indicador, posicion) => {
+        infoDots.forEach(
+            (dot, i) => {
 
-                indicador.classList.toggle(
+                dot.classList.toggle(
                     "activo",
-                    posicion === indice
+                    i === infoIndex
                 );
+
             }
         );
-    }
-}
+    };
 
 
-/* ============================================================
-   4. MENÚ MOBILE
-   ============================================================ */
+    infoPrev?.addEventListener(
+        "click",
+        () => {
+            showInfo(
+                infoIndex - 1
+            );
+        }
+    );
 
-class MenuMobile {
 
-    constructor() {
+    infoNext?.addEventListener(
+        "click",
+        () => {
+            showInfo(
+                infoIndex + 1
+            );
+        }
+    );
 
-        this.boton =
-            document.getElementById(
-                "botonMenuMobile"
+
+    infoDots.forEach(
+        (dot, i) => {
+
+            dot.addEventListener(
+                "click",
+                () => {
+                    showInfo(i);
+                }
             );
 
-        this.menu =
-            document.getElementById(
-                "menuPrincipal"
-            );
+        }
+    );
 
-        this.overlay =
-            document.getElementById(
-                "menuOverlay"
-            );
+
+    $("#infoCarrusel")?.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "ArrowLeft") {
+
+                showInfo(
+                    infoIndex - 1
+                );
+
+            }
+
+            if (event.key === "ArrowRight") {
+
+                showInfo(
+                    infoIndex + 1
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       CARRUSELES GENERALES
+       ========================================================= */
+
+    const initCarousel = (
+        id,
+        cardSelector
+    ) => {
+
+        const root =
+            document.getElementById(id);
+
+        if (!root) {
+            return;
+        }
+
+
+        const viewport =
+            $(".carrusel-vista", root);
+
+        const track =
+            $(".carrusel-pista", root);
+
+        const cards =
+            $$(cardSelector, root);
+
+        const prev =
+            $(".carrusel-flecha-anterior", root);
+
+        const next =
+            $(".carrusel-flecha-siguiente", root);
+
 
         if (
-            !this.boton ||
-            !this.menu ||
-            !this.overlay
+            !viewport ||
+            !track ||
+            !cards.length
         ) {
             return;
         }
 
-        this.estaAbierto = false;
 
-        this.init();
-    }
+        let index = 0;
 
 
-    /* --------------------------------------------------------
-       Inicializar
-       -------------------------------------------------------- */
+        const visibleCount = () => {
 
-    init() {
-
-        /*
-         * Botón hamburguesa
-         */
-
-        this.boton.addEventListener(
-            "click",
-            (evento) => {
-
-                evento.preventDefault();
-                evento.stopPropagation();
-
-                this.toggleMenu();
+            if (window.innerWidth <= 768) {
+                return 1;
             }
-        );
 
-
-        /*
-         * Overlay
-         */
-
-        this.overlay.addEventListener(
-            "click",
-            (evento) => {
-
-                evento.preventDefault();
-
-                this.cerrarMenu();
+            if (window.innerWidth <= 1100) {
+                return 3;
             }
-        );
+
+            return 4;
+        };
 
 
-        /*
-         * Submenús
-         */
+        const update = () => {
 
-        const botonesSubmenu =
-            document.querySelectorAll(
-                ".enlace-menu-desplegable"
-            );
+            const count =
+                visibleCount();
 
-        botonesSubmenu.forEach(
-            (boton) => {
-
-                boton.addEventListener(
-                    "click",
-                    (evento) => {
-
-                        this.handleSubmenuClick(
-                            evento,
-                            boton
-                        );
-                    }
+            const max =
+                Math.max(
+                    0,
+                    cards.length - count
                 );
-            }
-        );
 
 
-        /*
-         * Cerrar al seleccionar enlace
-         */
-
-        const enlacesMenu =
-            document.querySelectorAll(
-                ".enlace-menu, .submenu a"
-            );
-
-        enlacesMenu.forEach(
-            (enlace) => {
-
-                enlace.addEventListener(
-                    "click",
-                    () => {
-
-                        if (
-                            window.innerWidth <= 768 &&
-                            this.estaAbierto
-                        ) {
-
-                            setTimeout(
-                                () => {
-                                    this.cerrarMenu();
-                                },
-                                150
-                            );
-                        }
-                    }
+            index =
+                Math.min(
+                    index,
+                    max
                 );
+
+
+            const first =
+                cards[0];
+
+
+            if (!first) {
+                return;
+            }
+
+
+            const step =
+                first.getBoundingClientRect()
+                    .width + 5;
+
+
+            track.style.transform =
+                `translateX(-${index * step}px)`;
+
+
+            if (prev) {
+
+                prev.disabled =
+                    index <= 0;
+
+            }
+
+
+            if (next) {
+
+                next.disabled =
+                    index >= max;
+
+            }
+
+        };
+
+
+        prev?.addEventListener(
+            "click",
+            () => {
+
+                index--;
+
+                update();
+
             }
         );
 
 
-        /*
-         * Escape
-         */
+        next?.addEventListener(
+            "click",
+            () => {
 
-        document.addEventListener(
-            "keydown",
-            (evento) => {
+                index++;
 
-                if (
-                    evento.key === "Escape" &&
-                    this.estaAbierto
-                ) {
+                update();
 
-                    this.cerrarMenu();
-
-                    this.boton.focus();
-                }
             }
         );
 
-
-        /*
-         * Reset al pasar a desktop
-         */
 
         window.addEventListener(
             "resize",
-            () => {
-
-                if (
-                    window.innerWidth > 768 &&
-                    this.estaAbierto
-                ) {
-
-                    this.cerrarMenu();
-                }
-            }
+            update
         );
-    }
 
 
-    /* --------------------------------------------------------
-       Submenú
-       -------------------------------------------------------- */
+        update();
+    };
 
-    handleSubmenuClick(
-        evento,
-        boton
-    ) {
+
+    initCarousel(
+        "categoriasCarrusel",
+        ".categoria-card"
+    );
+
+
+    initCarousel(
+        "destacadosCarrusel",
+        ".destacado-card"
+    );
+
+
+    initCarousel(
+        "muroCarrusel",
+        ".muro-item"
+    );
+
+
+    /* =========================================================
+       SERVICIOS FOTOGRÁFICOS + MODAL
+       ========================================================= */
+
+    const modal =
+        $("#modalServicio");
+
+    const modalImage =
+        $("#modalServicioImagen");
+
+    const modalTitle =
+        $("#modalServicioTitulo");
+
+    const modalDescription =
+        $("#modalServicioDescripcion");
+
+    const modalMore =
+        $("#modalServicioVerMas");
+
+    const modalClose =
+        $("#cerrarModalServicio");
+
+
+    const openService = card => {
+
+        if (!modal) {
+            return;
+        }
+
+
+        const service =
+            card.dataset.servicio || "";
+
+
+        const title =
+            card.dataset.title || "";
+
+
+        const description =
+            card.dataset.description || "";
+
+
+        const image =
+            card.dataset.image || "";
+
+
+        if (modalImage) {
+
+            modalImage.src = image;
+
+            modalImage.alt = title;
+
+        }
+
+
+        if (modalTitle) {
+
+            modalTitle.textContent =
+                title;
+
+        }
+
+
+        if (modalDescription) {
+
+            modalDescription.textContent =
+                description;
+
+        }
+
+
+        /*
+         * "Ver más" lleva a:
+         *
+         * servicios.html?servicio=nombre-del-servicio
+         */
+
+        if (modalMore) {
+
+            modalMore.href =
+                `servicios.html?servicio=${encodeURIComponent(service)}`;
+
+        }
+
 
         if (
-            window.innerWidth > 768
+            typeof modal.showModal ===
+            "function"
         ) {
-            return;
-        }
 
-        evento.preventDefault();
-        evento.stopPropagation();
-
-
-        const padre =
-            boton.closest(
-                ".menu-con-desplegable"
-            );
-
-        if (!padre) {
-            return;
-        }
-
-
-        /*
-         * Cerrar otros submenús
-         */
-
-        document
-            .querySelectorAll(
-                ".menu-con-desplegable.activo"
-            )
-            .forEach(
-                (item) => {
-
-                    if (item !== padre) {
-
-                        item.classList.remove(
-                            "activo"
-                        );
-
-                        const otroBoton =
-                            item.querySelector(
-                                ".enlace-menu-desplegable"
-                            );
-
-                        if (otroBoton) {
-
-                            otroBoton.setAttribute(
-                                "aria-expanded",
-                                "false"
-                            );
-                        }
-                    }
-                }
-            );
-
-
-        /*
-         * Toggle
-         */
-
-        const estaActivo =
-            padre.classList.contains(
-                "activo"
-            );
-
-        padre.classList.toggle(
-            "activo",
-            !estaActivo
-        );
-
-        boton.setAttribute(
-            "aria-expanded",
-            String(!estaActivo)
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Toggle
-       -------------------------------------------------------- */
-
-    toggleMenu() {
-
-        if (this.estaAbierto) {
-
-            this.cerrarMenu();
+            modal.showModal();
 
         } else {
 
-            this.abrirMenu();
-        }
-    }
-
-
-    /* --------------------------------------------------------
-       Abrir
-       -------------------------------------------------------- */
-
-    abrirMenu() {
-
-        this.estaAbierto = true;
-
-        this.menu.classList.add(
-            "activo"
-        );
-
-        this.overlay.classList.add(
-            "activo"
-        );
-
-        document.body.style.overflow =
-            "hidden";
-
-        this.boton.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-        this.boton.setAttribute(
-            "aria-label",
-            "Cerrar menú"
-        );
-    }
-
-
-    /* --------------------------------------------------------
-       Cerrar
-       -------------------------------------------------------- */
-
-    cerrarMenu() {
-
-        this.estaAbierto = false;
-
-        this.menu.classList.remove(
-            "activo"
-        );
-
-        this.overlay.classList.remove(
-            "activo"
-        );
-
-        document.body.style.overflow =
-            "";
-
-        this.boton.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        this.boton.setAttribute(
-            "aria-label",
-            "Abrir menú"
-        );
-
-
-        /*
-         * Cerrar submenús
-         */
-
-        document
-            .querySelectorAll(
-                ".menu-con-desplegable.activo"
-            )
-            .forEach(
-                (item) => {
-
-                    item.classList.remove(
-                        "activo"
-                    );
-
-                    const boton =
-                        item.querySelector(
-                            ".enlace-menu-desplegable"
-                        );
-
-                    if (boton) {
-
-                        boton.setAttribute(
-                            "aria-expanded",
-                            "false"
-                        );
-                    }
-                }
+            modal.setAttribute(
+                "open",
+                ""
             );
-    }
-}
 
-
-/* ============================================================
-   5. ANIMACIONES REVEAL
-   ============================================================ */
-
-function initRevealAnimations() {
-
-    const elementos =
-        document.querySelectorAll(
-            ".reveal"
-        );
-
-    if (
-        elementos.length === 0
-    ) {
-        return;
-    }
-
-
-    /*
-     * Navegadores sin IntersectionObserver
-     */
-
-    if (
-        !(
-            "IntersectionObserver"
-            in window
-        )
-    ) {
-
-        elementos.forEach(
-            (elemento) => {
-
-                elemento.classList.add(
-                    "visible"
-                );
-            }
-        );
-
-        return;
-    }
-
-
-    /*
-     * Observer
-     */
-
-    const observer =
-        new IntersectionObserver(
-            (entradas) => {
-
-                entradas.forEach(
-                    (entrada) => {
-
-                        if (
-                            entrada.isIntersecting
-                        ) {
-
-                            entrada.target.classList.add(
-                                "visible"
-                            );
-
-                            observer.unobserve(
-                                entrada.target
-                            );
-                        }
-                    }
-                );
-            },
-            {
-                threshold: 0.15,
-
-                rootMargin:
-                    "0px 0px -40px 0px"
-            }
-        );
-
-
-    elementos.forEach(
-        (elemento) => {
-
-            observer.observe(
-                elemento
-            );
         }
-    );
-}
+
+    };
 
 
-/* ============================================================
-   6. NAVEGACIÓN SUAVE
-   ============================================================ */
+    $$(".servicio-fotografia-card")
+        .forEach(card => {
 
-function initNavegacionSuave() {
-
-    const enlaces =
-        document.querySelectorAll(
-            'a[href^="#"]'
-        );
-
-    enlaces.forEach(
-        (enlace) => {
-
-            enlace.addEventListener(
+            card.addEventListener(
                 "click",
-                (evento) => {
-
-                    const targetId =
-                        enlace.getAttribute(
-                            "href"
-                        );
-
-
-                    if (
-                        !targetId ||
-                        targetId === "#"
-                    ) {
-                        return;
-                    }
-
-
-                    const targetElement =
-                        document.querySelector(
-                            targetId
-                        );
-
-
-                    if (!targetElement) {
-                        return;
-                    }
-
-
-                    evento.preventDefault();
-
+                event => {
 
                     /*
-                     * Altura aproximada del header
+                     * Evitamos que el botón interno
+                     * provoque acciones duplicadas.
                      */
 
-                    const headerOffset = 80;
+                    if (
+                        event.target.closest(
+                            ".servicio-ver-mas"
+                        )
+                    ) {
+
+                        event.preventDefault();
+
+                    }
 
 
-                    const elementPosition =
-                        targetElement.getBoundingClientRect()
-                            .top;
+                    openService(card);
 
-
-                    const offsetPosition =
-                        elementPosition +
-                        window.pageYOffset -
-                        headerOffset;
-
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
                 }
             );
+
+
+            const button =
+                $(".servicio-ver-mas", card);
+
+
+            button?.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+                    openService(card);
+
+                }
+            );
+
+        });
+
+
+    const closeService = () => {
+
+        if (!modal) {
+            return;
+        }
+
+
+        if (
+            typeof modal.close ===
+            "function"
+        ) {
+
+            modal.close();
+
+        } else {
+
+            modal.removeAttribute(
+                "open"
+            );
+
+        }
+
+    };
+
+
+    modalClose?.addEventListener(
+        "click",
+        closeService
+    );
+
+
+    modal?.addEventListener(
+        "click",
+        event => {
+
+            /*
+             * Si se hace click directamente
+             * sobre el fondo del dialog se cierra.
+             */
+
+            if (
+                event.target === modal
+            ) {
+
+                closeService();
+
+            }
+
         }
     );
-}
 
 
-/* ============================================================
-   7. FAQ
-   ============================================================ */
+    document.addEventListener(
+        "keydown",
+        event => {
 
-function initFAQ() {
+            if (
+                event.key === "Escape" &&
+                modal?.open
+            ) {
 
-    const preguntas =
-        document.querySelectorAll(
-            ".faq-item"
-        );
+                closeService();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       REVEAL / ANIMACIONES AL HACER SCROLL
+       ========================================================= */
+
+    const reveals =
+        $$(".reveal");
+
 
     if (
-        preguntas.length === 0
+        "IntersectionObserver" in window
     ) {
-        return;
+
+        const observer =
+            new IntersectionObserver(
+                entries => {
+
+                    entries.forEach(
+                        entry => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target
+                                    .classList
+                                    .add(
+                                        "visible"
+                                    );
+
+
+                                observer.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.12
+                }
+            );
+
+
+        reveals.forEach(
+            element => {
+
+                observer.observe(
+                    element
+                );
+
+            }
+        );
+
+    } else {
+
+        reveals.forEach(
+            element => {
+
+                element.classList.add(
+                    "visible"
+                );
+
+            }
+        );
+
     }
 
 
-    preguntas.forEach(
-        (item) => {
+    /* =========================================================
+       FAQ
+       ========================================================= */
+
+    $$(".faq-item")
+        .forEach(item => {
 
             item.addEventListener(
                 "toggle",
                 () => {
 
-                    /*
-                     * Si abrimos una pregunta,
-                     * cerramos las demás.
-                     */
-
                     if (!item.open) {
                         return;
                     }
 
-                    preguntas.forEach(
-                        (otroItem) => {
+
+                    /*
+                     * Mantiene solamente
+                     * una pregunta abierta.
+                     */
+
+                    $$(".faq-item")
+                        .forEach(other => {
 
                             if (
-                                otroItem !== item &&
-                                otroItem.open
+                                other !== item
                             ) {
 
-                                otroItem.open =
-                                    false;
+                                other.removeAttribute(
+                                    "open"
+                                );
+
                             }
-                        }
-                    );
+
+                        });
+
                 }
             );
-        }
-    );
-}
+
+        });
 
 
-/* ============================================================
-   8. HEADER — CAMBIO AL HACER SCROLL
-   ============================================================ */
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
 
-function initHeaderScroll() {
+    if (
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) {
 
-    const header =
-        document.querySelector(
-            ".header-principal"
+        clearInterval(
+            heroTimer
         );
 
-    if (!header) {
-        return;
-    }
 
+        reveals.forEach(
+            element => {
 
-    let ultimoScroll = 0;
-
-
-    window.addEventListener(
-        "scroll",
-        () => {
-
-            const scrollActual =
-                window.scrollY;
-
-
-            if (
-                scrollActual > 30
-            ) {
-
-                header.classList.add(
-                    "scrolled"
+                element.classList.add(
+                    "visible"
                 );
 
-            } else {
-
-                header.classList.remove(
-                    "scrolled"
-                );
-            }
-
-
-            ultimoScroll =
-                scrollActual;
-        },
-        {
-            passive: true
-        }
-    );
-}
-
-
-/* ============================================================
-   9. INICIALIZACIÓN GENERAL
-   ============================================================ */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        console.log(
-            "SublimArts — inicializando página de sublimación..."
-        );
-
-
-        /*
-         * HERO
-         */
-
-        new HeroCarrusel(
-            "inicio",
-            "heroSlides",
-            "heroIndicadores",
-            {
-                intervalo: 5000
             }
         );
 
-
-        /*
-         * CARRUSEL INFORMACIÓN
-         */
-
-        new CarruselInfo(
-            "infoCarrusel"
-        );
-
-
-        /*
-         * CATEGORÍAS
-         */
-
-        new Carrusel(
-            "categoriasCarrusel",
-            "categoriasPista",
-            {
-                visiblesDesktop: 4,
-                visiblesTablet: 3,
-                visiblesMobile: 1,
-                gap: 20
-            }
-        );
-
-
-        /*
-         * AMBIENTES / MURO
-         */
-
-        new Carrusel(
-            "muroCarrusel",
-            "muroPista",
-            {
-                visiblesDesktop: 3,
-                visiblesTablet: 2,
-                visiblesMobile: 1,
-                gap: 20
-            }
-        );
-
-
-        /*
-         * DESTACADOS
-         */
-
-        new Carrusel(
-            "destacadosCarrusel",
-            "destacadosPista",
-            {
-                visiblesDesktop: 4,
-                visiblesTablet: 3,
-                visiblesMobile: 1,
-                gap: 20
-            }
-        );
-
-
-        /*
-         * MENÚ MOBILE
-         */
-
-        new MenuMobile();
-
-
-        /*
-         * ANIMACIONES
-         */
-
-        initRevealAnimations();
-
-
-        /*
-         * NAVEGACIÓN
-         */
-
-        initNavegacionSuave();
-
-
-        /*
-         * FAQ
-         */
-
-        initFAQ();
-
-
-        /*
-         * HEADER
-         */
-
-        initHeaderScroll();
-
-
-        console.log(
-            "SublimArts — página de sublimación cargada correctamente."
-        );
     }
-);
+
+});

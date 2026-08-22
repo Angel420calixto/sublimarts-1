@@ -1242,3 +1242,219 @@ textarea:focus-visible {
         transition: none !important;
     }
 }
+
+/* ============================================================
+   SUBLIMARTS · OPTIMIZACIÓN FINAL
+   Mantiene la estética original y mejora imágenes / navegación.
+   ============================================================ */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: background .25s ease, backdrop-filter .25s ease,
+        box-shadow .25s ease;
+}
+
+.site-header.sublimarts-scrolled {
+    background: rgba(17, 18, 20, .94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .18);
+}
+
+html {
+    scroll-padding-top: 92px;
+}
+
+section[id] {
+    scroll-margin-top: 92px;
+}
+
+/* ------------------------------------------------------------
+   IMÁGENES: completas, proporción original, sin deformación.
+   El HERO queda expresamente fuera de esta regla.
+   ------------------------------------------------------------ */
+
+.portfolio-item img,
+.product-image img,
+.about > div:first-child img,
+.comparison-image img,
+.product-card-image img,
+.category-grid img,
+.service-grid article > img,
+.image-modal img {
+    object-fit: contain;
+    object-position: center;
+}
+
+.hero-image img {
+    object-fit: cover;
+}
+
+/* El fondo ocupa visualmente cualquier diferencia de proporción
+   sin cortar la fotografía. */
+.portfolio-item,
+.product-image,
+.about > div:first-child,
+.comparison-image,
+.product-card-image,
+.category-grid a,
+.service-grid article,
+.image-modal img {
+    background: #101114;
+}
+
+/* ------------------------------------------------------------
+   MOSAICO: conserva tamaños variados y elimina huecos innecesarios.
+   ------------------------------------------------------------ */
+
+.masonry {
+    grid-auto-flow: dense;
+}
+
+.portfolio-item {
+    min-width: 0;
+    min-height: 0;
+}
+
+.portfolio-item img {
+    transition: transform .5s ease;
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.025);
+}
+
+.portfolio-item span {
+    opacity: 1;
+    z-index: 2;
+    background: linear-gradient(
+        transparent 25%,
+        rgba(0, 0, 0, .78) 100%
+    );
+}
+
+/* ------------------------------------------------------------
+   COMPARACIÓN: la fotografía es protagonista y el texto se
+   superpone elegantemente sobre ella.
+   ------------------------------------------------------------ */
+
+.comparison-grid article {
+    position: relative;
+}
+
+.comparison-image {
+    position: relative;
+}
+
+.comparison-grid article.comparison-enhanced .comparison-image {
+    margin-bottom: 0;
+}
+
+.comparison-grid article.comparison-enhanced > .eyebrow,
+.comparison-grid article.comparison-enhanced > h3,
+.comparison-grid article.comparison-enhanced > ul {
+    display: none;
+}
+
+.comparison-overlay {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 3;
+    padding: 55px 25px 24px;
+    background: linear-gradient(
+        transparent,
+        rgba(0, 0, 0, .9)
+    );
+    pointer-events: none;
+}
+
+.comparison-overlay h3 {
+    margin: 0 0 10px;
+    color: var(--cream);
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 38px;
+    line-height: .95;
+}
+
+.comparison-overlay .eyebrow {
+    margin-bottom: 7px;
+}
+
+.comparison-overlay ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+/* ------------------------------------------------------------
+   MODAL
+   ------------------------------------------------------------ */
+
+.image-modal img {
+    max-height: 60vh;
+}
+
+.modal-service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 760px) {
+    html {
+        scroll-padding-top: 78px;
+    }
+
+    section[id] {
+        scroll-margin-top: 78px;
+    }
+
+    .site-header {
+        position: fixed;
+    }
+
+    .main-nav.open {
+        position: fixed;
+        top: 68px;
+        left: 0;
+        max-height: calc(100vh - 68px);
+        overflow-y: auto;
+    }
+
+    .portfolio-item img,
+    .product-image img,
+    .about > div:first-child img,
+    .comparison-image img,
+    .product-card-image img,
+    .category-grid img,
+    .service-grid article > img {
+        object-fit: contain;
+    }
+
+    .comparison-overlay {
+        padding: 42px 18px 17px;
+    }
+
+    .comparison-overlay h3 {
+        font-size: 29px;
+    }
+
+    .comparison-overlay ul {
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .image-modal img {
+        max-height: 55vh;
+    }
+}
