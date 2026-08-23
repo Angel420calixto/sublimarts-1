@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link rel="stylesheet" href="categoria1.css">
+<link rel="stylesheet" href="css/categoria1.css">
 </head>
 <body>
 <a class="skip-link" href="#catalogo">Saltar al catálogo</a>
@@ -21,22 +21,68 @@
             <img src="ChatGPT Image 11 mar 2026, 02_12_48 a.m..png" alt="SublimArts" width="44" height="44">
             <span>Sublim<span>Arts</span></span>
         </a>
+
         <nav class="desktop-nav" aria-label="Navegación principal">
             <a href="index.html">Inicio</a>
-            <a href="#catalogo" class="active">Catálogo</a>
+
+            <div class="nav-dropdown">
+                <button
+                    class="nav-dropdown__toggle active"
+                    id="desktopCatalogToggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="desktopCatalogMenu">
+                    <span>Catálogo</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                </button>
+
+                <div class="nav-dropdown__menu" id="desktopCatalogMenu">
+                    <a href="#catalogo" class="nav-dropdown__intro">
+                        <span>Ver catálogo</span>
+                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                    </a>
+                    <div class="nav-dropdown__divider"></div>
+                    <span class="nav-dropdown__label">Colecciones</span>
+                    <div class="nav-dropdown__collections" id="desktopCollectionLinks"></div>
+                </div>
+            </div>
+
             <a href="#aluminio">Aluminio HD</a>
             <a href="#contacto">Contacto</a>
         </nav>
+
         <a class="header-cta" href="https://wa.me/56912345678?text=Hola%20SublimArts,%20quiero%20cotizar%20un%20cuadro" target="_blank" rel="noopener">
             <span>Quiero un cuadro</span><i class="fa-brands fa-whatsapp"></i>
         </a>
+
         <button class="mobile-toggle" id="mobileToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Abrir menú">
             <i class="fa-solid fa-bars"></i>
         </button>
     </div>
+
     <nav class="mobile-nav" id="mobileNav" aria-label="Menú móvil">
         <a href="index.html">Inicio</a>
-        <a href="#catalogo">Catálogo</a>
+
+        <div class="mobile-nav__group">
+            <button
+                class="mobile-nav__catalog-toggle"
+                id="mobileCatalogToggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="mobileCatalogSubmenu">
+                <span>Catálogo</span>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </button>
+
+            <div class="mobile-nav__submenu" id="mobileCatalogSubmenu" hidden>
+                <a href="#catalogo" class="mobile-nav__catalog-home">
+                    Ver catálogo
+                </a>
+                <span class="mobile-nav__submenu-label">Colecciones</span>
+                <div id="mobileCollectionLinks"></div>
+            </div>
+        </div>
+
         <a href="#aluminio">Aluminio HD</a>
         <a href="#contacto">Contacto</a>
     </nav>
@@ -83,7 +129,7 @@
             <h2>Encuentra el diseño<br><em>que representa tu mundo.</em></h2>
         </div>
         <div class="catalog-intro__copy">
-            <p>Explora las colecciones de Anime y Gaming. Cada tarjeta es una muestra real de diseño: haz clic para ampliar, revisar medidas y abrir el visualizador en pared.</p>
+            <p>Explora las colecciones de Anime y Gaming. Cada tarjeta es una muestra real de diseño: haz clic para ampliar, revisar medidas y consultar el diseño directamente.</p>
             <div class="catalog-intro__stats">
                 <span><strong>16</strong><small>colecciones</small></span>
                 <span><strong>288</strong><small>diseños</small></span>
@@ -306,7 +352,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 09">
                     <figure class="product-card__media">
@@ -331,7 +377,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 10">
                     <figure class="product-card__media">
@@ -356,7 +402,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 11">
                     <figure class="product-card__media">
@@ -381,7 +427,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 12">
                     <figure class="product-card__media">
@@ -406,7 +452,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 13">
                     <figure class="product-card__media">
@@ -431,7 +477,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 14">
                     <figure class="product-card__media">
@@ -456,7 +502,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 15">
                     <figure class="product-card__media">
@@ -481,7 +527,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 16">
                     <figure class="product-card__media">
@@ -506,7 +552,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 17">
                     <figure class="product-card__media">
@@ -531,7 +577,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Dragon Ball 18">
                     <figure class="product-card__media">
@@ -556,12 +602,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-dragon-ball-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -776,7 +816,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 09">
                     <figure class="product-card__media">
@@ -801,7 +841,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 10">
                     <figure class="product-card__media">
@@ -826,7 +866,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 11">
                     <figure class="product-card__media">
@@ -851,7 +891,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 12">
                     <figure class="product-card__media">
@@ -876,7 +916,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 13">
                     <figure class="product-card__media">
@@ -901,7 +941,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 14">
                     <figure class="product-card__media">
@@ -926,7 +966,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 15">
                     <figure class="product-card__media">
@@ -951,7 +991,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 16">
                     <figure class="product-card__media">
@@ -976,7 +1016,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 17">
                     <figure class="product-card__media">
@@ -1001,7 +1041,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Naruto 18">
                     <figure class="product-card__media">
@@ -1026,12 +1066,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-naruto-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -1246,7 +1280,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 09">
                     <figure class="product-card__media">
@@ -1271,7 +1305,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 10">
                     <figure class="product-card__media">
@@ -1296,7 +1330,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 11">
                     <figure class="product-card__media">
@@ -1321,7 +1355,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 12">
                     <figure class="product-card__media">
@@ -1346,7 +1380,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 13">
                     <figure class="product-card__media">
@@ -1371,7 +1405,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 14">
                     <figure class="product-card__media">
@@ -1396,7 +1430,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 15">
                     <figure class="product-card__media">
@@ -1421,7 +1455,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 16">
                     <figure class="product-card__media">
@@ -1446,7 +1480,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 17">
                     <figure class="product-card__media">
@@ -1471,7 +1505,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver One Piece 18">
                     <figure class="product-card__media">
@@ -1497,17 +1531,11 @@
                 </button>
             </article>
                 </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-one-piece-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
-                </div>
             </div>
         </section>
         <section class="aluminum-strip" aria-label="Información sobre cuadros de aluminio HD">
             <div class="aluminum-strip__image">
-                <img src="" alt="Cuadros de aluminio HD" loading="lazy" width="1200" height="700">
+                <img src="https://scontent.fscl37-1.fna.fbcdn.net/v/t39.30808-6/763847788_122126447745207747_6056750299802978879_n.jpg?stp=dst-jpg_tt6&cstp=mx1086x1448&ctp=s1086x1448&_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFVCeAsckEQegR5vGExVpTY7RulKzX0cwftG6UrNfRzB3xhhuXbvj-rxCIEgw9PfjIF9QvmkUPAVjhlTpeuD77w&_nc_ohc=d_NEoG5kXY8Q7kNvwGm5Km1&_nc_oc=AdpB40Pz8wMcIZMEiG8BNT6Ddt4-91X8go7A2JY0vDBpTA-Yh33GNVOE6djD4Msn-o0&_nc_zt=23&_nc_ht=scontent.fscl37-1.fna&_nc_gid=4H_HrFPBZfaJk_8nWdiqug&_nc_ss=7b2a8&oh=00_AQE1cbp5ryRyRIV6bgHi8KZn43597J26Bet7KhOnu-tnyQ&oe=6A8FF7D6" alt="Cuadros de aluminio HD" loading="lazy" width="1200" height="700">
             </div>
             <div class="aluminum-strip__overlay"></div>
             <div class="shell aluminum-strip__content">
@@ -1732,7 +1760,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 09">
                     <figure class="product-card__media">
@@ -1757,7 +1785,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 10">
                     <figure class="product-card__media">
@@ -1782,7 +1810,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 11">
                     <figure class="product-card__media">
@@ -1807,7 +1835,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 12">
                     <figure class="product-card__media">
@@ -1832,7 +1860,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 13">
                     <figure class="product-card__media">
@@ -1857,7 +1885,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 14">
                     <figure class="product-card__media">
@@ -1882,7 +1910,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 15">
                     <figure class="product-card__media">
@@ -1907,7 +1935,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 16">
                     <figure class="product-card__media">
@@ -1932,7 +1960,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 17">
                     <figure class="product-card__media">
@@ -1957,7 +1985,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Jujutsu Kaisen 18">
                     <figure class="product-card__media">
@@ -1982,12 +2010,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-jujutsu-kaisen-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -2202,7 +2224,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 09">
                     <figure class="product-card__media">
@@ -2227,7 +2249,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 10">
                     <figure class="product-card__media">
@@ -2252,7 +2274,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 11">
                     <figure class="product-card__media">
@@ -2277,7 +2299,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 12">
                     <figure class="product-card__media">
@@ -2302,7 +2324,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 13">
                     <figure class="product-card__media">
@@ -2327,7 +2349,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 14">
                     <figure class="product-card__media">
@@ -2352,7 +2374,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 15">
                     <figure class="product-card__media">
@@ -2377,7 +2399,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 16">
                     <figure class="product-card__media">
@@ -2402,7 +2424,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 17">
                     <figure class="product-card__media">
@@ -2427,7 +2449,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Demon Slayer 18">
                     <figure class="product-card__media">
@@ -2452,12 +2474,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-demon-slayer-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -2672,7 +2688,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 09">
                     <figure class="product-card__media">
@@ -2697,7 +2713,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 10">
                     <figure class="product-card__media">
@@ -2722,7 +2738,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 11">
                     <figure class="product-card__media">
@@ -2747,7 +2763,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 12">
                     <figure class="product-card__media">
@@ -2772,7 +2788,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 13">
                     <figure class="product-card__media">
@@ -2797,7 +2813,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 14">
                     <figure class="product-card__media">
@@ -2822,7 +2838,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 15">
                     <figure class="product-card__media">
@@ -2847,7 +2863,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 16">
                     <figure class="product-card__media">
@@ -2872,7 +2888,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 17">
                     <figure class="product-card__media">
@@ -2897,7 +2913,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Pokémon 18">
                     <figure class="product-card__media">
@@ -2922,12 +2938,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-pokemon-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -3158,7 +3168,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 09">
                     <figure class="product-card__media">
@@ -3183,7 +3193,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 10">
                     <figure class="product-card__media">
@@ -3208,7 +3218,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 11">
                     <figure class="product-card__media">
@@ -3233,7 +3243,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 12">
                     <figure class="product-card__media">
@@ -3258,7 +3268,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 13">
                     <figure class="product-card__media">
@@ -3283,7 +3293,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 14">
                     <figure class="product-card__media">
@@ -3308,7 +3318,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 15">
                     <figure class="product-card__media">
@@ -3333,7 +3343,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 16">
                     <figure class="product-card__media">
@@ -3358,7 +3368,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 17">
                     <figure class="product-card__media">
@@ -3383,7 +3393,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Attack on Titan 18">
                     <figure class="product-card__media">
@@ -3408,12 +3418,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-attack-on-titan-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -3628,7 +3632,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 09">
                     <figure class="product-card__media">
@@ -3653,7 +3657,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 10">
                     <figure class="product-card__media">
@@ -3678,7 +3682,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 11">
                     <figure class="product-card__media">
@@ -3703,7 +3707,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 12">
                     <figure class="product-card__media">
@@ -3728,7 +3732,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 13">
                     <figure class="product-card__media">
@@ -3753,7 +3757,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 14">
                     <figure class="product-card__media">
@@ -3778,7 +3782,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 15">
                     <figure class="product-card__media">
@@ -3803,7 +3807,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 16">
                     <figure class="product-card__media">
@@ -3828,7 +3832,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 17">
                     <figure class="product-card__media">
@@ -3853,7 +3857,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver My Hero Academia 18">
                     <figure class="product-card__media">
@@ -3878,12 +3882,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="anime-my-hero-academia-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -4098,7 +4096,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 09">
                     <figure class="product-card__media">
@@ -4123,7 +4121,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 10">
                     <figure class="product-card__media">
@@ -4148,7 +4146,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 11">
                     <figure class="product-card__media">
@@ -4173,7 +4171,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 12">
                     <figure class="product-card__media">
@@ -4198,7 +4196,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 13">
                     <figure class="product-card__media">
@@ -4223,7 +4221,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 14">
                     <figure class="product-card__media">
@@ -4248,7 +4246,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 15">
                     <figure class="product-card__media">
@@ -4273,7 +4271,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 16">
                     <figure class="product-card__media">
@@ -4298,7 +4296,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 17">
                     <figure class="product-card__media">
@@ -4323,7 +4321,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver God of War 18">
                     <figure class="product-card__media">
@@ -4348,12 +4346,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-god-of-war-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -4584,7 +4576,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 09">
                     <figure class="product-card__media">
@@ -4609,7 +4601,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 10">
                     <figure class="product-card__media">
@@ -4634,7 +4626,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 11">
                     <figure class="product-card__media">
@@ -4659,7 +4651,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 12">
                     <figure class="product-card__media">
@@ -4684,7 +4676,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 13">
                     <figure class="product-card__media">
@@ -4709,7 +4701,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 14">
                     <figure class="product-card__media">
@@ -4734,7 +4726,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 15">
                     <figure class="product-card__media">
@@ -4759,7 +4751,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 16">
                     <figure class="product-card__media">
@@ -4784,7 +4776,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 17">
                     <figure class="product-card__media">
@@ -4809,7 +4801,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Call of Duty 18">
                     <figure class="product-card__media">
@@ -4834,12 +4826,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-call-of-duty-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -5054,7 +5040,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 09">
                     <figure class="product-card__media">
@@ -5079,7 +5065,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 10">
                     <figure class="product-card__media">
@@ -5104,7 +5090,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 11">
                     <figure class="product-card__media">
@@ -5129,7 +5115,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 12">
                     <figure class="product-card__media">
@@ -5154,7 +5140,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 13">
                     <figure class="product-card__media">
@@ -5179,7 +5165,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 14">
                     <figure class="product-card__media">
@@ -5204,7 +5190,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 15">
                     <figure class="product-card__media">
@@ -5229,7 +5215,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 16">
                     <figure class="product-card__media">
@@ -5254,7 +5240,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 17">
                     <figure class="product-card__media">
@@ -5279,7 +5265,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Grand Theft Auto 18">
                     <figure class="product-card__media">
@@ -5304,12 +5290,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-gta-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -5524,7 +5504,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 09">
                     <figure class="product-card__media">
@@ -5549,7 +5529,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 10">
                     <figure class="product-card__media">
@@ -5574,7 +5554,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 11">
                     <figure class="product-card__media">
@@ -5599,7 +5579,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 12">
                     <figure class="product-card__media">
@@ -5624,7 +5604,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 13">
                     <figure class="product-card__media">
@@ -5649,7 +5629,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 14">
                     <figure class="product-card__media">
@@ -5674,7 +5654,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 15">
                     <figure class="product-card__media">
@@ -5699,7 +5679,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 16">
                     <figure class="product-card__media">
@@ -5724,7 +5704,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 17">
                     <figure class="product-card__media">
@@ -5749,7 +5729,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Minecraft 18">
                     <figure class="product-card__media">
@@ -5774,12 +5754,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-minecraft-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -6010,7 +5984,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 09">
                     <figure class="product-card__media">
@@ -6035,7 +6009,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 10">
                     <figure class="product-card__media">
@@ -6060,7 +6034,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 11">
                     <figure class="product-card__media">
@@ -6085,7 +6059,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 12">
                     <figure class="product-card__media">
@@ -6110,7 +6084,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 13">
                     <figure class="product-card__media">
@@ -6135,7 +6109,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 14">
                     <figure class="product-card__media">
@@ -6160,7 +6134,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 15">
                     <figure class="product-card__media">
@@ -6185,7 +6159,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 16">
                     <figure class="product-card__media">
@@ -6210,7 +6184,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 17">
                     <figure class="product-card__media">
@@ -6235,7 +6209,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Fortnite 18">
                     <figure class="product-card__media">
@@ -6260,12 +6234,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-fortnite-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -6480,7 +6448,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 09">
                     <figure class="product-card__media">
@@ -6505,7 +6473,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 10">
                     <figure class="product-card__media">
@@ -6530,7 +6498,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 11">
                     <figure class="product-card__media">
@@ -6555,7 +6523,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 12">
                     <figure class="product-card__media">
@@ -6580,7 +6548,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 13">
                     <figure class="product-card__media">
@@ -6605,7 +6573,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 14">
                     <figure class="product-card__media">
@@ -6630,7 +6598,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 15">
                     <figure class="product-card__media">
@@ -6655,7 +6623,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 16">
                     <figure class="product-card__media">
@@ -6680,7 +6648,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 17">
                     <figure class="product-card__media">
@@ -6705,7 +6673,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Assassin's Creed 18">
                     <figure class="product-card__media">
@@ -6730,12 +6698,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-assassins-creed-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -6950,7 +6912,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 09">
                     <figure class="product-card__media">
@@ -6975,7 +6937,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 10">
                     <figure class="product-card__media">
@@ -7000,7 +6962,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 11">
                     <figure class="product-card__media">
@@ -7025,7 +6987,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 12">
                     <figure class="product-card__media">
@@ -7050,7 +7012,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 13">
                     <figure class="product-card__media">
@@ -7075,7 +7037,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 14">
                     <figure class="product-card__media">
@@ -7100,7 +7062,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 15">
                     <figure class="product-card__media">
@@ -7125,7 +7087,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 16">
                     <figure class="product-card__media">
@@ -7150,7 +7112,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 17">
                     <figure class="product-card__media">
@@ -7175,7 +7137,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Resident Evil 18">
                     <figure class="product-card__media">
@@ -7200,12 +7162,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-resident-evil-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -7436,7 +7392,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="8">
+            <article class="product-card" data-index="8">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 09">
                     <figure class="product-card__media">
@@ -7461,7 +7417,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="9">
+            <article class="product-card" data-index="9">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 10">
                     <figure class="product-card__media">
@@ -7486,7 +7442,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="10">
+            <article class="product-card" data-index="10">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 11">
                     <figure class="product-card__media">
@@ -7511,7 +7467,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="11">
+            <article class="product-card" data-index="11">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 12">
                     <figure class="product-card__media">
@@ -7536,7 +7492,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="12">
+            <article class="product-card" data-index="12">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 13">
                     <figure class="product-card__media">
@@ -7561,7 +7517,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="13">
+            <article class="product-card" data-index="13">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 14">
                     <figure class="product-card__media">
@@ -7586,7 +7542,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="14">
+            <article class="product-card" data-index="14">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 15">
                     <figure class="product-card__media">
@@ -7611,7 +7567,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="15">
+            <article class="product-card" data-index="15">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 16">
                     <figure class="product-card__media">
@@ -7636,7 +7592,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="16">
+            <article class="product-card" data-index="16">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 17">
                     <figure class="product-card__media">
@@ -7661,7 +7617,7 @@
                     </div>
                 </button>
             </article>
-            <article class="product-card is-hidden-product" data-index="17">
+            <article class="product-card" data-index="17">
                 <button class="product-card__button" type="button"
                         aria-label="Ver Gaming 18">
                     <figure class="product-card__media">
@@ -7686,12 +7642,6 @@
                     </div>
                 </button>
             </article>
-                </div>
-                <div class="collection__more">
-                    <button class="more-button" type="button" aria-expanded="false" aria-controls="gamer-gaming-gallery">
-                        <span>Ver más diseños</span>
-                        <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
-                    </button>
                 </div>
             </div>
         </section>
@@ -7767,7 +7717,6 @@
                 <div><small>PRECIO</small><strong id="modalPrice">$20.000 CLP</strong></div>
             </div>
             <div class="modal-actions">
-                <button class="button button--gold" id="wallButton" type="button">Ver en pared <i class="fa-solid fa-cube"></i></button>
                 <a class="button button--ghost" id="modalDetails" href="visualizacion.html">Ver detalles <i class="fa-solid fa-arrow-right"></i></a>
             </div>
             <a class="modal-whatsapp" id="modalWhatsapp" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Quiero este diseño</a>
@@ -7775,34 +7724,6 @@
     </div>
 </dialog>
 
-<dialog class="wall-modal" id="wallModal" aria-labelledby="wallTitle">
-    <button class="modal-close" id="wallClose" type="button" aria-label="Cerrar">
-        <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="wall-modal__top">
-        <div>
-            <span class="section-kicker">VISUALIZADOR</span>
-            <h2 id="wallTitle">Así podría verse en tu pared.</h2>
-        </div>
-        <label>Escala
-            <input id="wallScale" type="range" min="35" max="75" value="52">
-        </label>
-    </div>
-    <div class="wall-scene" id="wallScene">
-        <div class="wall-light"></div>
-        <div class="wall-floor"></div>
-        <div class="wall-frame" id="wallFrame">
-            <img id="wallImage" src="" alt="">
-        </div>
-        <div class="wall-console"></div>
-        <div class="wall-plant"></div>
-    </div>
-    <div class="wall-modal__bottom">
-        <span>Simulación visual · formato 30 × 40 cm</span>
-        <span>La escala es ilustrativa.</span>
-    </div>
-</dialog>
-
-<script src="categoria1.js" defer></script>
+<script src="js/categoria1.js" defer></script>
 </body>
 </html>
