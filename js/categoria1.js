@@ -19,156 +19,87 @@ document.addEventListener("DOMContentLoaded", () => {
 
         menu.classList.remove("activo");
         menuButton.setAttribute("aria-expanded", "false");
-
         document.body.classList.remove("menu-abierto");
-
         overlay?.classList.remove("activo");
     };
 
     menuButton?.addEventListener("click", () => {
-        const open =
-            menuButton.getAttribute("aria-expanded") === "true";
+        const open = menuButton.getAttribute("aria-expanded") === "true";
 
-        menuButton.setAttribute(
-            "aria-expanded",
-            String(!open)
-        );
-
+        menuButton.setAttribute("aria-expanded", String(!open));
         menu?.classList.toggle("activo", !open);
-
-        overlay?.classList.toggle(
-            "activo",
-            !open
-        );
-
-        document.body.classList.toggle(
-            "menu-abierto",
-            !open
-        );
+        overlay?.classList.toggle("activo", !open);
+        document.body.classList.toggle("menu-abierto", !open);
     });
 
-    overlay?.addEventListener(
-        "click",
-        closeMenu
-    );
+    overlay?.addEventListener("click", closeMenu);
 
     $$(".enlace-menu", menu).forEach(link => {
-        link.addEventListener(
-            "click",
-            closeMenu
-        );
+        link.addEventListener("click", closeMenu);
     });
 
-    dropdownButton?.addEventListener(
-        "click",
-        () => {
+    dropdownButton?.addEventListener("click", () => {
+        if (window.innerWidth > 768) return;
 
-            if (window.innerWidth > 768) {
-                return;
-            }
+        const active = dropdown.classList.toggle("activo");
 
-            const active =
-                dropdown.classList.toggle("activo");
-
-            dropdownButton.setAttribute(
-                "aria-expanded",
-                String(active)
-            );
-        }
-    );
+        dropdownButton.setAttribute(
+            "aria-expanded",
+            String(active)
+        );
+    });
 
 
     /* =========================================================
        HERO
        ========================================================= */
 
-    const heroSlides =
-        $$(".hero-slide");
-
-    const heroDots =
-        $$(".hero-indicador");
+    const heroSlides = $$(".hero-slide");
+    const heroDots = $$(".hero-indicador");
 
     let heroIndex = 0;
-
     let heroTimer = null;
 
-
     const showHero = index => {
-
-        if (!heroSlides.length) {
-            return;
-        }
+        if (!heroSlides.length) return;
 
         heroIndex =
             (index + heroSlides.length) %
             heroSlides.length;
 
+        heroSlides.forEach((slide, i) => {
+            slide.classList.toggle(
+                "activo",
+                i === heroIndex
+            );
+        });
 
-        heroSlides.forEach(
-            (slide, i) => {
-
-                slide.classList.toggle(
-                    "activo",
-                    i === heroIndex
-                );
-
-            }
-        );
-
-
-        heroDots.forEach(
-            (dot, i) => {
-
-                dot.classList.toggle(
-                    "activo",
-                    i === heroIndex
-                );
-
-            }
-        );
+        heroDots.forEach((dot, i) => {
+            dot.classList.toggle(
+                "activo",
+                i === heroIndex
+            );
+        });
     };
 
-
     const startHero = () => {
-
-        if (heroSlides.length < 2) {
-            return;
-        }
+        if (heroSlides.length < 2) return;
 
         clearInterval(heroTimer);
 
-        heroTimer =
-            setInterval(
-                () => {
-                    showHero(
-                        heroIndex + 1
-                    );
-                },
-                6000
-            );
+        heroTimer = setInterval(() => {
+            showHero(heroIndex + 1);
+        }, 6000);
     };
 
-
-    heroDots.forEach(
-        (dot, i) => {
-
-            dot.addEventListener(
-                "click",
-                () => {
-
-                    showHero(i);
-
-                    startHero();
-
-                }
-            );
-
-        }
-    );
-
+    heroDots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+            showHero(i);
+            startHero();
+        });
+    });
 
     showHero(0);
-
     startHero();
 
 
@@ -176,11 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
        CARRUSEL: ¿QUÉ ES?
        ========================================================= */
 
-    const infoSlides =
-        $$(".info-slide");
-
-    const infoDots =
-        $$(".info-indicador");
+    const infoSlides = $$(".info-slide");
+    const infoDots = $$(".info-indicador");
 
     const infoPrev =
         $(".info-carrusel-flecha.anterior");
@@ -190,97 +118,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let infoIndex = 0;
 
-
     const showInfo = index => {
-
-        if (!infoSlides.length) {
-            return;
-        }
+        if (!infoSlides.length) return;
 
         infoIndex =
             (index + infoSlides.length) %
             infoSlides.length;
 
+        infoSlides.forEach((slide, i) => {
+            slide.classList.toggle(
+                "activo",
+                i === infoIndex
+            );
+        });
 
-        infoSlides.forEach(
-            (slide, i) => {
-
-                slide.classList.toggle(
-                    "activo",
-                    i === infoIndex
-                );
-
-            }
-        );
-
-
-        infoDots.forEach(
-            (dot, i) => {
-
-                dot.classList.toggle(
-                    "activo",
-                    i === infoIndex
-                );
-
-            }
-        );
+        infoDots.forEach((dot, i) => {
+            dot.classList.toggle(
+                "activo",
+                i === infoIndex
+            );
+        });
     };
-
 
     infoPrev?.addEventListener(
         "click",
-        () => {
-            showInfo(
-                infoIndex - 1
-            );
-        }
+        () => showInfo(infoIndex - 1)
     );
-
 
     infoNext?.addEventListener(
         "click",
-        () => {
-            showInfo(
-                infoIndex + 1
-            );
-        }
+        () => showInfo(infoIndex + 1)
     );
 
-
-    infoDots.forEach(
-        (dot, i) => {
-
-            dot.addEventListener(
-                "click",
-                () => {
-                    showInfo(i);
-                }
-            );
-
-        }
-    );
-
+    infoDots.forEach((dot, i) => {
+        dot.addEventListener(
+            "click",
+            () => showInfo(i)
+        );
+    });
 
     $("#infoCarrusel")?.addEventListener(
         "keydown",
         event => {
-
             if (event.key === "ArrowLeft") {
-
-                showInfo(
-                    infoIndex - 1
-                );
-
+                showInfo(infoIndex - 1);
             }
 
             if (event.key === "ArrowRight") {
-
-                showInfo(
-                    infoIndex + 1
-                );
-
+                showInfo(infoIndex + 1);
             }
-
         }
     );
 
@@ -289,18 +175,10 @@ document.addEventListener("DOMContentLoaded", () => {
        CARRUSELES GENERALES
        ========================================================= */
 
-    const initCarousel = (
-        id,
-        cardSelector
-    ) => {
+    const initCarousel = (id, cardSelector) => {
+        const root = document.getElementById(id);
 
-        const root =
-            document.getElementById(id);
-
-        if (!root) {
-            return;
-        }
-
+        if (!root) return;
 
         const viewport =
             $(".carrusel-vista", root);
@@ -317,21 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const next =
             $(".carrusel-flecha-siguiente", root);
 
-
-        if (
-            !viewport ||
-            !track ||
-            !cards.length
-        ) {
+        if (!viewport || !track || !cards.length) {
             return;
         }
 
-
         let index = 0;
 
-
         const visibleCount = () => {
-
             if (window.innerWidth <= 768) {
                 return 1;
             }
@@ -343,107 +213,62 @@ document.addEventListener("DOMContentLoaded", () => {
             return 4;
         };
 
-
         const update = () => {
+            const count = visibleCount();
 
-            const count =
-                visibleCount();
+            const max = Math.max(
+                0,
+                cards.length - count
+            );
 
-            const max =
-                Math.max(
-                    0,
-                    cards.length - count
-                );
+            index = Math.min(index, max);
 
+            const first = cards[0];
 
-            index =
-                Math.min(
-                    index,
-                    max
-                );
-
-
-            const first =
-                cards[0];
-
-
-            if (!first) {
-                return;
-            }
-
+            if (!first) return;
 
             const step =
-                first.getBoundingClientRect()
-                    .width + 5;
-
+                first.getBoundingClientRect().width + 5;
 
             track.style.transform =
                 `translateX(-${index * step}px)`;
 
-
             if (prev) {
-
-                prev.disabled =
-                    index <= 0;
-
+                prev.disabled = index <= 0;
             }
-
 
             if (next) {
-
-                next.disabled =
-                    index >= max;
-
+                next.disabled = index >= max;
             }
-
         };
 
+        prev?.addEventListener("click", () => {
+            index--;
+            update();
+        });
 
-        prev?.addEventListener(
-            "click",
-            () => {
-
-                index--;
-
-                update();
-
-            }
-        );
-
-
-        next?.addEventListener(
-            "click",
-            () => {
-
-                index++;
-
-                update();
-
-            }
-        );
-
+        next?.addEventListener("click", () => {
+            index++;
+            update();
+        });
 
         window.addEventListener(
             "resize",
             update
         );
 
-
         update();
     };
-
 
     initCarousel(
         "categoriasCarrusel",
         ".categoria-card"
     );
 
-
     initCarousel(
         "destacadosCarrusel",
         ".destacado-card"
     );
-
 
     initCarousel(
         "muroCarrusel",
@@ -455,8 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
        SERVICIOS FOTOGRÁFICOS + MODAL
        ========================================================= */
 
-    const modal =
-        $("#modalServicio");
+    const modal = $("#modalServicio");
 
     const modalImage =
         $("#modalServicioImagen");
@@ -473,87 +297,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalClose =
         $("#cerrarModalServicio");
 
-
     const openService = card => {
-
-        if (!modal) {
-            return;
-        }
-
+        if (!modal) return;
 
         const service =
             card.dataset.servicio || "";
 
-
         const title =
             card.dataset.title || "";
-
 
         const description =
             card.dataset.description || "";
 
-
         const image =
             card.dataset.image || "";
 
-
         if (modalImage) {
-
             modalImage.src = image;
-
             modalImage.alt = title;
-
         }
-
 
         if (modalTitle) {
-
-            modalTitle.textContent =
-                title;
-
+            modalTitle.textContent = title;
         }
-
 
         if (modalDescription) {
-
             modalDescription.textContent =
                 description;
-
         }
-
-
-        /*
-         * "Ver más" lleva a:
-         *
-         * servicios.html?servicio=nombre-del-servicio
-         */
 
         if (modalMore) {
-
             modalMore.href =
                 `servicios.html?servicio=${encodeURIComponent(service)}`;
-
         }
-
 
         if (
             typeof modal.showModal ===
             "function"
         ) {
-
             modal.showModal();
-
         } else {
-
-            modal.setAttribute(
-                "open",
-                ""
-            );
-
+            modal.setAttribute("open", "");
         }
-
     };
-
 
     $$(".servicio-fotografia-card")
         .forEach(card => {
@@ -562,99 +348,57 @@ document.addEventListener("DOMContentLoaded", () => {
                 "click",
                 event => {
 
-                    /*
-                     * Evitamos que el botón interno
-                     * provoque acciones duplicadas.
-                     */
-
                     if (
                         event.target.closest(
                             ".servicio-ver-mas"
                         )
                     ) {
-
                         event.preventDefault();
-
                     }
 
-
                     openService(card);
-
                 }
             );
 
+            $(".servicio-ver-mas", card)
+                ?.addEventListener(
+                    "click",
+                    event => {
 
-            const button =
-                $(".servicio-ver-mas", card);
+                        event.preventDefault();
+                        event.stopPropagation();
 
-
-            button?.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-                    openService(card);
-
-                }
-            );
-
+                        openService(card);
+                    }
+                );
         });
 
-
     const closeService = () => {
-
-        if (!modal) {
-            return;
-        }
-
+        if (!modal) return;
 
         if (
             typeof modal.close ===
             "function"
         ) {
-
             modal.close();
-
         } else {
-
-            modal.removeAttribute(
-                "open"
-            );
-
+            modal.removeAttribute("open");
         }
-
     };
-
 
     modalClose?.addEventListener(
         "click",
         closeService
     );
 
-
     modal?.addEventListener(
         "click",
         event => {
-
-            /*
-             * Si se hace click directamente
-             * sobre el fondo del dialog se cierra.
-             */
-
-            if (
-                event.target === modal
-            ) {
-
+            if (event.target === modal) {
                 closeService();
-
             }
-
         }
     );
-
 
     document.addEventListener(
         "keydown",
@@ -664,53 +408,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.key === "Escape" &&
                 modal?.open
             ) {
-
                 closeService();
-
             }
-
         }
     );
 
 
     /* =========================================================
-       REVEAL / ANIMACIONES AL HACER SCROLL
+       REVEAL
        ========================================================= */
 
-    const reveals =
-        $$(".reveal");
+    const reveals = $$(".reveal");
 
-
-    if (
-        "IntersectionObserver" in window
-    ) {
+    if ("IntersectionObserver" in window) {
 
         const observer =
             new IntersectionObserver(
                 entries => {
 
-                    entries.forEach(
-                        entry => {
+                    entries.forEach(entry => {
 
-                            if (
-                                entry.isIntersecting
-                            ) {
+                        if (
+                            entry.isIntersecting
+                        ) {
 
+                            entry.target.classList.add(
+                                "visible"
+                            );
+
+                            observer.unobserve(
                                 entry.target
-                                    .classList
-                                    .add(
-                                        "visible"
-                                    );
-
-
-                                observer.unobserve(
-                                    entry.target
-                                );
-
-                            }
-
+                            );
                         }
-                    );
+                    });
 
                 },
                 {
@@ -718,29 +448,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
-
-        reveals.forEach(
-            element => {
-
-                observer.observe(
-                    element
-                );
-
-            }
-        );
+        reveals.forEach(element => {
+            observer.observe(element);
+        });
 
     } else {
 
-        reveals.forEach(
-            element => {
-
-                element.classList.add(
-                    "visible"
-                );
-
-            }
-        );
-
+        reveals.forEach(element => {
+            element.classList.add("visible");
+        });
     }
 
 
@@ -748,42 +464,26 @@ document.addEventListener("DOMContentLoaded", () => {
        FAQ
        ========================================================= */
 
-    $$(".faq-item")
-        .forEach(item => {
+    $$(".faq-item").forEach(item => {
 
-            item.addEventListener(
-                "toggle",
-                () => {
+        item.addEventListener(
+            "toggle",
+            () => {
 
-                    if (!item.open) {
-                        return;
+                if (!item.open) return;
+
+                $$(".faq-item").forEach(other => {
+
+                    if (other !== item) {
+                        other.removeAttribute(
+                            "open"
+                        );
                     }
 
-
-                    /*
-                     * Mantiene solamente
-                     * una pregunta abierta.
-                     */
-
-                    $$(".faq-item")
-                        .forEach(other => {
-
-                            if (
-                                other !== item
-                            ) {
-
-                                other.removeAttribute(
-                                    "open"
-                                );
-
-                            }
-
-                        });
-
-                }
-            );
-
-        });
+                });
+            }
+        );
+    });
 
 
     /* =========================================================
@@ -796,21 +496,658 @@ document.addEventListener("DOMContentLoaded", () => {
         ).matches
     ) {
 
-        clearInterval(
-            heroTimer
-        );
+        clearInterval(heroTimer);
+
+        reveals.forEach(element => {
+            element.classList.add("visible");
+        });
+    }
 
 
-        reveals.forEach(
-            element => {
+    /* =========================================================
+       CATÁLOGO EDITORIAL
+       VER MÁS + VISUALIZADOR DE PRODUCTOS
+       ========================================================= */
 
-                element.classList.add(
-                    "visible"
+    const PRODUCTOS_VISIBLES = 8;
+
+    $$(".catalogo-editorial-seccion")
+        .forEach(section => {
+
+            const gallery =
+                $(".catalogo-editorial-grid", section);
+
+            const button =
+                $(".catalogo-ver-mas", section);
+
+            if (!gallery || !button) return;
+
+            const products =
+                $$(".producto-card", gallery);
+
+            const updateGallery = expanded => {
+
+                products.forEach(
+                    (product, index) => {
+
+                        const hidden =
+                            !expanded &&
+                            index >= PRODUCTOS_VISIBLES;
+
+                        product.classList.toggle(
+                            "producto-oculto",
+                            hidden
+                        );
+
+                        product.setAttribute(
+                            "aria-hidden",
+                            String(hidden)
+                        );
+
+                        if (
+                            !hidden &&
+                            expanded &&
+                            index >= PRODUCTOS_VISIBLES
+                        ) {
+
+                            product.classList.remove(
+                                "producto-aparece"
+                            );
+
+                            requestAnimationFrame(
+                                () => {
+
+                                    product.classList.add(
+                                        "producto-aparece"
+                                    );
+
+                                }
+                            );
+                        }
+                    }
                 );
 
-            }
-        );
+                button.setAttribute(
+                    "aria-expanded",
+                    String(expanded)
+                );
 
-    }
+                const text =
+                    $("span", button);
+
+                if (text) {
+                    text.textContent =
+                        expanded
+                            ? "Ver menos"
+                            : "Ver más";
+                }
+
+                const icon =
+                    $("i", button);
+
+                icon?.classList.toggle(
+                    "fa-arrow-up",
+                    expanded
+                );
+
+                icon?.classList.toggle(
+                    "fa-arrow-down",
+                    !expanded
+                );
+            };
+
+            if (
+                products.length <=
+                PRODUCTOS_VISIBLES
+            ) {
+
+                button.hidden = true;
+
+                products.forEach(product => {
+                    product.setAttribute(
+                        "aria-hidden",
+                        "false"
+                    );
+                });
+
+            } else {
+
+                updateGallery(false);
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        const expanded =
+                            button.getAttribute(
+                                "aria-expanded"
+                            ) === "true";
+
+                        updateGallery(!expanded);
+
+                        if (expanded) {
+
+                            section.scrollIntoView({
+                                behavior:
+                                    window.matchMedia(
+                                        "(prefers-reduced-motion: reduce)"
+                                    ).matches
+                                        ? "auto"
+                                        : "smooth",
+
+                                block: "start"
+                            });
+                        }
+                    }
+                );
+            }
+        });
+
+
+    /* =========================================================
+       MODAL DE PRODUCTO
+       ========================================================= */
+
+    const productModal =
+        $("#modalProducto");
+
+    const productModalImage =
+        $("#modalProductoImagen");
+
+    const productModalCategory =
+        $("#modalProductoCategoria");
+
+    const productModalTitle =
+        $("#modalProductoTitulo");
+
+    const productModalMeasure =
+        $("#modalProductoMedida");
+
+    const productModalPrice =
+        $("#modalProductoPrecio");
+
+    const productModalDetails =
+        $("#modalProductoDetalles");
+
+    const productModalWhatsapp =
+        $("#modalProductoWhatsapp");
+
+    const productModalClose =
+        $("#cerrarModalProducto");
+
+    let lastProductTrigger = null;
+
+
+    /* =========================================================
+       OBTENER DATOS DEL PRODUCTO
+       ========================================================= */
+
+    const getProductData = card => {
+
+        const image =
+            $(".imagen-producto", card);
+
+        return {
+
+            title:
+                $(".titulo-producto", card)
+                    ?.textContent
+                    .trim()
+                ||
+                image?.alt
+                ||
+                "Cuadro Anime o Gamer",
+
+            measure:
+                $(".dimension-producto", card)
+                    ?.textContent
+                    .trim()
+                ||
+                "30 × 40 cm",
+
+            price:
+                $(".precio-producto", card)
+                    ?.textContent
+                    .trim()
+                ||
+                "$20.000 CLP",
+
+            category:
+                card
+                    .closest(
+                        ".catalogo-editorial-seccion"
+                    )
+                    ?.querySelector(
+                        ".catalogo-seccion-header h2"
+                    )
+                    ?.textContent
+                    .trim()
+                ||
+                "Anime & Gamer",
+
+            image:
+                image?.currentSrc
+                ||
+                image?.src
+                ||
+                ""
+        };
+    };
+
+
+    /* =========================================================
+       ABRIR MODAL DE PRODUCTO
+       ========================================================= */
+
+    const openProductModal = trigger => {
+
+        if (!productModal) return;
+
+        const card =
+            trigger.closest(".producto-card");
+
+        if (!card) return;
+
+        const data =
+            getProductData(card);
+
+        lastProductTrigger =
+            trigger;
+
+        if (productModalImage) {
+
+            productModalImage.src =
+                data.image;
+
+            productModalImage.alt =
+                data.title;
+        }
+
+        if (productModalCategory) {
+
+            productModalCategory.textContent =
+                `${data.category} · SUBLIMARTS`;
+        }
+
+        if (productModalTitle) {
+
+            productModalTitle.textContent =
+                data.title;
+        }
+
+        if (productModalMeasure) {
+
+            productModalMeasure.textContent =
+                data.measure.replace(
+                    /^Medida:\s*/i,
+                    ""
+                );
+        }
+
+        if (productModalPrice) {
+
+            productModalPrice.textContent =
+                data.price.replace(
+                    /^Precio:\s*/i,
+                    ""
+                );
+        }
+
+
+        /* =====================================================
+           ENLACE AL VISUALIZADOR
+           ===================================================== */
+
+        if (productModalDetails) {
+
+            const params =
+                new URLSearchParams({
+
+                    nombre:
+                        data.title,
+
+                    medida:
+                        data.measure,
+
+                    precio:
+                        data.price,
+
+                    imagen:
+                        data.image
+                });
+
+            productModalDetails.href =
+                `visualizacion.html?${params.toString()}`;
+        }
+
+
+        /* =====================================================
+           WHATSAPP
+           ===================================================== */
+
+        if (productModalWhatsapp) {
+
+            const message =
+                `Hola SublimArts, me interesa el cuadro "${data.title}", ${data.measure}, ${data.price}. ¿Está disponible?`;
+
+            productModalWhatsapp.href =
+                `https://wa.me/56912345678?text=${encodeURIComponent(message)}`;
+        }
+
+
+        if (
+            typeof productModal.showModal ===
+            "function"
+        ) {
+
+            productModal.showModal();
+
+        } else {
+
+            productModal.setAttribute(
+                "open",
+                ""
+            );
+        }
+
+        productModalClose?.focus();
+    };
+
+
+    /* =========================================================
+       CERRAR MODAL DE PRODUCTO
+       ========================================================= */
+
+    const closeProductModal = () => {
+
+        if (!productModal) return;
+
+        if (
+            typeof productModal.close ===
+                "function" &&
+            productModal.open
+        ) {
+
+            productModal.close();
+
+        } else {
+
+            productModal.removeAttribute(
+                "open"
+            );
+        }
+
+        lastProductTrigger?.focus();
+    };
+
+
+    /* =========================================================
+       EVENTOS PRODUCTOS
+       ========================================================= */
+
+    $$(".producto-interactivo")
+        .forEach(trigger => {
+
+            trigger.addEventListener(
+                "click",
+                () => {
+                    openProductModal(trigger);
+                }
+            );
+
+        });
+
+
+    productModalClose?.addEventListener(
+        "click",
+        closeProductModal
+    );
+
+    productModal?.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                productModal
+            ) {
+                closeProductModal();
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       VISUALIZADOR EN PARED
+       ========================================================= */
+
+    const wallDialog =
+        $("#visualizadorPared");
+
+    const wallOpen =
+        $("#abrirVisualizadorPared");
+
+    const wallClose =
+        $("#cerrarVisualizadorPared");
+
+    const wallImage =
+        $("#paredImagen");
+
+    const wallFrame =
+        $("#paredCuadro");
+
+    const wallScene =
+        $("#paredScene");
+
+    const wallSize =
+        $("#paredTamano");
+
+
+    /* =========================================================
+       SINCRONIZAR IMAGEN CON VISUALIZADOR
+       ========================================================= */
+
+    const syncWallImage = () => {
+
+        if (
+            !wallImage ||
+            !productModalImage
+        ) {
+            return;
+        }
+
+        wallImage.src =
+            productModalImage.src;
+
+        wallImage.alt =
+            productModalImage.alt ||
+            "Cuadro SublimArts en pared";
+    };
+
+
+    /* =========================================================
+       ABRIR VISUALIZADOR EN PARED
+       ========================================================= */
+
+    wallOpen?.addEventListener(
+        "click",
+        () => {
+
+            syncWallImage();
+
+            if (
+                productModal?.open &&
+                typeof productModal.close ===
+                    "function"
+            ) {
+
+                productModal.close();
+            }
+
+            if (
+                typeof wallDialog?.showModal ===
+                "function"
+            ) {
+
+                wallDialog.showModal();
+
+            } else {
+
+                wallDialog?.setAttribute(
+                    "open",
+                    ""
+                );
+            }
+
+            wallSize?.focus();
+        }
+    );
+
+
+    /* =========================================================
+       CERRAR VISUALIZADOR
+       ========================================================= */
+
+    wallClose?.addEventListener(
+        "click",
+        () => {
+
+            if (
+                wallDialog?.open &&
+                typeof wallDialog.close ===
+                    "function"
+            ) {
+
+                wallDialog.close();
+
+            } else {
+
+                wallDialog?.removeAttribute(
+                    "open"
+                );
+            }
+
+            lastProductTrigger?.focus();
+        }
+    );
+
+
+    wallDialog?.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                wallDialog
+            ) {
+
+                wallClose?.click();
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       CONTROL DE TAMAÑO DEL CUADRO
+       ========================================================= */
+
+    wallSize?.addEventListener(
+        "input",
+        () => {
+
+            if (wallFrame) {
+
+                wallFrame.style.width =
+                    `${wallSize.value}%`;
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       CAMBIO DE PARED
+       ========================================================= */
+
+    $$(".pared-wall")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    $$(".pared-wall")
+                        .forEach(item => {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        });
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    wallScene?.classList.remove(
+                        "wall-dark",
+                        "wall-light"
+                    );
+
+                    const wall =
+                        button.dataset.wall;
+
+                    if (
+                        wall === "dark"
+                    ) {
+
+                        wallScene?.classList.add(
+                            "wall-dark"
+                        );
+                    }
+
+                    if (
+                        wall === "light"
+                    ) {
+
+                        wallScene?.classList.add(
+                            "wall-light"
+                        );
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* =========================================================
+       ESCAPE — MODALES
+       ========================================================= */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape" &&
+                wallDialog?.open
+            ) {
+
+                wallClose?.click();
+            }
+
+            if (
+                event.key === "Escape" &&
+                productModal?.open
+            ) {
+
+                closeProductModal();
+            }
+
+        }
+    );
 
 });
