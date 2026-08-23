@@ -1385,3 +1385,56 @@ document.addEventListener("DOMContentLoaded", () => {
         "SublimArts: JavaScript cargado correctamente."
     );
 });
+
+
+/* =========================================================
+   SUBLIMARTS — INTERACCIÓN FINAL DE PERSONALIZA
+   La sección usa el mismo lenguaje de carrusel que Destacados.
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const pista = document.querySelector(".personaliza-pista");
+
+    if (!pista) return;
+
+    const cards = [...pista.querySelectorAll(".personaliza-card")];
+
+    if (!cards.length) return;
+
+    pista.setAttribute("tabindex", "0");
+    pista.setAttribute(
+        "aria-label",
+        "Opciones para personalizar tu cuadro"
+    );
+
+    pista.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+            return;
+        }
+
+        event.preventDefault();
+
+        const direction = event.key === "ArrowRight" ? 1 : -1;
+        const currentLeft = pista.scrollLeft;
+        const nearest = cards.reduce((best, card) => {
+            const distance = Math.abs(card.offsetLeft - currentLeft);
+            const bestDistance = Math.abs(best.offsetLeft - currentLeft);
+            return distance < bestDistance ? card : best;
+        }, cards[0]);
+
+        const index = cards.indexOf(nearest);
+        const nextIndex = Math.max(
+            0,
+            Math.min(cards.length - 1, index + direction)
+        );
+
+        pista.scrollTo({
+            left: cards[nextIndex].offsetLeft,
+            behavior: window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            ).matches
+                ? "auto"
+                : "smooth"
+        });
+    });
+});
