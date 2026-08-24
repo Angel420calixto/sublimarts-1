@@ -1,179 +1,85 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================================================
+       SELECTORES
+       ========================================================= */
+
     const $ = (selector, scope = document) =>
-        scope?.querySelector?.(selector) || null;
+        scope.querySelector(selector);
 
     const $$ = (selector, scope = document) =>
-        scope?.querySelectorAll
-            ? [...scope.querySelectorAll(selector)]
-            : [];
+        [...scope.querySelectorAll(selector)];
+
+
+    /* =========================================================
+       CONFIGURACIÓN
+       ========================================================= */
 
     const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    const header = $(".site-header");
+
+    /* =========================================================
+       FUNCIONES GENERALES
+       ========================================================= */
+
+    const safeOpenDialog = (dialog) => {
+
+        if (!dialog) return;
+
+        if (typeof dialog.showModal === "function") {
+
+            if (!dialog.open) {
+                dialog.showModal();
+            }
+
+        } else {
+
+            dialog.setAttribute("open", "");
+
+        }
+
+        document.body.classList.add("modal-open");
+    };
+
+
+    const safeCloseDialog = (dialog) => {
+
+        if (!dialog) return;
+
+        if (
+            typeof dialog.close === "function" &&
+            dialog.open
+        ) {
+
+            dialog.close();
+
+        } else {
+
+            dialog.removeAttribute("open");
+
+        }
+
+        if (!$(".product-modal[open]")) {
+            document.body.classList.remove("modal-open");
+        }
+    };
+
+
+    /* =========================================================
+       MENÚ MÓVIL
+       ========================================================= */
+
     const mobileToggle = $("#mobileToggle");
     const mobileNav = $("#mobileNav");
 
-    const desktopCatalogToggle = $("#desktopCatalogToggle");
-    const desktopCatalogMenu = $("#desktopCatalogMenu");
-    const desktopCollectionLinks = $("#desktopCollectionLinks");
-
-    const mobileCatalogToggle = $("#mobileCatalogToggle");
-    const mobileCatalogSubmenu = $("#mobileCatalogSubmenu");
-    const mobileCollectionLinks = $("#mobileCollectionLinks");
-
-    const collections = $$(".collection");
-
-    /* =========================================================
-       UTILIDADES
-       ========================================================= */
-
-    const getHeaderHeight = () =>
-        header
-            ? Math.ceil(
-                  header.getBoundingClientRect().height
-              )
-            : 0;
-
-    const updateHeaderHeight = () => {
-        document.documentElement.style.setProperty(
-            "--site-header-height",
-            `${getHeaderHeight()}px`
-        );
-    };
-
-    /* =========================================================
-       MENÚ DESKTOP
-       ========================================================= */
-
-    const closeDesktopCatalog = () => {
-        if (
-            !desktopCatalogToggle ||
-            !desktopCatalogMenu
-        ) {
-            return;
-        }
-
-        desktopCatalogToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        desktopCatalogMenu.classList.remove(
-            "is-open"
-        );
-    };
-
-    const openDesktopCatalog = () => {
-        if (
-            !desktopCatalogToggle ||
-            !desktopCatalogMenu
-        ) {
-            return;
-        }
-
-        desktopCatalogToggle.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-        desktopCatalogMenu.classList.add(
-            "is-open"
-        );
-    };
-
-    const toggleDesktopCatalog = () => {
-        const isOpen =
-            desktopCatalogToggle?.getAttribute(
-                "aria-expanded"
-            ) === "true";
-
-        if (isOpen) {
-            closeDesktopCatalog();
-        } else {
-            openDesktopCatalog();
-        }
-    };
-
-    /* =========================================================
-       SUBMENÚ MOBILE
-       ========================================================= */
-
-    const closeMobileCatalog = () => {
-        if (
-            !mobileCatalogToggle ||
-            !mobileCatalogSubmenu
-        ) {
-            return;
-        }
-
-        mobileCatalogToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        mobileCatalogToggle.classList.remove(
-            "is-open"
-        );
-
-        mobileCatalogSubmenu.classList.remove(
-            "is-open"
-        );
-
-        mobileCatalogSubmenu.hidden = true;
-    };
-
-    const openMobileCatalog = () => {
-        if (
-            !mobileCatalogToggle ||
-            !mobileCatalogSubmenu
-        ) {
-            return;
-        }
-
-        mobileCatalogToggle.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-        mobileCatalogToggle.classList.add(
-            "is-open"
-        );
-
-        mobileCatalogSubmenu.classList.add(
-            "is-open"
-        );
-
-        mobileCatalogSubmenu.hidden = false;
-    };
-
-    const toggleMobileCatalog = () => {
-        const isOpen =
-            mobileCatalogToggle?.getAttribute(
-                "aria-expanded"
-            ) === "true";
-
-        if (isOpen) {
-            closeMobileCatalog();
-        } else {
-            openMobileCatalog();
-        }
-    };
-
-    /* =========================================================
-       MENÚ MOBILE PRINCIPAL
-       ========================================================= */
 
     const closeMobileMenu = () => {
-        if (
-            !mobileToggle ||
-            !mobileNav
-        ) {
-            return;
-        }
+
+        if (!mobileToggle || !mobileNav) return;
 
         mobileToggle.setAttribute(
             "aria-expanded",
@@ -190,20 +96,15 @@ document.addEventListener("DOMContentLoaded", () => {
             "activo"
         );
 
-        closeMobileCatalog();
-
         document.body.classList.remove(
             "menu-abierto"
         );
     };
 
+
     const openMobileMenu = () => {
-        if (
-            !mobileToggle ||
-            !mobileNav
-        ) {
-            return;
-        }
+
+        if (!mobileToggle || !mobileNav) return;
 
         mobileToggle.setAttribute(
             "aria-expanded",
@@ -225,180 +126,101 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
-    const closeAllMenus = () => {
-        closeDesktopCatalog();
-        closeMobileMenu();
-    };
 
-    /* =========================================================
-       HEADER / NAVEGACIÓN
-       ========================================================= */
+    if (mobileToggle && mobileNav) {
 
-    updateHeaderHeight();
-
-    if (
-        header &&
-        "ResizeObserver" in window
-    ) {
-        const headerObserver =
-            new ResizeObserver(
-                updateHeaderHeight
-            );
-
-        headerObserver.observe(header);
-    } else {
-        window.addEventListener(
-            "resize",
-            updateHeaderHeight,
-            {
-                passive: true
-            }
-        );
-    }
-
-    if (desktopCatalogToggle) {
-        desktopCatalogToggle.addEventListener(
-            "click",
-            (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-
-                toggleDesktopCatalog();
-            }
-        );
-    }
-
-    if (
-        mobileToggle &&
-        mobileNav
-    ) {
         mobileToggle.addEventListener(
             "click",
             () => {
+
                 const isOpen =
                     mobileToggle.getAttribute(
                         "aria-expanded"
                     ) === "true";
 
                 if (isOpen) {
+
                     closeMobileMenu();
+
                 } else {
+
                     openMobileMenu();
+
                 }
+
             }
         );
-    }
 
-    if (mobileCatalogToggle) {
-        mobileCatalogToggle.addEventListener(
-            "click",
+
+        $$("#mobileNav a").forEach((link) => {
+
+            link.addEventListener(
+                "click",
+                closeMobileMenu
+            );
+
+        });
+
+
+        document.addEventListener(
+            "keydown",
             (event) => {
-                event.preventDefault();
 
-                toggleMobileCatalog();
+                if (event.key === "Escape") {
+                    closeMobileMenu();
+                }
+
             }
         );
+
     }
 
-    document.addEventListener(
-        "click",
-        (event) => {
-
-            if (
-                desktopCatalogMenu &&
-                desktopCatalogToggle &&
-                !event.target.closest(
-                    ".nav-dropdown"
-                )
-            ) {
-                closeDesktopCatalog();
-            }
-
-            if (
-                mobileNav &&
-                mobileToggle &&
-                !event.target.closest(
-                    "#mobileNav"
-                ) &&
-                !event.target.closest(
-                    "#mobileToggle"
-                )
-            ) {
-                closeMobileMenu();
-            }
-        }
-    );
-
-    document.addEventListener(
-        "keydown",
-        (event) => {
-            if (
-                event.key !== "Escape"
-            ) {
-                return;
-            }
-
-            closeAllMenus();
-        }
-    );
 
     /* =========================================================
        HERO
        ========================================================= */
 
-    const heroSlides =
-        $$(".hero__slide");
+    const heroSlides = $$(".hero__slide");
+    const heroDots = $("#heroDots");
 
-    const heroDots =
-        $("#heroDots");
 
     if (heroSlides.length) {
 
-        let heroIndex =
-            Math.max(
-                0,
-                heroSlides.findIndex(
-                    (slide) =>
-                        slide.classList.contains(
-                            "is-active"
-                        )
-                )
+        let heroIndex = Math.max(
+            0,
+            heroSlides.findIndex(
+                slide =>
+                    slide.classList.contains(
+                        "is-active"
+                    )
+            )
+        );
+
+
+        const setHeroSlide = (index) => {
+
+            heroIndex =
+                (index + heroSlides.length) %
+                heroSlides.length;
+
+
+            heroSlides.forEach(
+                (slide, i) => {
+
+                    slide.classList.toggle(
+                        "is-active",
+                        i === heroIndex
+                    );
+
+                }
             );
 
-        if (heroIndex < 0) {
-            heroIndex = 0;
-        }
 
-        const setHeroSlide =
-            (index) => {
-
-                heroIndex =
-                    (
-                        index +
-                        heroSlides.length
-                    ) %
-                    heroSlides.length;
-
-                heroSlides.forEach(
-                    (
-                        slide,
-                        i
-                    ) => {
-
-                        slide.classList.toggle(
-                            "is-active",
-                            i === heroIndex
-                        );
-
-                    }
-                );
+            if (heroDots) {
 
                 $$(".hero-dot", heroDots)
                     .forEach(
-                        (
-                            dot,
-                            i
-                        ) => {
+                        (dot, i) => {
 
                             dot.classList.toggle(
                                 "is-active",
@@ -415,26 +237,25 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     );
 
-            };
+            }
+
+        };
+
 
         if (heroDots) {
 
-            heroDots.innerHTML =
-                "";
+            heroDots.innerHTML = "";
+
 
             heroSlides.forEach(
-                (
-                    _,
-                    index
-                ) => {
+                (_, index) => {
 
                     const dot =
                         document.createElement(
                             "button"
                         );
 
-                    dot.type =
-                        "button";
+                    dot.type = "button";
 
                     dot.className =
                         "hero-dot";
@@ -451,30 +272,28 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "false"
                     );
 
+
                     dot.addEventListener(
                         "click",
-                        () => {
-                            setHeroSlide(
-                                index
-                            );
-                        }
+                        () =>
+                            setHeroSlide(index)
                     );
 
-                    heroDots.appendChild(
-                        dot
-                    );
+
+                    heroDots.appendChild(dot);
 
                 }
             );
 
-            $(
-                ".hero-dot",
-                heroDots
-            )?.classList.add(
-                "is-active"
-            );
+
+            $$(".hero-dot", heroDots)
+                [heroIndex]
+                ?.classList.add(
+                    "is-active"
+                );
 
         }
+
 
         if (
             !prefersReducedMotion &&
@@ -482,19 +301,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             window.setInterval(
-                () => {
-
-                    if (
-                        !document.hidden
-                    ) {
-
-                        setHeroSlide(
-                            heroIndex + 1
-                        );
-
-                    }
-
-                },
+                () =>
+                    setHeroSlide(
+                        heroIndex + 1
+                    ),
                 6500
             );
 
@@ -502,347 +312,295 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /* =========================================================
-       COLECCIONES
+       CREAR NAVEGACIÓN DE COLECCIONES
        ========================================================= */
 
-    const validCollections =
-        collections.filter(
-            (section) =>
-                section.id &&
-                $(
-                    ".collection__header h2",
+    const collections =
+        $$(".collection");
+
+
+    if (collections.length) {
+
+        createCollectionNavigation(
+            collections
+        );
+
+    }
+
+
+    function createCollectionNavigation(
+        sections
+    ) {
+
+        const header =
+            $(".site-header");
+
+        if (!header) return;
+
+
+        /*
+         * No duplicar navegación si el JS
+         * se ejecuta nuevamente.
+         */
+
+        const existing =
+            $("#catalogCollectionNav");
+
+        if (existing) {
+            existing.remove();
+        }
+
+
+        const navigation =
+            document.createElement("nav");
+
+        navigation.id =
+            "catalogCollectionNav";
+
+        navigation.className =
+            "catalog-collection-nav";
+
+        navigation.setAttribute(
+            "aria-label",
+            "Colecciones del catálogo"
+        );
+
+
+        const inner =
+            document.createElement("div");
+
+        inner.className =
+            "catalog-collection-nav__inner";
+
+
+        sections.forEach(
+            (section, index) => {
+
+                const title =
+                    section.querySelector(
+                        ".collection__header h2"
+                    );
+
+
+                if (!title) return;
+
+
+                const id =
+                    section.id;
+
+
+                if (!id) return;
+
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+
+                link.href =
+                    `#${id}`;
+
+
+                link.dataset.target =
+                    id;
+
+
+                link.textContent =
+                    title.textContent.trim();
+
+
+                link.setAttribute(
+                    "aria-label",
+                    `Ir a ${title.textContent.trim()}`
+                );
+
+
+                if (index === 0) {
+
+                    link.classList.add(
+                        "is-active"
+                    );
+
+                }
+
+
+                link.addEventListener(
+                    "click",
+                    (event) => {
+
+                        event.preventDefault();
+
+
+                        const target =
+                            document.getElementById(
+                                id
+                            );
+
+
+                        if (!target) return;
+
+
+                        const headerHeight =
+                            header.offsetHeight;
+
+
+                        const navHeight =
+                            navigation.offsetHeight;
+
+
+                        const top =
+                            target.getBoundingClientRect()
+                                .top +
+                            window.scrollY -
+                            headerHeight -
+                            navHeight -
+                            12;
+
+
+                        window.scrollTo({
+
+                            top,
+
+                            behavior:
+                                prefersReducedMotion
+                                    ? "auto"
+                                    : "smooth"
+
+                        });
+
+
+                        setActiveCollection(
+                            id
+                        );
+
+                    }
+                );
+
+
+                inner.appendChild(
+                    link
+                );
+
+            }
+        );
+
+
+        navigation.appendChild(
+            inner
+        );
+
+
+        header.insertAdjacentElement(
+            "afterend",
+            navigation
+        );
+
+
+        /* -----------------------------------------
+           Detectar sección visible
+           ----------------------------------------- */
+
+        const observer =
+            new IntersectionObserver(
+                (entries) => {
+
+                    entries.forEach(
+                        (entry) => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                setActiveCollection(
+                                    entry.target.id
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    rootMargin:
+                        "-30% 0px -55% 0px",
+
+                    threshold: 0
+                }
+            );
+
+
+        sections.forEach(
+            section =>
+                observer.observe(
                     section
                 )
         );
 
-    const getCollectionName =
-        (section) =>
+
+        function setActiveCollection(
+            id
+        ) {
+
             $(
-                ".collection__header h2",
-                section
-            )
-                ?.textContent
-                ?.trim() ||
-            section.id;
-
-    /* =========================================================
-       SCROLL A COLECCIÓN
-       ========================================================= */
-
-    const scrollToCollection =
-        (section) => {
-
-            if (!section) {
-                return;
-            }
-
-            closeDesktopCatalog();
-            closeMobileCatalog();
-
-            const top =
-                section.getBoundingClientRect()
-                    .top +
-                window.scrollY -
-                getHeaderHeight() -
-                16;
-
-            window.scrollTo({
-
-                top:
-                    Math.max(
-                        0,
-                        top
-                    ),
-
-                behavior:
-                    prefersReducedMotion
-                        ? "auto"
-                        : "smooth"
-
-            });
-
-        };
-
-    /* =========================================================
-       CREAR LINK DE COLECCIÓN
-       ========================================================= */
-
-    const makeCollectionLink =
-        (
-            section,
-            className,
-            closeMobile = false
-        ) => {
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-            const name =
-                getCollectionName(
-                    section
-                );
-
-            link.href =
-                `#${section.id}`;
-
-            link.dataset.target =
-                section.id;
-
-            link.className =
-                className;
-
-            link.textContent =
-                name;
-
-            link.setAttribute(
-                "aria-label",
-                `Ir a ${name}`
+                ".catalog-collection-nav__inner"
             );
 
-            link.addEventListener(
-                "click",
-                (event) => {
-
-                    event.preventDefault();
-
-                    scrollToCollection(
-                        section
-                    );
-
-                    if (
-                        closeMobile
-                    ) {
-                        closeMobileMenu();
-                    }
-
-                }
-            );
-
-            return link;
-        };
-
-    /* =========================================================
-       GENERAR SUBMENÚ DE COLECCIONES
-       ========================================================= */
-
-    const buildCollectionNavigation =
-        () => {
-
-            if (
-                !desktopCollectionLinks &&
-                !mobileCollectionLinks
-            ) {
-                return;
-            }
-
-            validCollections.forEach(
-                (section) => {
-
-                    if (
-                        desktopCollectionLinks
-                    ) {
-
-                        desktopCollectionLinks.appendChild(
-                            makeCollectionLink(
-                                section,
-                                "nav-dropdown__collection-link"
-                            )
-                        );
-
-                    }
-
-                    if (
-                        mobileCollectionLinks
-                    ) {
-
-                        mobileCollectionLinks.appendChild(
-                            makeCollectionLink(
-                                section,
-                                "mobile-nav__collection-link",
-                                true
-                            )
-                        );
-
-                    }
-
-                }
-            );
-
-        };
-
-    buildCollectionNavigation();
-
-    /* =========================================================
-       COLECCIÓN ACTIVA
-       ========================================================= */
-
-    const setActiveCollection =
-        (id) => {
-
-            $$(".nav-dropdown__collection-link")
+            $$(".catalog-collection-nav a")
                 .forEach(
-                    (link) => {
+                    link => {
 
                         const active =
-                            link.dataset.target ===
-                            id;
+                            link.dataset.target === id;
+
 
                         link.classList.toggle(
                             "is-active",
                             active
                         );
 
-                        if (active) {
-
-                            link.setAttribute(
-                                "aria-current",
-                                "true"
-                            );
-
-                        } else {
-
-                            link.removeAttribute(
-                                "aria-current"
-                            );
-
-                        }
-
                     }
                 );
 
-            $$(".mobile-nav__collection-link")
-                .forEach(
-                    (link) => {
 
-                        const active =
-                            link.dataset.target ===
-                            id;
-
-                        link.classList.toggle(
-                            "is-active",
-                            active
-                        );
-
-                        if (active) {
-
-                            link.setAttribute(
-                                "aria-current",
-                                "true"
-                            );
-
-                        } else {
-
-                            link.removeAttribute(
-                                "aria-current"
-                            );
-
-                        }
-
-                    }
+            const activeLink =
+                $(
+                    `.catalog-collection-nav a[data-target="${id}"]`
                 );
 
-        };
 
-    /* =========================================================
-       INTERSECTION OBSERVER
-       ========================================================= */
+            if (activeLink) {
 
-    if (
-        validCollections.length &&
-        "IntersectionObserver" in window
-    ) {
+                activeLink.scrollIntoView({
+                    behavior:
+                        prefersReducedMotion
+                            ? "auto"
+                            : "smooth",
 
-        const collectionObserver =
-            new IntersectionObserver(
+                    block: "nearest",
 
-                (entries) => {
-
-                    const visible =
-                        entries
-                            .filter(
-                                (entry) =>
-                                    entry.isIntersecting
-                            )
-                            .sort(
-                                (
-                                    a,
-                                    b
-                                ) =>
-                                    b.intersectionRatio -
-                                    a.intersectionRatio
-                            )[0];
-
-                    if (visible) {
-
-                        /*
-                         * IMPORTANTE:
-                         *
-                         * Aquí SOLO se actualiza
-                         * el estado visual.
-                         *
-                         * NO se ejecuta
-                         * scrollIntoView().
-                         *
-                         * Esto evita que el observer
-                         * interfiera con el scroll.
-                         */
-
-                        setActiveCollection(
-                            visible.target.id
-                        );
-
-                    }
-
-                },
-
-                {
-                    root: null,
-
-                    rootMargin:
-                        `-${getHeaderHeight() + 20}px 0px -55% 0px`,
-
-                    threshold:
-                        [
-                            0.05,
-                            0.15,
-                            0.30,
-                            0.50
-                        ]
-
-                }
-
-            );
-
-        validCollections.forEach(
-            (section) => {
-
-                collectionObserver.observe(
-                    section
-                );
+                    inline: "center"
+                });
 
             }
-        );
+
+        }
 
     }
 
-    if (
-        validCollections[0]
-    ) {
-
-        setActiveCollection(
-            validCollections[0].id
-        );
-
-    }
 
     /* =========================================================
-       GALERÍAS
+       CONVERTIR CADA GALERÍA EN:
+
+       FILA 1 → 5 CUADROS
+       FILA 2 → 5 CUADROS
+       DERECHA → IMAGEN PROTAGONISTA
        ========================================================= */
 
-    validCollections.forEach(
+    collections.forEach(
         (collection) => {
 
             setupCollectionSlider(
@@ -852,9 +610,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-    /* =========================================================
-       CREAR GALERÍA DE COLECCIÓN
-       ========================================================= */
 
     function setupCollectionSlider(
         collection
@@ -863,60 +618,64 @@ document.addEventListener("DOMContentLoaded", () => {
         const gallery =
             $(".product-grid", collection);
 
+
+        if (!gallery) return;
+
+
+        /*
+         * Evitar inicializar dos veces.
+         */
+
         if (
-            !gallery ||
             gallery.dataset.sliderReady ===
-                "true"
+            "true"
         ) {
+
             return;
+
         }
 
-        const cards =
-            $$(".product-card", gallery);
-
-        if (!cards.length) {
-            return;
-        }
 
         gallery.dataset.sliderReady =
             "true";
 
+
+        const cards =
+            $$(".product-card", gallery);
+
+
+        if (!cards.length) return;
+
+
         /*
-         * IMPORTANTE:
+         * La primera tarjeta siempre será
+         * la imagen protagonista.
          *
-         * Los productos que antes estaban
-         * ocultos por "Ver más" ahora forman
-         * parte del carrusel.
-         */
-
-        cards.forEach(
-            (card) => {
-
-                card.classList.remove(
-                    "is-hidden-product"
-                );
-
-                card.removeAttribute(
-                    "hidden"
-                );
-
-            }
-        );
-
-        /*
-         * Primera imagen =
-         * protagonista.
+         * Esto coincide con la estructura
+         * actual del HTML.
          */
 
         const feature =
             cards[0];
 
-        const sliderCards =
-            cards.slice(1);
 
         feature.classList.add(
             "collection-feature"
         );
+
+
+        /*
+         * Las demás tarjetas son las que
+         * entrarán al carrusel.
+         */
+
+        const sliderCards =
+            cards.slice(1);
+
+
+        /*
+         * Crear estructura nueva.
+         */
 
         const layout =
             document.createElement(
@@ -926,21 +685,10 @@ document.addEventListener("DOMContentLoaded", () => {
         layout.className =
             "collection-showcase";
 
-        /* =====================================================
-           ÁREA DEL CARRUSEL
-           ===================================================== */
 
-        const carouselArea =
-            document.createElement(
-                "div"
-            );
-
-        carouselArea.className =
-            "collection-showcase__carousel";
-
-        /* =====================================================
+        /* =========================================
            PROTAGONISTA
-           ===================================================== */
+           ========================================= */
 
         const featureWrapper =
             document.createElement(
@@ -950,13 +698,28 @@ document.addEventListener("DOMContentLoaded", () => {
         featureWrapper.className =
             "collection-showcase__feature";
 
+
         featureWrapper.appendChild(
             feature
         );
 
-        /* =====================================================
-           FILAS
-           ===================================================== */
+
+        /* =========================================
+           ÁREA DEL CARRUSEL
+           ========================================= */
+
+        const carouselArea =
+            document.createElement(
+                "div"
+            );
+
+        carouselArea.className =
+            "collection-showcase__carousel";
+
+
+        /* =========================================
+           FILA 1
+           ========================================= */
 
         const rowOne =
             createSliderRow(
@@ -965,6 +728,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Fila superior"
             );
 
+
+        /* =========================================
+           FILA 2
+           ========================================= */
+
         const rowTwo =
             createSliderRow(
                 sliderCards,
@@ -972,32 +740,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Fila inferior"
             );
 
-        carouselArea.append(
-            rowOne,
+
+        carouselArea.appendChild(
+            rowOne
+        );
+
+        carouselArea.appendChild(
             rowTwo
         );
 
-        /*
-         * IZQUIERDA:
-         * carruseles
-         *
-         * DERECHA:
-         * protagonista
-         */
 
-        layout.append(
-            carouselArea,
+        layout.appendChild(
+            carouselArea
+        );
+
+        layout.appendChild(
             featureWrapper
         );
 
+
         /*
-         * Sustituir únicamente
-         * el grid de productos.
+         * Reemplazar el grid original.
          */
 
         gallery.replaceWith(
             layout
         );
+
+
+        /*
+         * Si hay suficientes tarjetas,
+         * inicializar flechas.
+         */
 
         setupRowControls(
             rowOne
@@ -1007,19 +781,8 @@ document.addEventListener("DOMContentLoaded", () => {
             rowTwo
         );
 
-        /*
-         * El viejo botón Ver Más
-         * ya no tiene utilidad.
-         */
-
-        const oldMore =
-            $(".collection__more", collection);
-
-        if (oldMore) {
-            oldMore.remove();
-        }
-
     }
+
 
     /* =========================================================
        CREAR FILA
@@ -1039,88 +802,92 @@ document.addEventListener("DOMContentLoaded", () => {
         row.className =
             "collection-slider-row";
 
+
         row.dataset.row =
             String(rowIndex);
 
-        /* =====================================================
-           ANTERIOR
-           ===================================================== */
+
+        /* =========================================
+           BOTÓN ANTERIOR
+           ========================================= */
 
         const prev =
             document.createElement(
                 "button"
             );
 
-        prev.type =
-            "button";
+
+        prev.type = "button";
 
         prev.className =
             "collection-slider-arrow collection-slider-arrow--prev";
+
 
         prev.setAttribute(
             "aria-label",
             `${label}: diseños anteriores`
         );
 
-        prev.innerHTML =
-            '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>';
 
-        /* =====================================================
+        prev.innerHTML =
+            `<i class="fa-solid fa-chevron-left"></i>`;
+
+
+        /* =========================================
            VIEWPORT
-           ===================================================== */
+           ========================================= */
 
         const viewport =
             document.createElement(
                 "div"
             );
 
+
         viewport.className =
             "collection-slider-viewport";
 
-        viewport.tabIndex =
-            0;
 
         viewport.setAttribute(
-            "role",
-            "region"
+            "tabindex",
+            "0"
         );
 
-        viewport.setAttribute(
-            "aria-label",
-            label
-        );
 
-        /* =====================================================
+        /* =========================================
            TRACK
-           ===================================================== */
+           ========================================= */
 
         const track =
             document.createElement(
                 "div"
             );
 
+
         track.className =
             "collection-slider-track";
 
+
         /*
-         * Distribución:
+         * Distribuir tarjetas:
          *
-         * fila superior:
+         * row 0:
          * 1, 3, 5, 7...
          *
-         * fila inferior:
+         * row 1:
          * 2, 4, 6, 8...
+         *
+         * Esto permite mantener 2 filas.
          */
 
         cards.forEach(
-            (
-                card,
-                index
-            ) => {
+            (card, index) => {
+
+                const belongsToRow =
+                    index % 2 === rowIndex;
+
 
                 if (
-                    index % 2 ===
-                    rowIndex
+                    belongsToRow
                 ) {
 
                     track.appendChild(
@@ -1132,77 +899,82 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
         viewport.appendChild(
             track
         );
 
-        /* =====================================================
-           SIGUIENTE
-           ===================================================== */
+
+        /* =========================================
+           BOTÓN SIGUIENTE
+           ========================================= */
 
         const next =
             document.createElement(
                 "button"
             );
 
-        next.type =
-            "button";
+
+        next.type = "button";
 
         next.className =
             "collection-slider-arrow collection-slider-arrow--next";
+
 
         next.setAttribute(
             "aria-label",
             `${label}: siguientes diseños`
         );
 
-        next.innerHTML =
-            '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>';
 
-        row.append(
-            prev,
-            viewport,
+        next.innerHTML =
+            `<i class="fa-solid fa-chevron-right"></i>`;
+
+
+        row.appendChild(
+            prev
+        );
+
+        row.appendChild(
+            viewport
+        );
+
+        row.appendChild(
             next
         );
 
+
         return row;
+
     }
 
+
     /* =========================================================
-       CONTROLES DE CARRUSEL
+       CONTROLES DE CADA FILA
        ========================================================= */
 
     function setupRowControls(
         row
     ) {
 
-        if (!row) {
-            return;
-        }
+        if (!row) return;
+
 
         const viewport =
-            $(
-                ".collection-slider-viewport",
-                row
-            );
+            $(".collection-slider-viewport", row);
+
 
         const track =
-            $(
-                ".collection-slider-track",
-                row
-            );
+            $(".collection-slider-track", row);
+
 
         const prev =
-            $(
-                ".collection-slider-arrow--prev",
-                row
-            );
+            $(".collection-slider-arrow--prev", row);
+
 
         const next =
-            $(
-                ".collection-slider-arrow--next",
-                row
-            );
+            $(".collection-slider-arrow--next", row);
+
 
         if (
             !viewport ||
@@ -1210,119 +982,104 @@ document.addEventListener("DOMContentLoaded", () => {
             !prev ||
             !next
         ) {
+
             return;
+
         }
 
-        /* =====================================================
-           ESTADO DE BOTONES
-           ===================================================== */
 
         const updateButtons =
             () => {
 
                 const maxScroll =
-                    Math.max(
-                        0,
-                        viewport.scrollWidth -
-                            viewport.clientWidth
-                    );
+                    viewport.scrollWidth -
+                    viewport.clientWidth;
+
 
                 const current =
                     viewport.scrollLeft;
 
-                const tolerance =
-                    3;
 
                 const canPrev =
-                    current >
-                    tolerance;
+                    current > 5;
+
 
                 const canNext =
                     current <
-                    maxScroll -
-                        tolerance;
+                    maxScroll - 5;
+
 
                 prev.disabled =
                     !canPrev;
 
+
                 next.disabled =
                     !canNext;
+
 
                 prev.classList.toggle(
                     "is-disabled",
                     !canPrev
                 );
 
+
                 next.classList.toggle(
                     "is-disabled",
                     !canNext
                 );
 
-                viewport.classList.toggle(
-                    "has-overflow",
-                    maxScroll >
-                        tolerance
-                );
-
             };
 
-        /* =====================================================
-           CANTIDAD DE DESPLAZAMIENTO
-           ===================================================== */
 
         const getScrollAmount =
             () => {
 
-                const firstCard =
-                    $(
-                        ".product-card",
-                        track
-                    );
+                /*
+                 * Desplazamiento equivalente
+                 * a aproximadamente 5 tarjetas.
+                 */
 
-                if (!firstCard) {
+                const cards =
+                    $$(".product-card", track);
 
+
+                if (!cards.length) {
                     return viewport.clientWidth;
-
                 }
 
+
+                const first =
+                    cards[0];
+
+
                 const cardWidth =
-                    firstCard.getBoundingClientRect()
+                    first.getBoundingClientRect()
                         .width;
 
-                const styles =
-                    getComputedStyle(
-                        track
-                    );
 
                 const gap =
                     parseFloat(
-                        styles.columnGap ||
-                        styles.gap
+                        getComputedStyle(
+                            track
+                        ).columnGap
                     ) || 8;
 
-                /*
-                 * Cinco productos.
-                 */
 
                 return (
-                    cardWidth +
-                    gap
-                ) * 5;
+                    (cardWidth + gap) * 5
+                );
 
             };
 
-        /* =====================================================
-           MOVIMIENTO
-           ===================================================== */
 
-        const move =
-            (direction) => {
+        prev.addEventListener(
+            "click",
+            () => {
 
                 viewport.scrollBy({
 
                     left:
-                        getScrollAmount() *
-                        direction,
+                        -getScrollAmount(),
 
                     behavior:
                         prefersReducedMotion
@@ -1331,33 +1088,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 });
 
-            };
-
-        /* =====================================================
-           BOTÓN ANTERIOR
-           ===================================================== */
-
-        prev.addEventListener(
-            "click",
-            () => {
-                move(-1);
             }
         );
 
-        /* =====================================================
-           BOTÓN SIGUIENTE
-           ===================================================== */
 
         next.addEventListener(
             "click",
             () => {
-                move(1);
+
+                viewport.scrollBy({
+
+                    left:
+                        getScrollAmount(),
+
+                    behavior:
+                        prefersReducedMotion
+                            ? "auto"
+                            : "smooth"
+
+                });
+
             }
         );
 
-        /* =====================================================
-           SCROLL HORIZONTAL NATIVO
-           ===================================================== */
 
         viewport.addEventListener(
             "scroll",
@@ -1367,20 +1120,66 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
+        window.addEventListener(
+            "resize",
+            updateButtons
+        );
+
+
         /*
-         * NO EXISTE:
-         *
-         * wheel
-         * preventDefault()
-         *
-         * Por lo tanto la rueda del mouse
-         * continúa controlando el scroll
-         * vertical de la página.
+         * Soporte para rueda del mouse
+         * sobre el carrusel.
          */
 
-        /* =====================================================
-           TECLADO
-           ===================================================== */
+        viewport.addEventListener(
+            "wheel",
+            (event) => {
+
+                if (
+                    Math.abs(
+                        event.deltaY
+                    ) <=
+                    Math.abs(
+                        event.deltaX
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                const maxScroll =
+                    viewport.scrollWidth -
+                    viewport.clientWidth;
+
+
+                const canScroll =
+                    maxScroll > 0;
+
+
+                if (!canScroll) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                viewport.scrollLeft +=
+                    event.deltaY;
+
+            },
+            {
+                passive: false
+            }
+        );
+
+
+        /*
+         * Soporte teclado.
+         */
 
         viewport.addEventListener(
             "keydown",
@@ -1393,9 +1192,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     event.preventDefault();
 
-                    move(1);
+                    viewport.scrollBy({
+
+                        left:
+                            getScrollAmount(),
+
+                        behavior:
+                            prefersReducedMotion
+                                ? "auto"
+                                : "smooth"
+
+                    });
 
                 }
+
 
                 if (
                     event.key ===
@@ -1404,48 +1214,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     event.preventDefault();
 
-                    move(-1);
+                    viewport.scrollBy({
+
+                        left:
+                            -getScrollAmount(),
+
+                        behavior:
+                            prefersReducedMotion
+                                ? "auto"
+                                : "smooth"
+
+                    });
 
                 }
 
             }
         );
 
-        /* =====================================================
-           RESIZE
-           ===================================================== */
 
-        if (
-            "ResizeObserver" in
-            window
-        ) {
-
-            const resizeObserver =
-                new ResizeObserver(
-                    updateButtons
-                );
-
-            resizeObserver.observe(
-                viewport
-            );
-
-        } else {
-
-            window.addEventListener(
-                "resize",
-                updateButtons,
-                {
-                    passive: true
-                }
-            );
-
-        }
+        /*
+         * Esperar a que el navegador
+         * calcule correctamente los tamaños.
+         */
 
         requestAnimationFrame(
-            updateButtons
+            () => {
+
+                updateButtons();
+
+            }
         );
 
     }
+
 
     /* =========================================================
        MODAL DE PRODUCTO
@@ -1478,91 +1279,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalDetails =
         $("#modalDetails");
 
-    /* =========================================================
-       ABRIR MODAL
-       ========================================================= */
-
-    const safeOpenDialog =
-        (dialog) => {
-
-            if (!dialog) {
-                return;
-            }
-
-            if (
-                typeof dialog.showModal ===
-                    "function" &&
-                !dialog.open
-            ) {
-
-                dialog.showModal();
-
-            } else {
-
-                dialog.setAttribute(
-                    "open",
-                    ""
-                );
-
-            }
-
-        };
-
-    /* =========================================================
-       CERRAR MODAL
-       ========================================================= */
-
-    const safeCloseDialog =
-        (dialog) => {
-
-            if (!dialog) {
-                return;
-            }
-
-            if (
-                typeof dialog.close ===
-                    "function" &&
-                dialog.open
-            ) {
-
-                dialog.close();
-
-            } else {
-
-                dialog.removeAttribute(
-                    "open"
-                );
-
-            }
-
-        };
-
-    /* =========================================================
-       OBTENER DATOS DEL PRODUCTO
-       ========================================================= */
 
     const getCardData =
         (card) => {
 
-            if (!card) {
-                return null;
-            }
+            if (!card) return null;
+
 
             const image =
-                $(
-                    ".product-card__image",
-                    card
-                );
+                $(".product-card__image", card);
+
 
             const title =
                 $("h3", card);
 
+
             const meta =
                 $$(".product-card__meta span", card);
 
-            if (!image) {
-                return null;
-            }
+
+            if (!image) return null;
+
 
             const collection =
                 card
@@ -1574,8 +1311,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                     ?.textContent
                     ?.trim()
-                ||
-                "SublimArts";
+                    ||
+                    "SublimArts";
+
 
             return {
 
@@ -1589,21 +1327,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Cuadro en aluminio HD",
 
                 title:
-                    title
-                        ?.textContent
-                        ?.trim() ||
+                    title?.textContent?.trim()
+                    ||
                     "Cuadro",
 
                 measure:
                     meta[0]
                         ?.textContent
-                        ?.trim() ||
+                        ?.trim()
+                    ||
                     "30 × 40 cm",
 
                 price:
                     meta[1]
                         ?.textContent
-                        ?.trim() ||
+                        ?.trim()
+                    ||
                     "$20.000 CLP",
 
                 collection
@@ -1612,9 +1351,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         };
 
-    /* =========================================================
-       ACTUALIZAR MODAL
-       ========================================================= */
 
     const updateProductModal =
         (data) => {
@@ -1623,8 +1359,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 !data ||
                 !productModal
             ) {
+
                 return;
+
             }
+
 
             if (modalImage) {
 
@@ -1636,12 +1375,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (modalCollection) {
 
                 modalCollection.textContent =
                     data.collection;
 
             }
+
 
             if (modalTitle) {
 
@@ -1650,12 +1391,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (modalMeasure) {
 
                 modalMeasure.textContent =
                     data.measure;
 
             }
+
 
             if (modalPrice) {
 
@@ -1664,17 +1407,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
+
             if (modalWhatsapp) {
 
                 const message =
                     encodeURIComponent(
+
                         `Hola SublimArts, quiero consultar por el diseño "${data.title}" (${data.measure}, ${data.price}).`
+
                     );
+
 
                 modalWhatsapp.href =
                     `https://wa.me/56912345678?text=${message}`;
 
             }
+
 
             if (modalDetails) {
 
@@ -1685,27 +1433,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             modalDetails.getAttribute(
                                 "href"
                             ) ||
-                                "visualizacion.html",
+                            "visualizacion.html",
+
                             window.location.href
                         );
+
 
                     url.searchParams.set(
                         "producto",
                         data.title
                     );
 
+
                     url.searchParams.set(
                         "coleccion",
                         data.collection
                     );
 
+
                     modalDetails.href =
                         url.toString();
+
 
                 } catch {
 
                     /*
-                     * Mantener enlace original.
+                     * Conservar URL original.
                      */
 
                 }
@@ -1714,8 +1467,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
         };
 
+
+    const openProduct =
+        (card) => {
+
+            const data =
+                getCardData(card);
+
+
+            if (
+                !data ||
+                !data.src ||
+                !productModal
+            ) {
+
+                return;
+
+            }
+
+
+            updateProductModal(
+                data
+            );
+
+
+            safeOpenDialog(
+                productModal
+            );
+
+        };
+
+
     /* =========================================================
-       CLICK EN PRODUCTO
+       EVENTO CLICK EN CUALQUIER CUADRO
        ========================================================= */
 
     document.addEventListener(
@@ -1727,40 +1511,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     ".product-card__button"
                 );
 
-            if (!button) {
-                return;
-            }
+
+            if (!button) return;
+
 
             const card =
                 button.closest(
                     ".product-card"
                 );
 
-            const data =
-                getCardData(
-                    card
-                );
 
-            if (
-                !data ||
-                !data.src ||
-                !productModal
-            ) {
-                return;
-            }
+            if (!card) return;
+
 
             event.preventDefault();
 
-            updateProductModal(
-                data
-            );
 
-            safeOpenDialog(
-                productModal
+            openProduct(
+                card
             );
 
         }
     );
+
 
     /* =========================================================
        CERRAR MODAL
@@ -1770,16 +1543,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         modalClose.addEventListener(
             "click",
-            () => {
-
+            () =>
                 safeCloseDialog(
                     productModal
-                );
-
-            }
+                )
         );
 
     }
+
 
     if (productModal) {
 
@@ -1801,6 +1572,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
         productModal.addEventListener(
             "close",
             () => {
@@ -1814,23 +1586,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /* =========================================================
-       ELIMINAR RESTOS DEL VISUALIZADOR ANTIGUO
+       DESACTIVAR VISUALIZADOR ANTIGUO
        ========================================================= */
 
-    $("#wallButton")?.remove();
+    const wallButton =
+        $("#wallButton");
 
-    $("#wallModal")?.remove();
+    const wallModal =
+        $("#wallModal");
+
+
+    if (wallButton) {
+        wallButton.remove();
+    }
+
+
+    if (wallModal) {
+        wallModal.remove();
+    }
+
+
+    /* =========================================================
+       CAMBIAR TEXTO QUE TODAVÍA MENCIONA
+       EL VISUALIZADOR ANTIGUO
+       ========================================================= */
 
     $$(".catalog-intro__copy p")
         .forEach(
-            (paragraph) => {
+            paragraph => {
+
+                const text =
+                    paragraph.textContent ||
+                    "";
+
 
                 if (
-                    /visualizador en pared/i.test(
-                        paragraph.textContent ||
-                            ""
-                    )
+                    /visualizador en pared/i
+                        .test(text)
                 ) {
 
                     paragraph.textContent =
@@ -1841,12 +1635,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
     /* =========================================================
-       IMAGEN DE FRANJA DE ALUMINIO
+       CORREGIR IMAGEN DE LA FRANJA DE ALUMINIO
        ========================================================= */
 
     const aluminumImage =
         $(".aluminum-strip__image img");
+
 
     if (
         aluminumImage &&
@@ -1858,6 +1654,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const firstImage =
             $(".product-card__image");
 
+
         if (firstImage?.src) {
 
             aluminumImage.src =
@@ -1868,8 +1665,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
     /* =========================================================
-       ESC GLOBAL
+       ESC — CERRAR MODAL / MENÚ
        ========================================================= */
 
     document.addEventListener(
@@ -1880,8 +1678,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.key !==
                 "Escape"
             ) {
+
                 return;
+
             }
+
 
             if (
                 productModal?.open
@@ -1893,19 +1694,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-            closeAllMenus();
+
+            closeMobileMenu();
 
         }
     );
 
+
     /* =========================================================
-       ESTADO FINAL
+       OBSERVADOR DEL MODAL
        ========================================================= */
 
-    updateHeaderHeight();
+    const modalObserver =
+        new MutationObserver(
+            () => {
+
+                const modalOpen =
+                    Boolean(
+                        $(
+                            ".product-modal[open]"
+                        )
+                    );
+
+
+                document.body.classList.toggle(
+                    "modal-open",
+                    modalOpen
+                );
+
+            }
+        );
+
+
+    modalObserver.observe(
+        document.body,
+        {
+            subtree: true,
+            attributes: true,
+            attributeFilter: [
+                "open"
+            ]
+        }
+    );
+
+
+    /* =========================================================
+       SCROLL SUAVE GENERAL
+       ========================================================= */
+
+    if (!prefersReducedMotion) {
+
+        document.documentElement.style
+            .scrollBehavior =
+            "smooth";
+
+    }
+
+
+    /* =========================================================
+       FINAL
+       ========================================================= */
 
     console.log(
-        "SublimArts — catálogo optimizado: scroll natural, carruseles y navegación corregidos."
+        "SublimArts — catálogo horizontal inicializado."
     );
 
 });
