@@ -1,1570 +1,455 @@
-"use strict";
+(() => {
+    "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    /* =========================================================
-       SELECTORES
-       ========================================================= */
-
-    const $ = (selector, scope = document) =>
-        scope.querySelector(selector);
-
-    const $$ = (selector, scope = document) =>
-        [...scope.querySelectorAll(selector)];
-
-
-    /* =========================================================
-       CONFIGURACIÓN
-       ========================================================= */
-
-    const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-
-    /* =========================================================
-       FUNCIONES GENERALES
-       ========================================================= */
-
-    const safeOpenDialog = (dialog) => {
-
-        if (!dialog) return;
-
-        if (typeof dialog.showModal === "function") {
-
-            if (!dialog.open) {
-                dialog.showModal();
-            }
-
-        } else {
-
-            dialog.setAttribute("open", "");
-
-        }
-
-        document.body.classList.add("modal-open");
+    const DOM = {
+        header: document.querySelector(".site-header"),
+        navToggle: document.querySelector(".nav-toggle"),
+        navList: document.querySelector(".nav-list"),
+        navLinks: document.querySelectorAll(".nav-list a[href^='#']"),
+        revealItems: document.querySelectorAll(".reveal"),
+        year: document.querySelector("[data-current-year]"),
+        faqTriggers: document.querySelectorAll("[data-faq-trigger]"),
+        carouselTrack: document.querySelector("[data-carousel-track]"),
+        carouselPrev: document.querySelector("[data-carousel-prev]"),
+        carouselNext: document.querySelector("[data-carousel-next]"),
+        newsletter: document.querySelector(".newsletter")
     };
 
-
-    const safeCloseDialog = (dialog) => {
-
-        if (!dialog) return;
-
-        if (
-            typeof dialog.close === "function" &&
-            dialog.open
-        ) {
-
-            dialog.close();
-
-        } else {
-
-            dialog.removeAttribute("open");
-
-        }
-
-        if (!$(".product-modal[open]")) {
-            document.body.classList.remove("modal-open");
-        }
-    };
+    const prefersReducedMotion =
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
     /* =========================================================
-       MENÚ MÓVIL
+       HEADER STICKY
        ========================================================= */
 
-    const mobileToggle = $("#mobileToggle");
-    const mobileNav = $("#mobileNav");
+    const updateHeader = () => {
+        if (!DOM.header) {
+            return;
+        }
+
+        DOM.header.classList.toggle(
+            "is-scrolled",
+            window.scrollY > 12
+        );
+    };
+
+    window.addEventListener(
+        "scroll",
+        updateHeader,
+        { passive: true }
+    );
+
+    updateHeader();
 
 
-    const closeMobileMenu = () => {
+    /* =========================================================
+       MENÚ RESPONSIVE
+       ========================================================= */
 
-        if (!mobileToggle || !mobileNav) return;
+    const closeMenu = () => {
+        if (!DOM.navToggle || !DOM.navList) {
+            return;
+        }
 
-        mobileToggle.setAttribute(
+        DOM.navToggle.setAttribute(
             "aria-expanded",
             "false"
         );
 
-        mobileToggle.setAttribute(
+        DOM.navToggle.setAttribute(
             "aria-label",
-            "Abrir menú"
+            "Abrir menú de navegación"
         );
 
-        mobileNav.classList.remove(
-            "is-open",
-            "activo"
-        );
-
-        document.body.classList.remove(
-            "menu-abierto"
-        );
+        DOM.navList.classList.remove("is-open");
     };
 
 
-    const openMobileMenu = () => {
+    if (DOM.navToggle && DOM.navList) {
 
-        if (!mobileToggle || !mobileNav) return;
+        DOM.navToggle.addEventListener("click", () => {
 
-        mobileToggle.setAttribute(
-            "aria-expanded",
-            "true"
-        );
+            const isOpen =
+                DOM.navToggle.getAttribute("aria-expanded") === "true";
 
-        mobileToggle.setAttribute(
-            "aria-label",
-            "Cerrar menú"
-        );
+            DOM.navToggle.setAttribute(
+                "aria-expanded",
+                String(!isOpen)
+            );
 
-        mobileNav.classList.add(
-            "is-open",
-            "activo"
-        );
+            DOM.navToggle.setAttribute(
+                "aria-label",
+                isOpen
+                    ? "Abrir menú de navegación"
+                    : "Cerrar menú de navegación"
+            );
 
-        document.body.classList.add(
-            "menu-abierto"
-        );
-    };
-
-
-    if (mobileToggle && mobileNav) {
-
-        mobileToggle.addEventListener(
-            "click",
-            () => {
-
-                const isOpen =
-                    mobileToggle.getAttribute(
-                        "aria-expanded"
-                    ) === "true";
-
-                if (isOpen) {
-
-                    closeMobileMenu();
-
-                } else {
-
-                    openMobileMenu();
-
-                }
-
-            }
-        );
+            DOM.navList.classList.toggle(
+                "is-open",
+                !isOpen
+            );
+        });
 
 
-        $$("#mobileNav a").forEach((link) => {
+        DOM.navLinks.forEach((link) => {
 
             link.addEventListener(
                 "click",
-                closeMobileMenu
+                closeMenu
             );
 
         });
 
 
-        document.addEventListener(
-            "keydown",
-            (event) => {
+        window.addEventListener("resize", () => {
 
-                if (event.key === "Escape") {
-                    closeMobileMenu();
-                }
-
+            if (window.innerWidth > 820) {
+                closeMenu();
             }
-        );
+
+        });
 
     }
 
 
     /* =========================================================
-       HERO
+       ANIMACIONES REVEAL AL HACER SCROLL
        ========================================================= */
 
-    const heroSlides = $$(".hero__slide");
-    const heroDots = $("#heroDots");
-
-
-    if (heroSlides.length) {
-
-        let heroIndex = Math.max(
-            0,
-            heroSlides.findIndex(
-                slide =>
-                    slide.classList.contains(
-                        "is-active"
-                    )
-            )
-        );
-
-
-        const setHeroSlide = (index) => {
-
-            heroIndex =
-                (index + heroSlides.length) %
-                heroSlides.length;
-
-
-            heroSlides.forEach(
-                (slide, i) => {
-
-                    slide.classList.toggle(
-                        "is-active",
-                        i === heroIndex
-                    );
-
-                }
-            );
-
-
-            if (heroDots) {
-
-                $$(".hero-dot", heroDots)
-                    .forEach(
-                        (dot, i) => {
-
-                            dot.classList.toggle(
-                                "is-active",
-                                i === heroIndex
-                            );
-
-                            dot.setAttribute(
-                                "aria-current",
-                                i === heroIndex
-                                    ? "true"
-                                    : "false"
-                            );
-
-                        }
-                    );
-
-            }
-
-        };
-
-
-        if (heroDots) {
-
-            heroDots.innerHTML = "";
-
-
-            heroSlides.forEach(
-                (_, index) => {
-
-                    const dot =
-                        document.createElement(
-                            "button"
-                        );
-
-                    dot.type = "button";
-
-                    dot.className =
-                        "hero-dot";
-
-                    dot.setAttribute(
-                        "aria-label",
-                        `Mostrar portada ${index + 1}`
-                    );
-
-                    dot.setAttribute(
-                        "aria-current",
-                        index === heroIndex
-                            ? "true"
-                            : "false"
-                    );
-
-
-                    dot.addEventListener(
-                        "click",
-                        () =>
-                            setHeroSlide(index)
-                    );
-
-
-                    heroDots.appendChild(dot);
-
-                }
-            );
-
-
-            $$(".hero-dot", heroDots)
-                [heroIndex]
-                ?.classList.add(
-                    "is-active"
-                );
-
-        }
-
-
-        if (
-            !prefersReducedMotion &&
-            heroSlides.length > 1
-        ) {
-
-            window.setInterval(
-                () =>
-                    setHeroSlide(
-                        heroIndex + 1
-                    ),
-                6500
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       CREAR NAVEGACIÓN DE COLECCIONES
-       ========================================================= */
-
-    const collections =
-        $$(".collection");
-
-
-    if (collections.length) {
-
-        createCollectionNavigation(
-            collections
-        );
-
-    }
-
-
-    function createCollectionNavigation(
-        sections
+    if (
+        !prefersReducedMotion &&
+        "IntersectionObserver" in window
     ) {
 
-        const header =
-            $(".site-header");
+        const revealObserver =
+            new IntersectionObserver(
+                (entries, observer) => {
 
-        if (!header) return;
+                    entries.forEach((entry) => {
 
+                        if (!entry.isIntersecting) {
+                            return;
+                        }
 
-        /*
-         * No duplicar navegación si el JS
-         * se ejecuta nuevamente.
-         */
-
-        const existing =
-            $("#catalogCollectionNav");
-
-        if (existing) {
-            existing.remove();
-        }
-
-
-        const navigation =
-            document.createElement("nav");
-
-        navigation.id =
-            "catalogCollectionNav";
-
-        navigation.className =
-            "catalog-collection-nav";
-
-        navigation.setAttribute(
-            "aria-label",
-            "Colecciones del catálogo"
-        );
-
-
-        const inner =
-            document.createElement("div");
-
-        inner.className =
-            "catalog-collection-nav__inner";
-
-
-        sections.forEach(
-            (section, index) => {
-
-                const title =
-                    section.querySelector(
-                        ".collection__header h2"
-                    );
-
-
-                if (!title) return;
-
-
-                const id =
-                    section.id;
-
-
-                if (!id) return;
-
-
-                const link =
-                    document.createElement(
-                        "a"
-                    );
-
-
-                link.href =
-                    `#${id}`;
-
-
-                link.dataset.target =
-                    id;
-
-
-                link.textContent =
-                    title.textContent.trim();
-
-
-                link.setAttribute(
-                    "aria-label",
-                    `Ir a ${title.textContent.trim()}`
-                );
-
-
-                if (index === 0) {
-
-                    link.classList.add(
-                        "is-active"
-                    );
-
-                }
-
-
-                link.addEventListener(
-                    "click",
-                    (event) => {
-
-                        event.preventDefault();
-
-
-                        const target =
-                            document.getElementById(
-                                id
-                            );
-
-
-                        if (!target) return;
-
-
-                        const headerHeight =
-                            header.offsetHeight;
-
-
-                        const navHeight =
-                            navigation.offsetHeight;
-
-
-                        const top =
-                            target.getBoundingClientRect()
-                                .top +
-                            window.scrollY -
-                            headerHeight -
-                            navHeight -
-                            12;
-
-
-                        window.scrollTo({
-
-                            top,
-
-                            behavior:
-                                prefersReducedMotion
-                                    ? "auto"
-                                    : "smooth"
-
-                        });
-
-
-                        setActiveCollection(
-                            id
+                        entry.target.classList.add(
+                            "is-visible"
                         );
 
-                    }
-                );
+                        observer.unobserve(
+                            entry.target
+                        );
 
-
-                inner.appendChild(
-                    link
-                );
-
-            }
-        );
-
-
-        navigation.appendChild(
-            inner
-        );
-
-
-        header.insertAdjacentElement(
-            "afterend",
-            navigation
-        );
-
-
-        /* -----------------------------------------
-           Detectar sección visible
-           ----------------------------------------- */
-
-        const observer =
-            new IntersectionObserver(
-                (entries) => {
-
-                    entries.forEach(
-                        (entry) => {
-
-                            if (
-                                entry.isIntersecting
-                            ) {
-
-                                setActiveCollection(
-                                    entry.target.id
-                                );
-
-                            }
-
-                        }
-                    );
+                    });
 
                 },
                 {
-                    rootMargin:
-                        "-30% 0px -55% 0px",
-
-                    threshold: 0
+                    threshold: 0.12,
+                    rootMargin: "0px 0px -40px"
                 }
             );
 
 
-        sections.forEach(
-            section =>
-                observer.observe(
-                    section
-                )
-        );
+        DOM.revealItems.forEach((item) => {
 
+            revealObserver.observe(item);
 
-        function setActiveCollection(
-            id
-        ) {
+        });
 
-            $(
-                ".catalog-collection-nav__inner"
+    } else {
+
+        DOM.revealItems.forEach((item) => {
+
+            item.classList.add(
+                "is-visible"
             );
 
-            $$(".catalog-collection-nav a")
-                .forEach(
-                    link => {
+        });
 
-                        const active =
-                            link.dataset.target === id;
+    }
 
 
-                        link.classList.toggle(
-                            "is-active",
-                            active
+    /* =========================================================
+       FAQ — ACORDEÓN ACCESIBLE
+       ========================================================= */
+
+    DOM.faqTriggers.forEach((trigger) => {
+
+        trigger.addEventListener("click", () => {
+
+            const isExpanded =
+                trigger.getAttribute("aria-expanded") === "true";
+
+            const answerId =
+                trigger.getAttribute("aria-controls");
+
+            const answer =
+                document.getElementById(answerId);
+
+
+            /*
+             * Cerramos las demás preguntas.
+             */
+
+            DOM.faqTriggers.forEach(
+                (otherTrigger) => {
+
+                    if (otherTrigger === trigger) {
+                        return;
+                    }
+
+                    const otherId =
+                        otherTrigger.getAttribute(
+                            "aria-controls"
                         );
 
-                    }
-                );
-
-
-            const activeLink =
-                $(
-                    `.catalog-collection-nav a[data-target="${id}"]`
-                );
-
-
-            if (activeLink) {
-
-                activeLink.scrollIntoView({
-                    behavior:
-                        prefersReducedMotion
-                            ? "auto"
-                            : "smooth",
-
-                    block: "nearest",
-
-                    inline: "center"
-                });
-
-            }
-
-        }
-
-    }
-
-
-    /* =========================================================
-       CONVERTIR CADA GALERÍA EN:
-
-       FILA 1 → 5 CUADROS
-       FILA 2 → 5 CUADROS
-       DERECHA → IMAGEN PROTAGONISTA
-       ========================================================= */
-
-    collections.forEach(
-        (collection) => {
-
-            setupCollectionSlider(
-                collection
-            );
-
-        }
-    );
-
-
-    function setupCollectionSlider(
-        collection
-    ) {
-
-        const gallery =
-            $(".product-grid", collection);
-
-
-        if (!gallery) return;
-
-
-        /*
-         * Evitar inicializar dos veces.
-         */
-
-        if (
-            gallery.dataset.sliderReady ===
-            "true"
-        ) {
-
-            return;
-
-        }
-
-
-        gallery.dataset.sliderReady =
-            "true";
-
-
-        const cards =
-            $$(".product-card", gallery);
-
-
-        if (!cards.length) return;
-
-
-        /*
-         * La primera tarjeta siempre será
-         * la imagen protagonista.
-         *
-         * Esto coincide con la estructura
-         * actual del HTML.
-         */
-
-        const feature =
-            cards[0];
-
-
-        feature.classList.add(
-            "collection-feature"
-        );
-
-
-        /*
-         * Las demás tarjetas son las que
-         * entrarán al carrusel.
-         */
-
-        const sliderCards =
-            cards.slice(1);
-
-
-        /*
-         * Crear estructura nueva.
-         */
-
-        const layout =
-            document.createElement(
-                "div"
-            );
-
-        layout.className =
-            "collection-showcase";
-
-
-        /* =========================================
-           PROTAGONISTA
-           ========================================= */
-
-        const featureWrapper =
-            document.createElement(
-                "div"
-            );
-
-        featureWrapper.className =
-            "collection-showcase__feature";
-
-
-        featureWrapper.appendChild(
-            feature
-        );
-
-
-        /* =========================================
-           ÁREA DEL CARRUSEL
-           ========================================= */
-
-        const carouselArea =
-            document.createElement(
-                "div"
-            );
-
-        carouselArea.className =
-            "collection-showcase__carousel";
-
-
-        /* =========================================
-           FILA 1
-           ========================================= */
-
-        const rowOne =
-            createSliderRow(
-                sliderCards,
-                0,
-                "Fila superior"
-            );
-
-
-        /* =========================================
-           FILA 2
-           ========================================= */
-
-        const rowTwo =
-            createSliderRow(
-                sliderCards,
-                1,
-                "Fila inferior"
-            );
-
-
-        carouselArea.appendChild(
-            rowOne
-        );
-
-        carouselArea.appendChild(
-            rowTwo
-        );
-
-
-        layout.appendChild(
-            carouselArea
-        );
-
-        layout.appendChild(
-            featureWrapper
-        );
-
-
-        /*
-         * Reemplazar el grid original.
-         */
-
-        gallery.replaceWith(
-            layout
-        );
-
-
-        /*
-         * Si hay suficientes tarjetas,
-         * inicializar flechas.
-         */
-
-        setupRowControls(
-            rowOne
-        );
-
-        setupRowControls(
-            rowTwo
-        );
-
-    }
-
-
-    /* =========================================================
-       CREAR FILA
-       ========================================================= */
-
-    function createSliderRow(
-        cards,
-        rowIndex,
-        label
-    ) {
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "collection-slider-row";
-
-
-        row.dataset.row =
-            String(rowIndex);
-
-
-        /* =========================================
-           BOTÓN ANTERIOR
-           ========================================= */
-
-        const prev =
-            document.createElement(
-                "button"
-            );
-
-
-        prev.type = "button";
-
-        prev.className =
-            "collection-slider-arrow collection-slider-arrow--prev";
-
-
-        prev.setAttribute(
-            "aria-label",
-            `${label}: diseños anteriores`
-        );
-
-
-        prev.innerHTML =
-            `<i class="fa-solid fa-chevron-left"></i>`;
-
-
-        /* =========================================
-           VIEWPORT
-           ========================================= */
-
-        const viewport =
-            document.createElement(
-                "div"
-            );
-
-
-        viewport.className =
-            "collection-slider-viewport";
-
-
-        viewport.setAttribute(
-            "tabindex",
-            "0"
-        );
-
-
-        /* =========================================
-           TRACK
-           ========================================= */
-
-        const track =
-            document.createElement(
-                "div"
-            );
-
-
-        track.className =
-            "collection-slider-track";
-
-
-        /*
-         * Distribuir tarjetas:
-         *
-         * row 0:
-         * 1, 3, 5, 7...
-         *
-         * row 1:
-         * 2, 4, 6, 8...
-         *
-         * Esto permite mantener 2 filas.
-         */
-
-        cards.forEach(
-            (card, index) => {
-
-                const belongsToRow =
-                    index % 2 === rowIndex;
-
-
-                if (
-                    belongsToRow
-                ) {
-
-                    track.appendChild(
-                        card
+                    const otherAnswer =
+                        document.getElementById(
+                            otherId
+                        );
+
+
+                    otherTrigger.setAttribute(
+                        "aria-expanded",
+                        "false"
                     );
 
+
+                    if (otherAnswer) {
+
+                        otherAnswer.hidden = true;
+
+                    }
+
                 }
-
-            }
-        );
-
-
-        viewport.appendChild(
-            track
-        );
-
-
-        /* =========================================
-           BOTÓN SIGUIENTE
-           ========================================= */
-
-        const next =
-            document.createElement(
-                "button"
             );
 
 
-        next.type = "button";
+            /*
+             * Alternamos la pregunta seleccionada.
+             */
 
-        next.className =
-            "collection-slider-arrow collection-slider-arrow--next";
-
-
-        next.setAttribute(
-            "aria-label",
-            `${label}: siguientes diseños`
-        );
+            trigger.setAttribute(
+                "aria-expanded",
+                String(!isExpanded)
+            );
 
 
-        next.innerHTML =
-            `<i class="fa-solid fa-chevron-right"></i>`;
+            if (answer) {
 
+                answer.hidden = isExpanded;
 
-        row.appendChild(
-            prev
-        );
+            }
 
-        row.appendChild(
-            viewport
-        );
+        });
 
-        row.appendChild(
-            next
-        );
-
-
-        return row;
-
-    }
+    });
 
 
     /* =========================================================
-       CONTROLES DE CADA FILA
+       CARRUSEL DE SERVICIOS
        ========================================================= */
 
-    function setupRowControls(
-        row
-    ) {
-
-        if (!row) return;
-
-
-        const viewport =
-            $(".collection-slider-viewport", row);
-
-
-        const track =
-            $(".collection-slider-track", row);
-
-
-        const prev =
-            $(".collection-slider-arrow--prev", row);
-
-
-        const next =
-            $(".collection-slider-arrow--next", row);
-
+    const updateCarouselButtons = () => {
 
         if (
-            !viewport ||
-            !track ||
-            !prev ||
-            !next
+            !DOM.carouselTrack ||
+            !DOM.carouselPrev ||
+            !DOM.carouselNext
         ) {
-
             return;
-
         }
 
 
-        const updateButtons =
-            () => {
-
-                const maxScroll =
-                    viewport.scrollWidth -
-                    viewport.clientWidth;
+        const maxScroll =
+            DOM.carouselTrack.scrollWidth -
+            DOM.carouselTrack.clientWidth;
 
 
-                const current =
-                    viewport.scrollLeft;
+        DOM.carouselPrev.disabled =
+            DOM.carouselTrack.scrollLeft <= 2;
 
 
-                const canPrev =
-                    current > 5;
+        DOM.carouselNext.disabled =
+            DOM.carouselTrack.scrollLeft >=
+            maxScroll - 2;
+
+    };
 
 
-                const canNext =
-                    current <
-                    maxScroll - 5;
+    const getCarouselStep = () => {
+
+        if (!DOM.carouselTrack) {
+            return 0;
+        }
 
 
-                prev.disabled =
-                    !canPrev;
+        const firstSlide =
+            DOM.carouselTrack.querySelector(
+                ".service-slide"
+            );
 
 
-                next.disabled =
-                    !canNext;
+        if (!firstSlide) {
+            return DOM.carouselTrack.clientWidth;
+        }
 
 
-                prev.classList.toggle(
-                    "is-disabled",
-                    !canPrev
-                );
+        const styles =
+            window.getComputedStyle(
+                DOM.carouselTrack
+            );
 
 
-                next.classList.toggle(
-                    "is-disabled",
-                    !canNext
-                );
-
-            };
-
-
-        const getScrollAmount =
-            () => {
-
-                /*
-                 * Desplazamiento equivalente
-                 * a aproximadamente 5 tarjetas.
-                 */
-
-                const cards =
-                    $$(".product-card", track);
+        const gap =
+            Number.parseFloat(
+                styles.columnGap ||
+                styles.gap ||
+                "16"
+            );
 
 
-                if (!cards.length) {
-                    return viewport.clientWidth;
-                }
+        return (
+            firstSlide.getBoundingClientRect().width +
+            gap
+        );
+
+    };
 
 
-                const first =
-                    cards[0];
+    if (
+        DOM.carouselTrack &&
+        DOM.carouselPrev &&
+        DOM.carouselNext
+    ) {
 
-
-                const cardWidth =
-                    first.getBoundingClientRect()
-                        .width;
-
-
-                const gap =
-                    parseFloat(
-                        getComputedStyle(
-                            track
-                        ).columnGap
-                    ) || 8;
-
-
-                return (
-                    (cardWidth + gap) * 5
-                );
-
-            };
-
-
-        prev.addEventListener(
+        DOM.carouselPrev.addEventListener(
             "click",
             () => {
 
-                viewport.scrollBy({
-
-                    left:
-                        -getScrollAmount(),
+                DOM.carouselTrack.scrollBy({
+                    left: -getCarouselStep(),
 
                     behavior:
                         prefersReducedMotion
                             ? "auto"
                             : "smooth"
-
                 });
 
             }
         );
 
 
-        next.addEventListener(
+        DOM.carouselNext.addEventListener(
             "click",
             () => {
 
-                viewport.scrollBy({
-
-                    left:
-                        getScrollAmount(),
+                DOM.carouselTrack.scrollBy({
+                    left: getCarouselStep(),
 
                     behavior:
                         prefersReducedMotion
                             ? "auto"
                             : "smooth"
-
                 });
 
             }
         );
 
 
-        viewport.addEventListener(
+        DOM.carouselTrack.addEventListener(
             "scroll",
-            updateButtons,
-            {
-                passive: true
-            }
+            updateCarouselButtons,
+            { passive: true }
         );
 
 
         window.addEventListener(
             "resize",
-            updateButtons
+            updateCarouselButtons
         );
 
 
-        /*
-         * Soporte para rueda del mouse
-         * sobre el carrusel.
-         */
+        updateCarouselButtons();
 
-        viewport.addEventListener(
-            "wheel",
+    }
+
+
+    /* =========================================================
+       AÑO AUTOMÁTICO DEL FOOTER
+       ========================================================= */
+
+    if (DOM.year) {
+
+        DOM.year.textContent =
+            String(new Date().getFullYear());
+
+    }
+
+
+    /* =========================================================
+       NEWSLETTER
+       
+       Este comportamiento es demostrativo.
+       Cuando tengas backend, reemplazar por el endpoint real.
+       ========================================================= */
+
+    if (DOM.newsletter) {
+
+        DOM.newsletter.addEventListener(
+            "submit",
             (event) => {
-
-                if (
-                    Math.abs(
-                        event.deltaY
-                    ) <=
-                    Math.abs(
-                        event.deltaX
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                const maxScroll =
-                    viewport.scrollWidth -
-                    viewport.clientWidth;
-
-
-                const canScroll =
-                    maxScroll > 0;
-
-
-                if (!canScroll) {
-                    return;
-                }
-
 
                 event.preventDefault();
 
 
-                viewport.scrollLeft +=
-                    event.deltaY;
-
-            },
-            {
-                passive: false
-            }
-        );
-
-
-        /*
-         * Soporte teclado.
-         */
-
-        viewport.addEventListener(
-            "keydown",
-            (event) => {
-
-                if (
-                    event.key ===
-                    "ArrowRight"
-                ) {
-
-                    event.preventDefault();
-
-                    viewport.scrollBy({
-
-                        left:
-                            getScrollAmount(),
-
-                        behavior:
-                            prefersReducedMotion
-                                ? "auto"
-                                : "smooth"
-
-                    });
-
-                }
+                const emailInput =
+                    DOM.newsletter.querySelector(
+                        "input[type='email']"
+                    );
 
 
                 if (
-                    event.key ===
-                    "ArrowLeft"
+                    !emailInput ||
+                    !emailInput.value.trim()
                 ) {
-
-                    event.preventDefault();
-
-                    viewport.scrollBy({
-
-                        left:
-                            -getScrollAmount(),
-
-                        behavior:
-                            prefersReducedMotion
-                                ? "auto"
-                                : "smooth"
-
-                    });
-
+                    return;
                 }
 
-            }
-        );
 
-
-        /*
-         * Esperar a que el navegador
-         * calcule correctamente los tamaños.
-         */
-
-        requestAnimationFrame(
-            () => {
-
-                updateButtons();
-
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       MODAL DE PRODUCTO
-       ========================================================= */
-
-    const productModal =
-        $("#productModal");
-
-    const modalClose =
-        $("#modalClose");
-
-    const modalImage =
-        $("#modalImage");
-
-    const modalCollection =
-        $("#modalCollection");
-
-    const modalTitle =
-        $("#modalTitle");
-
-    const modalMeasure =
-        $("#modalMeasure");
-
-    const modalPrice =
-        $("#modalPrice");
-
-    const modalWhatsapp =
-        $("#modalWhatsapp");
-
-    const modalDetails =
-        $("#modalDetails");
-
-
-    const getCardData =
-        (card) => {
-
-            if (!card) return null;
-
-
-            const image =
-                $(".product-card__image", card);
-
-
-            const title =
-                $("h3", card);
-
-
-            const meta =
-                $$(".product-card__meta span", card);
-
-
-            if (!image) return null;
-
-
-            const collection =
-                card
-                    .closest(
-                        ".collection"
-                    )
-                    ?.querySelector(
-                        ".collection__header h2"
-                    )
-                    ?.textContent
-                    ?.trim()
-                    ||
-                    "SublimArts";
-
-
-            return {
-
-                src:
-                    image.currentSrc ||
-                    image.src ||
-                    "",
-
-                alt:
-                    image.alt ||
-                    "Cuadro en aluminio HD",
-
-                title:
-                    title?.textContent?.trim()
-                    ||
-                    "Cuadro",
-
-                measure:
-                    meta[0]
-                        ?.textContent
-                        ?.trim()
-                    ||
-                    "30 × 40 cm",
-
-                price:
-                    meta[1]
-                        ?.textContent
-                        ?.trim()
-                    ||
-                    "$20.000 CLP",
-
-                collection
-
-            };
-
-        };
-
-
-    const updateProductModal =
-        (data) => {
-
-            if (
-                !data ||
-                !productModal
-            ) {
-
-                return;
-
-            }
-
-
-            if (modalImage) {
-
-                modalImage.src =
-                    data.src;
-
-                modalImage.alt =
-                    data.alt;
-
-            }
-
-
-            if (modalCollection) {
-
-                modalCollection.textContent =
-                    data.collection;
-
-            }
-
-
-            if (modalTitle) {
-
-                modalTitle.textContent =
-                    data.title;
-
-            }
-
-
-            if (modalMeasure) {
-
-                modalMeasure.textContent =
-                    data.measure;
-
-            }
-
-
-            if (modalPrice) {
-
-                modalPrice.textContent =
-                    data.price;
-
-            }
-
-
-            if (modalWhatsapp) {
-
-                const message =
-                    encodeURIComponent(
-
-                        `Hola SublimArts, quiero consultar por el diseño "${data.title}" (${data.measure}, ${data.price}).`
-
+                const submitButton =
+                    DOM.newsletter.querySelector(
+                        "button"
                     );
 
 
-                modalWhatsapp.href =
-                    `https://wa.me/56912345678?text=${message}`;
+                if (submitButton) {
 
-            }
-
-
-            if (modalDetails) {
-
-                try {
-
-                    const url =
-                        new URL(
-                            modalDetails.getAttribute(
-                                "href"
-                            ) ||
-                            "visualizacion.html",
-
-                            window.location.href
-                        );
+                    const originalText =
+                        submitButton.textContent;
 
 
-                    url.searchParams.set(
-                        "producto",
-                        data.title
-                    );
+                    submitButton.textContent =
+                        "¡Registrado!";
 
 
-                    url.searchParams.set(
-                        "coleccion",
-                        data.collection
-                    );
+                    submitButton.disabled =
+                        true;
 
 
-                    modalDetails.href =
-                        url.toString();
+                    window.setTimeout(
+                        () => {
 
+                            submitButton.textContent =
+                                originalText;
 
-                } catch {
+                            submitButton.disabled =
+                                false;
 
-                    /*
-                     * Conservar URL original.
-                     */
+                            DOM.newsletter.reset();
 
-                }
-
-            }
-
-        };
-
-
-    const openProduct =
-        (card) => {
-
-            const data =
-                getCardData(card);
-
-
-            if (
-                !data ||
-                !data.src ||
-                !productModal
-            ) {
-
-                return;
-
-            }
-
-
-            updateProductModal(
-                data
-            );
-
-
-            safeOpenDialog(
-                productModal
-            );
-
-        };
-
-
-    /* =========================================================
-       EVENTO CLICK EN CUALQUIER CUADRO
-       ========================================================= */
-
-    document.addEventListener(
-        "click",
-        (event) => {
-
-            const button =
-                event.target.closest(
-                    ".product-card__button"
-                );
-
-
-            if (!button) return;
-
-
-            const card =
-                button.closest(
-                    ".product-card"
-                );
-
-
-            if (!card) return;
-
-
-            event.preventDefault();
-
-
-            openProduct(
-                card
-            );
-
-        }
-    );
-
-
-    /* =========================================================
-       CERRAR MODAL
-       ========================================================= */
-
-    if (modalClose) {
-
-        modalClose.addEventListener(
-            "click",
-            () =>
-                safeCloseDialog(
-                    productModal
-                )
-        );
-
-    }
-
-
-    if (productModal) {
-
-        productModal.addEventListener(
-            "click",
-            (event) => {
-
-                if (
-                    event.target ===
-                    productModal
-                ) {
-
-                    safeCloseDialog(
-                        productModal
+                        },
+                        2200
                     );
 
                 }
@@ -1572,191 +457,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
-
-        productModal.addEventListener(
-            "close",
-            () => {
-
-                document.body.classList.remove(
-                    "modal-open"
-                );
-
-            }
-        );
-
     }
 
-
-    /* =========================================================
-       DESACTIVAR VISUALIZADOR ANTIGUO
-       ========================================================= */
-
-    const wallButton =
-        $("#wallButton");
-
-    const wallModal =
-        $("#wallModal");
-
-
-    if (wallButton) {
-        wallButton.remove();
-    }
-
-
-    if (wallModal) {
-        wallModal.remove();
-    }
-
-
-    /* =========================================================
-       CAMBIAR TEXTO QUE TODAVÍA MENCIONA
-       EL VISUALIZADOR ANTIGUO
-       ========================================================= */
-
-    $$(".catalog-intro__copy p")
-        .forEach(
-            paragraph => {
-
-                const text =
-                    paragraph.textContent ||
-                    "";
-
-
-                if (
-                    /visualizador en pared/i
-                        .test(text)
-                ) {
-
-                    paragraph.textContent =
-                        "Explora las colecciones de Anime y Gaming. Cada tarjeta es una muestra real de diseño: haz clic para ampliar, revisar medidas y consultar el diseño directamente.";
-
-                }
-
-            }
-        );
-
-
-    /* =========================================================
-       CORREGIR IMAGEN DE LA FRANJA DE ALUMINIO
-       ========================================================= */
-
-    const aluminumImage =
-        $(".aluminum-strip__image img");
-
-
-    if (
-        aluminumImage &&
-        !aluminumImage.getAttribute(
-            "src"
-        )
-    ) {
-
-        const firstImage =
-            $(".product-card__image");
-
-
-        if (firstImage?.src) {
-
-            aluminumImage.src =
-                firstImage.currentSrc ||
-                firstImage.src;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       ESC — CERRAR MODAL / MENÚ
-       ========================================================= */
-
-    document.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (
-                event.key !==
-                "Escape"
-            ) {
-
-                return;
-
-            }
-
-
-            if (
-                productModal?.open
-            ) {
-
-                safeCloseDialog(
-                    productModal
-                );
-
-            }
-
-
-            closeMobileMenu();
-
-        }
-    );
-
-
-    /* =========================================================
-       OBSERVADOR DEL MODAL
-       ========================================================= */
-
-    const modalObserver =
-        new MutationObserver(
-            () => {
-
-                const modalOpen =
-                    Boolean(
-                        $(
-                            ".product-modal[open]"
-                        )
-                    );
-
-
-                document.body.classList.toggle(
-                    "modal-open",
-                    modalOpen
-                );
-
-            }
-        );
-
-
-    modalObserver.observe(
-        document.body,
-        {
-            subtree: true,
-            attributes: true,
-            attributeFilter: [
-                "open"
-            ]
-        }
-    );
-
-
-    /* =========================================================
-       SCROLL SUAVE GENERAL
-       ========================================================= */
-
-    if (!prefersReducedMotion) {
-
-        document.documentElement.style
-            .scrollBehavior =
-            "smooth";
-
-    }
-
-
-    /* =========================================================
-       FINAL
-       ========================================================= */
-
-    console.log(
-        "SublimArts — catálogo horizontal inicializado."
-    );
-
-});
+})();
