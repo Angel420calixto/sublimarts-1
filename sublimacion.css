@@ -178,8 +178,8 @@ iframe {
     border-bottom: 1px solid var(--line);
     background: rgba(17, 18, 20, .94);
     box-shadow: 0 8px 35px rgba(0, 0, 0, .22);
-    backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
 }
 
 .navegacion,

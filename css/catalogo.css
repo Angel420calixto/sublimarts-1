@@ -293,8 +293,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     background: rgba(17,18,20,.98);
     border-bottom: 1px solid var(--borde-sutil);
     padding: .9rem 0;
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     isolation: isolate;
 }
 
@@ -346,8 +346,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     position: absolute;
     inset: 0;
     background: rgba(0,0,0,.88);
-    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
 }
 .visor-catalogo-panel {
     position: relative;

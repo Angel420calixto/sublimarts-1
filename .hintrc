@@ -34,7 +34,12 @@
           "scrollbar-width",
           "scrollbar-width: none",
           "min-height: auto",
-          "-webkit-overflow-scrolling"
+          "-webkit-overflow-scrolling",
+          "scrollbar-width: thin",
+          "user-select",
+          "-webkit-user-drag",
+          "overscroll-behavior-inline",
+          "overscroll-behavior-inline: contain"
         ]
       }
     ]
