@@ -7,7 +7,7 @@
         order: "recientes",
         images: [],
         index: 0,
-        completeMode: false,
+        detailsOpen: false,
         touchStartX: 0
     };
 
@@ -21,26 +21,17 @@
     };
 
     const categoryHeroTitles = {
-        todo: "Guerrero Samurái",
-        anime: "Guerrero Samurái",
-        autos: "Moto Café Racer",
-        paisajes: "Skyline Nocturno",
-        religion: "Virgen del Carmen",
-        retratos: "Mascota en HD"
+        todo: "Guerrero Samurái", anime: "Guerrero Samurái", autos: "Moto Café Racer",
+        paisajes: "Skyline Nocturno", religion: "Virgen del Carmen", retratos: "Mascota en HD"
     };
 
     const categoryLabels = {
-        todo: "Todos",
-        anime: "Anime y Gamer",
-        autos: "Autos y Motos",
-        paisajes: "Paisajes y Ciudades",
-        religion: "Religión",
-        retratos: "Retratos"
+        todo: "Todos", anime: "Anime y Gamer", autos: "Autos y Motos",
+        paisajes: "Paisajes y Ciudades", religion: "Religión", retratos: "Retratos"
     };
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
     const cards = $$(".tarjeta-cuadro");
     const tabs = $$(".tab-categoria");
     const searchInput = $("#buscadorCatalogo");
@@ -54,76 +45,75 @@
     const viewerImage = $("#visorImagen");
     const viewerTitle = $("#visorTitulo");
     const viewerCounter = $("#visorContador");
-    const viewerComplete = $("#visorCompleto");
-    const viewerCompleteTitle = $("#visorCompletoTitulo");
-    const viewerCompleteCounter = $("#visorCompletoContador");
-    const viewerCompleteGrid = $("#visorCompletoGrid");
+    const detailsPanel = $("#visorDetalles");
+    const detailsTitle = $("#visorDetallesTitulo");
+    const detailsDescription = $("#visorDetallesDescripcion");
+    const detailsCategory = $("#visorDetallesCategoria");
+    const orderButton = $("#visorEncargar");
+    const detailsButton = $("#visorVerDetalles");
 
     function getCardData(card) {
         const image = $("img", card);
+        const size = card.dataset.tamano || "";
         return {
-            card,
-            src: image?.dataset.viewer || image?.currentSrc || image?.src || "",
+            card, src: image?.dataset.viewer || image?.currentSrc || image?.src || "",
             alt: image?.alt || $("h3", card)?.textContent?.trim() || "Cuadro",
             name: card.dataset.nombre || $("h3", card)?.textContent?.trim() || "Cuadro",
-            category: card.dataset.categoria || "todo",
-            size: card.dataset.tamano || ""
+            category: card.dataset.categoria || "todo", size
         };
     }
 
-    function getVisibleImages() {
+    function matchesSearch(item) {
         const query = state.search.trim().toLocaleLowerCase("es");
-        let result = cards
-            .filter(card => !card.classList.contains("tarjeta-filtrada"))
-            .map(getCardData)
-            .filter(item => {
-                const categoryMatch = state.category === "todo" || item.category === state.category;
-                const searchMatch = !query ||
-                    item.name.toLocaleLowerCase("es").includes(query) ||
-                    item.alt.toLocaleLowerCase("es").includes(query) ||
-                    item.category.toLocaleLowerCase("es").includes(query);
-                return categoryMatch && searchMatch;
-            });
+        if (!query) return true;
+        return [item.name, item.alt, item.category, categoryLabels[item.category] || ""]
+            .some(value => value.toLocaleLowerCase("es").includes(query));
+    }
 
-        if (state.order === "az") {
-            result.sort((a, b) => a.name.localeCompare(b.name, "es"));
-        } else if (state.order === "za") {
-            result.sort((a, b) => b.name.localeCompare(a.name, "es"));
-        } else if (state.order === "tamano") {
-            result.sort((a, b) => a.size.localeCompare(b.size, "es", { numeric: true }));
-        }
+    function getFilteredPool() {
+        let result = cards.map(getCardData).filter(item => {
+            const categoryMatch = state.category === "todo" || item.category === state.category;
+            return categoryMatch && matchesSearch(item);
+        });
+        if (state.order === "az") result.sort((a,b) => a.name.localeCompare(b.name, "es"));
+        if (state.order === "za") result.sort((a,b) => b.name.localeCompare(a.name, "es"));
+        if (state.order === "tamano") result.sort((a,b) => a.size.localeCompare(b.size, "es", {numeric:true}));
+        return result;
+    }
 
+    // En "Todos" se muestran solo 3 por categoría. Al entrar a una categoría
+    // concreta, o al buscar, se muestra todo lo que coincida.
+    function getVisibleImages() {
+        const pool = getFilteredPool();
+        if (state.search.trim()) return pool;
+        if (state.category !== "todo") return pool;
+
+        const perCategory = new Map();
+        const result = [];
+        pool.forEach(item => {
+            const count = perCategory.get(item.category) || 0;
+            if (count < 3) {
+                result.push(item);
+                perCategory.set(item.category, count + 1);
+            }
+        });
         return result;
     }
 
     function updateHero(category) {
         const nextSrc = categoryHeroImages[category] || categoryHeroImages.todo;
         const nextTitle = categoryHeroTitles[category] || categoryHeroTitles.todo;
-
         if (heroImage) {
-            heroImage.style.opacity = "0.65";
             const preloader = new Image();
-            preloader.onload = () => {
-                heroImage.src = nextSrc;
-                heroImage.alt = `Cuadro destacado SublimArts: ${nextTitle}`;
-                requestAnimationFrame(() => { heroImage.style.opacity = "1"; });
-            };
-            preloader.onerror = () => {
-                heroImage.src = categoryHeroImages.todo;
-                heroImage.style.opacity = "1";
-            };
+            preloader.onload = () => { heroImage.src = nextSrc; heroImage.alt = `Cuadro destacado SublimArts: ${nextTitle}`; };
             preloader.src = nextSrc;
         }
-
         if (heroTitle) {
             const badge = $(".hero-catalogo-badge", heroTitle);
             heroTitle.firstChild.textContent = `${nextTitle} `;
             if (badge) heroTitle.appendChild(badge);
         }
-
-        if (heroTag) {
-            heroTag.innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${categoryLabels[category] || categoryLabels.todo}`;
-        }
+        if (heroTag) heroTag.innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${categoryLabels[category] || categoryLabels.todo}`;
     }
 
     function updateTabs(category) {
@@ -137,86 +127,57 @@
     function filterGallery(category = state.category) {
         state.category = category;
         updateTabs(category);
-
-        const query = state.search.trim().toLocaleLowerCase("es");
-
+        const visibleItems = getVisibleImages();
+        const visibleCards = new Set(visibleItems.map(item => item.card));
         cards.forEach(card => {
-            const data = getCardData(card);
-            const categoryMatch = category === "todo" || data.category === category;
-            const searchMatch = !query ||
-                data.name.toLocaleLowerCase("es").includes(query) ||
-                data.alt.toLocaleLowerCase("es").includes(query) ||
-                data.category.toLocaleLowerCase("es").includes(query);
-
-            const visible = categoryMatch && searchMatch;
-            card.hidden = !visible;
-            card.classList.toggle("tarjeta-filtrada", !visible);
+            const show = visibleCards.has(card);
+            card.hidden = !show;
+            card.classList.toggle("tarjeta-filtrada", !show);
         });
-
-        const visible = cards.filter(card => !card.classList.contains("tarjeta-filtrada")).length;
-        if (emptyMessage) emptyMessage.hidden = visible !== 0;
-
+        if (emptyMessage) emptyMessage.hidden = visibleItems.length !== 0;
         updateHero(category);
-
-        // Make every available item visible; no "Cargar más" state remains.
-        cards.forEach(card => {
-            card.classList.remove("tarjeta-oculta");
-        });
+        loadViewerImages();
     }
 
     function loadViewerImages() {
         state.images = getVisibleImages();
-        if (!state.images.length) {
-            state.index = 0;
-            return;
-        }
-        state.index = Math.min(state.index, state.images.length - 1);
+        if (!state.images.length) { state.index = 0; return; }
+        state.index = Math.min(Math.max(state.index, 0), state.images.length - 1);
+    }
+
+    function updateOrderLink(current) {
+        if (!orderButton) return;
+        const message = encodeURIComponent(`Hola, quiero encargar el cuadro "${current.name}". Me interesa la imagen del catálogo y quisiera cotizar las medidas disponibles: 20x30, 30x40 y 40x60 cm.`);
+        const phone = orderButton.dataset.numero || "";
+        if (phone) orderButton.href = `https://wa.me/${phone}?text=${message}`;
+        else orderButton.href = `#encargar-${encodeURIComponent(current.name.toLowerCase().replace(/\s+/g, "-"))}`;
     }
 
     function renderViewer() {
         if (!state.images.length) return;
         const current = state.images[state.index];
-
         viewerImage.src = current.src;
         viewerImage.alt = current.alt;
         viewerTitle.textContent = current.name;
         viewerCounter.textContent = `${state.index + 1} / ${state.images.length}`;
-
-        viewerCompleteTitle.textContent = categoryLabels[state.category] || "Catálogo";
-        viewerCompleteCounter.textContent = `${state.images.length} imágenes`;
-
-        renderCompleteGrid();
-    }
-
-    function renderCompleteGrid() {
-        viewerCompleteGrid.innerHTML = "";
-
-        state.images.forEach((item, index) => {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = `visor-completo-item${index === state.index ? " activo" : ""}`;
-            button.setAttribute("aria-label", `Ver ${item.name}`);
-            button.innerHTML = `<img src="${item.src}" alt="${item.alt}" loading="lazy">`;
-            button.addEventListener("click", () => {
-                state.index = index;
-                state.completeMode = true;
-                renderViewer();
-            });
-            viewerCompleteGrid.appendChild(button);
+        detailsTitle.textContent = current.name;
+        detailsDescription.textContent = `Cuadro personalizado en aluminio HD. Diseño: ${current.name}. Ideal para exhibir en formato vertical y conservar el detalle de la imagen.`;
+        detailsCategory.textContent = categoryLabels[current.category] || current.category;
+        updateOrderLink(current);
+        const selectedSize = current.size || "";
+        $$("[data-medida]", detailsPanel || document).forEach(button => {
+            button.classList.toggle("activo", button.dataset.medida === selectedSize);
         });
     }
 
     function openImageViewer(imageOrCard) {
         const clickedCard = imageOrCard.closest ? imageOrCard.closest(".tarjeta-cuadro") : imageOrCard;
-        const data = clickedCard ? getCardData(clickedCard) : null;
-        if (!data) return;
-
+        if (!clickedCard) return;
         loadViewerImages();
         const found = state.images.findIndex(item => item.card === clickedCard);
         state.index = found >= 0 ? found : 0;
-        state.completeMode = false;
-
-        viewerComplete.hidden = true;
+        if (detailsPanel) detailsPanel.hidden = true;
+        state.detailsOpen = false;
         viewer.classList.add("activo");
         viewer.setAttribute("aria-hidden", "false");
         document.body.classList.add("visor-abierto");
@@ -228,9 +189,15 @@
         viewer.classList.remove("activo");
         viewer.setAttribute("aria-hidden", "true");
         document.body.classList.remove("visor-abierto");
-        viewerComplete.hidden = true;
-        state.completeMode = false;
+        if (detailsPanel) detailsPanel.hidden = true;
+        state.detailsOpen = false;
         viewerImage.src = "";
+    }
+
+    function toggleDetails() {
+        state.detailsOpen = !state.detailsOpen;
+        if (detailsPanel) detailsPanel.hidden = !state.detailsOpen;
+        if (detailsButton) detailsButton.textContent = state.detailsOpen ? "Ocultar detalles" : "Ver detalles";
     }
 
     function nextImage() {
@@ -238,49 +205,22 @@
         state.index = (state.index + 1) % state.images.length;
         renderViewer();
     }
-
     function previousImage() {
         if (!state.images.length) return;
         state.index = (state.index - 1 + state.images.length) % state.images.length;
         renderViewer();
     }
 
-    function openCompleteViewer() {
-        loadViewerImages();
-        if (!state.images.length) return;
-        state.completeMode = true;
-        viewerComplete.hidden = false;
-        renderViewer();
-        viewerComplete.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            const category = tab.dataset.filtro || "todo";
-            filterGallery(category);
-        });
-    });
-
-    searchInput?.addEventListener("input", () => {
-        state.search = searchInput.value;
-        filterGallery(state.category);
-    });
-
-    orderSelect?.addEventListener("change", () => {
-        state.order = orderSelect.value;
-        loadViewerImages();
-        renderViewer();
-    });
+    tabs.forEach(tab => tab.addEventListener("click", () => filterGallery(tab.dataset.filtro || "todo")));
+    searchInput?.addEventListener("input", () => { state.search = searchInput.value; filterGallery(state.category); });
+    orderSelect?.addEventListener("change", () => { state.order = orderSelect.value; filterGallery(state.category); });
 
     cards.forEach(card => {
         const image = $("img", card);
         image?.addEventListener("click", () => openImageViewer(card));
         image?.setAttribute("tabindex", "0");
         image?.addEventListener("keydown", event => {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                openImageViewer(card);
-            }
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openImageViewer(card); }
         });
     });
 
@@ -288,18 +228,20 @@
     $("[data-visor-cerrar]")?.addEventListener("click", closeImageViewer);
     $("#visorSiguiente")?.addEventListener("click", nextImage);
     $("#visorAnterior")?.addEventListener("click", previousImage);
-    $("#visorVerMas")?.addEventListener("click", openCompleteViewer);
+    detailsButton?.addEventListener("click", toggleDetails);
 
-    viewer?.addEventListener("touchstart", event => {
-        state.touchStartX = event.changedTouches[0].screenX;
-    }, { passive: true });
-
+    viewer?.addEventListener("touchstart", event => { state.touchStartX = event.changedTouches[0].screenX; }, {passive:true});
     viewer?.addEventListener("touchend", event => {
         const delta = event.changedTouches[0].screenX - state.touchStartX;
-        if (Math.abs(delta) < 45) return;
-        if (delta < 0) nextImage();
-        else previousImage();
-    }, { passive: true });
+        if (Math.abs(delta) >= 45) delta < 0 ? nextImage() : previousImage();
+    }, {passive:true});
+
+    $("#visorMedidas")?.addEventListener("click", event => {
+        const button = event.target.closest("[data-medida]");
+        if (!button) return;
+        $$("[data-medida]", $("#visorMedidas")).forEach(item => item.classList.remove("activo"));
+        button.classList.add("activo");
+    });
 
     document.addEventListener("keydown", event => {
         if (!viewer?.classList.contains("activo")) return;
@@ -309,93 +251,32 @@
     });
 
     // Barra de filtros fija al llegar al borde superior.
-    // El placeholder evita que la galería salte cuando la barra pasa a position: fixed.
     const barraFiltros = $("#categorias");
     if (barraFiltros) {
         const placeholder = document.createElement("div");
         placeholder.className = "barra-filtros-placeholder";
         barraFiltros.parentNode.insertBefore(placeholder, barraFiltros);
-
-        let barraTop = 0;
-        let barraAltura = 0;
-        let fijada = false;
-
-        const soltarBarra = () => {
-            fijada = false;
-            barraFiltros.classList.remove("filtro-fijo");
-            placeholder.classList.remove("activo");
-            placeholder.style.height = "0px";
-        };
-
-        const fijarBarra = () => {
-            barraAltura = barraFiltros.offsetHeight;
-            fijada = true;
-            barraFiltros.classList.add("filtro-fijo");
-            placeholder.style.height = `${barraAltura}px`;
-            placeholder.classList.add("activo");
-        };
-
-        const medirBarra = () => {
-            const estabaFijada = fijada;
-            if (estabaFijada) soltarBarra();
-            barraTop = barraFiltros.getBoundingClientRect().top + window.scrollY;
-            barraAltura = barraFiltros.offsetHeight;
-            if (estabaFijada && window.scrollY >= barraTop) fijarBarra();
-        };
-
-        const actualizarBarra = () => {
-            if (window.scrollY >= barraTop) {
-                if (!fijada) fijarBarra();
-            } else if (fijada) {
-                soltarBarra();
-            }
-        };
-
-        medirBarra();
-        actualizarBarra();
-        window.addEventListener("scroll", actualizarBarra, { passive: true });
-        window.addEventListener("resize", medirBarra);
+        let barraTop = 0, barraAltura = 0, fijada = false;
+        const soltar = () => { fijada = false; barraFiltros.classList.remove("filtro-fijo"); placeholder.classList.remove("activo"); placeholder.style.height = "0px"; };
+        const fijar = () => { barraAltura = barraFiltros.offsetHeight; fijada = true; barraFiltros.classList.add("filtro-fijo"); placeholder.style.height = `${barraAltura}px`; placeholder.classList.add("activo"); };
+        const medir = () => { const was = fijada; if (was) soltar(); barraTop = barraFiltros.getBoundingClientRect().top + window.scrollY; barraAltura = barraFiltros.offsetHeight; if (was && window.scrollY >= barraTop) fijar(); };
+        const actualizar = () => window.scrollY >= barraTop ? (!fijada && fijar()) : (fijada && soltar());
+        medir(); actualizar(); window.addEventListener("scroll", actualizar, {passive:true}); window.addEventListener("resize", medir);
     }
 
-    // Sidebar mobile.
-    const sidebar = $("#sidebar");
-    const sidebarToggle = $("#sidebarToggle");
-    const sidebarOverlay = $("#sidebarOverlay");
-
-    function closeSidebar() {
-        sidebar?.classList.remove("activo");
-        sidebarOverlay?.classList.remove("activo");
-        sidebarToggle?.setAttribute("aria-expanded", "false");
-    }
-
-    sidebarToggle?.addEventListener("click", () => {
-        const open = sidebar.classList.toggle("activo");
-        sidebarOverlay?.classList.toggle("activo", open);
-        sidebarToggle.setAttribute("aria-expanded", String(open));
-    });
-
+    const sidebar = $("#sidebar"), sidebarToggle = $("#sidebarToggle"), sidebarOverlay = $("#sidebarOverlay");
+    function closeSidebar() { sidebar?.classList.remove("activo"); sidebarOverlay?.classList.remove("activo"); sidebarToggle?.setAttribute("aria-expanded", "false"); }
+    sidebarToggle?.addEventListener("click", () => { const open = sidebar.classList.toggle("activo"); sidebarOverlay?.classList.toggle("activo", open); sidebarToggle.setAttribute("aria-expanded", String(open)); });
     sidebarOverlay?.addEventListener("click", closeSidebar);
     $$(".sidebar-enlace").forEach(link => link.addEventListener("click", closeSidebar));
 
-    // Existing WhatsApp buttons remain compatible with the current HTML.
-    $$(".boton-whatsapp").forEach(button => {
-        button.addEventListener("click", event => {
-            const service = button.dataset.servicio || "Cuadros personalizados";
-            const message = encodeURIComponent(`Hola, quiero consultar por ${service}.`);
-            const phone = button.dataset.numero || "";
-            if (!phone) {
-                // Keep href="#" when no phone has been configured instead of inventing a number.
-                event.preventDefault();
-                return;
-            }
-            button.href = `https://wa.me/${phone}?text=${message}`;
-        });
-    });
+    $$(".boton-whatsapp").forEach(button => button.addEventListener("click", event => {
+        const service = button.dataset.servicio || "Cuadros personalizados";
+        const phone = button.dataset.numero || "";
+        if (!phone) { event.preventDefault(); return; }
+        button.href = `https://wa.me/${phone}?text=${encodeURIComponent(`Hola, quiero consultar por ${service}.`)}`;
+    }));
 
-    // Initial state.
-    cards.forEach(card => {
-        card.hidden = false;
-        card.classList.remove("tarjeta-oculta", "tarjeta-filtrada");
-    });
+    cards.forEach(card => { card.hidden = false; card.classList.remove("tarjeta-oculta", "tarjeta-filtrada"); });
     filterGallery("todo");
 })();

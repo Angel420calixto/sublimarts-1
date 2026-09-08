@@ -465,6 +465,29 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 
 /* =============================================
+   DETALLES DEL CUADRO / PEDIDO
+   ============================================= */
+.visor-catalogo-acciones {
+    display: flex; align-items: center; justify-content: flex-end; gap: .65rem; flex-wrap: wrap;
+}
+.visor-detalles-btn, .visor-encargar-btn { cursor: pointer; border-width: 1px; }
+.visor-catalogo-detalles {
+    border-top: 1px solid var(--borde-sutil);
+    padding: 1.25rem 1.2rem 1.4rem;
+    background: rgba(255,255,255,.015);
+}
+.visor-detalles-cabecera { margin-bottom: .9rem; }
+.visor-detalles-cabecera h2 { font-size: 1.35rem; }
+.visor-detalles-contenido { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1rem; align-items: start; }
+.visor-detalles-contenido > p { color: var(--texto-gris); font-size: .85rem; }
+.visor-detalles-bloque { padding: .9rem; border: 1px solid var(--borde-sutil); border-radius: var(--radius-md); background: var(--bg-tarjeta); }
+.visor-detalles-bloque > span { display: block; color: var(--texto-gris); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .6rem; }
+.visor-detalles-bloque > strong { color: var(--texto-claro); font-size: .9rem; }
+.visor-medidas { display: flex; flex-wrap: wrap; gap: .45rem; }
+.visor-medidas button { border: 1px solid var(--borde-sutil); background: transparent; color: var(--texto-claro); border-radius: 999px; padding: .5rem .7rem; cursor: pointer; font-size: .72rem; }
+.visor-medidas button:hover, .visor-medidas button.activo { border-color: var(--acento); color: var(--acento); }
+
+/* =============================================
    INFORMACIÓN / FAQ / CONTACTO
    ============================================= */
 .catalogo-info,
@@ -620,6 +643,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .visor-catalogo-info {
         padding: .8rem;
     }
+    .visor-catalogo-acciones { width: 100%; justify-content: stretch; }
+    .visor-catalogo-acciones .boton { flex: 1 1 0; text-align: center; }
+    .visor-detalles-contenido { grid-template-columns: 1fr; }
+    .visor-catalogo-detalles { padding: 1rem .8rem 1.2rem; }
+
     .visor-catalogo-completo { padding: .8rem; }
     .visor-completo-grid {
         grid-template-columns: repeat(2, minmax(0,1fr));
