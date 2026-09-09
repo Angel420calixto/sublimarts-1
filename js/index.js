@@ -27,6 +27,7 @@
 
     const SERVICE_DATA = [
         {
+            id: "impresiones",
             title: "Impresión de fotografías",
             category: "impresiones",
             categoryLabel: "Impresión",
@@ -35,6 +36,7 @@
         },
 
         {
+            id: "licenciaturas",
             title: "Fotografía para licenciaturas",
             category: "licenciaturas",
             categoryLabel: "Licenciaturas",
@@ -43,6 +45,7 @@
         },
 
         {
+            id: "tradicionales",
             title: "Cuadro tradicional",
             category: "tradicionales",
             categoryLabel: "Clásico",
@@ -51,6 +54,7 @@
         },
 
         {
+            id: "licenciaturas",
             title: "Cuadro de licenciatura Premium",
             category: "licenciaturas",
             categoryLabel: "Premium",
@@ -59,6 +63,7 @@
         },
 
         {
+            id: "albumes",
             title: "Álbumes fotográficos personalizados",
             category: "albumes",
             categoryLabel: "Álbumes",
@@ -67,6 +72,7 @@
         },
 
         {
+            id: "albumes",
             title: "Álbumes para momentos especiales",
             category: "albumes",
             categoryLabel: "Historias",
@@ -75,6 +81,7 @@
         },
 
         {
+            id: "aluminio",
             title: "Cuadros sublimados en aluminio",
             category: "aluminio",
             categoryLabel: "SublimArts",
@@ -713,6 +720,12 @@
             (item, index) => {
 
                 const service =
+                    SERVICE_DATA.find((entry) =>
+                        entry.id === item.dataset.service
+                    ) ||
+                    SERVICE_DATA.find((entry) =>
+                        entry.title === item.dataset.title
+                    ) ||
                     SERVICE_DATA[index];
 
 
@@ -1070,11 +1083,18 @@
 
                         if (modalCategory) {
 
+                            const serviceId =
+                                item.dataset.service ||
+                                category;
+
                             const service =
                                 SERVICE_DATA.find(
                                     (entry) =>
-                                        entry.title ===
-                                        title
+                                        entry.id === serviceId
+                                ) ||
+                                SERVICE_DATA.find(
+                                    (entry) =>
+                                        entry.title === title
                                 );
 
 
@@ -1467,120 +1487,18 @@
 
     function setupComparison() {
 
-        const grid =
-            document.querySelector(
-                ".comparison-grid"
-            );
-
+        const grid = document.querySelector(".comparison-grid");
 
         if (!grid) {
             return;
         }
 
-
-        const articles =
-            grid.querySelectorAll(
-                "article"
-            );
-
-
-        articles.forEach(
-            (article) => {
-
-                const image =
-                    article.querySelector(
-                        ".comparison-image"
-                    );
-
-
-                const eyebrow =
-                    article.querySelector(
-                        ".eyebrow"
-                    );
-
-
-                const title =
-                    article.querySelector(
-                        "h3"
-                    );
-
-
-                const list =
-                    article.querySelector(
-                        "ul"
-                    );
-
-
-                if (
-                    !image ||
-                    !title
-                ) {
-                    return;
-                }
-
-
-                /*
-                 * Evitar duplicar overlay si el JS se ejecuta
-                 * nuevamente.
-                 */
-
-                if (
-                    image.querySelector(
-                        ".comparison-overlay"
-                    )
-                ) {
-                    return;
-                }
-
-
-                const overlay =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                overlay.className =
-                    "comparison-overlay";
-
-
-                if (eyebrow) {
-
-                    overlay.appendChild(
-                        eyebrow.cloneNode(
-                            true
-                        )
-                    );
-
-                }
-
-
-                overlay.appendChild(
-                    title.cloneNode(
-                        true
-                    )
-                );
-
-
-                if (list) {
-
-                    overlay.appendChild(
-                        list.cloneNode(
-                            true
-                        )
-                    );
-
-                }
-
-
-                image.appendChild(
-                    overlay
-                );
-
-            }
-        );
-
+        // El texto permanece debajo de cada imagen; no se crean overlays duplicados.
+        grid.querySelectorAll(".comparison-overlay").forEach((overlay) => overlay.remove());
+        grid.querySelectorAll("article").forEach((article) => {
+            article.classList.remove("comparison-enhanced");
+        });
     }
-
 
     // ============================================================
     // IMÁGENES

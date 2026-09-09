@@ -1458,3 +1458,368 @@ section[id] {
         max-height: 55vh;
     }
 }
+
+/* ============================================================
+   SUBLIMARTS · REDISEÑO DE SERVICIOS Y BANNER PROMOCIONAL
+   ============================================================ */
+
+/* Servicios: primera tarjeta protagonista + dos tarjetas laterales. */
+#portafolio .masonry {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 170px;
+    gap: 6px;
+}
+
+#portafolio .portfolio-item:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+#portafolio .portfolio-item:nth-child(2),
+#portafolio .portfolio-item:nth-child(3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+#portafolio .portfolio-item:nth-child(n+4) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+/* Evita deformaciones: cada imagen conserva su proporción dentro del bloque. */
+#portafolio .portfolio-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+    background: #101114;
+}
+
+/* Servicios conectados: mismo lenguaje visual del portafolio.
+   Primera tarjeta protagonista + dos tarjetas laterales. */
+.connected-services .service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 170px;
+    gap: 6px;
+    max-width: 1180px;
+    margin: auto;
+}
+
+.connected-services .service-grid article {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: #222;
+}
+
+.connected-services .service-grid .service-featured {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.connected-services .service-grid article:nth-child(2),
+.connected-services .service-grid article:nth-child(3) {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.connected-services .service-grid article:nth-child(4) {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.connected-services .service-grid article:nth-child(5) {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.connected-services .service-grid .service-image {
+    position: absolute;
+    inset: 0;
+    background: #101114;
+    overflow: hidden;
+}
+
+.connected-services .service-grid .service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+    object-position: center;
+    filter: saturate(.78);
+    transition: transform .5s ease;
+}
+
+.connected-services .service-grid article:hover .service-image img {
+    transform: scale(1.035);
+}
+
+.connected-services .service-grid .service-copy {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 22px;
+    background: linear-gradient(180deg, transparent 38%, rgba(0,0,0,.82) 100%);
+}
+
+.connected-services .service-grid .service-copy h3 {
+    margin: 0 0 7px;
+    color: var(--cream);
+    font-size: clamp(28px, 3vw, 42px);
+    line-height: .92;
+}
+
+.connected-services .service-grid .service-copy p {
+    max-width: 560px;
+    margin: 0 0 13px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.connected-services .service-grid .text-link {
+    color: var(--cream);
+    position: relative;
+    z-index: 3;
+}
+
+.connected-services .service-grid .text-link:hover {
+    color: var(--sand);
+}
+
+/* Banner promocional: cinco imágenes separadas por diagonales. */
+.promo-contact {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+}
+
+.promo-banner {
+    position: relative;
+    min-height: 500px;
+    overflow: hidden;
+    background: #101114;
+}
+
+.promo-gallery {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.promo-gallery figure {
+    position: relative;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+}
+
+.promo-gallery figure + figure {
+    margin-left: -8%;
+}
+
+.promo-gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(.58) saturate(.8);
+    transition: transform .5s ease, filter .5s ease;
+}
+
+.promo-gallery figure:hover img {
+    transform: scale(1.04);
+    filter: brightness(.72) saturate(.95);
+}
+
+.promo-copy {
+    position: relative;
+    z-index: 3;
+    width: min(610px, 82%);
+    padding: 120px 7vw 95px;
+    background: linear-gradient(90deg, rgba(17,18,20,.94), rgba(17,18,20,.74), transparent);
+}
+
+.promo-copy h2 {
+    margin: 0;
+    max-width: 600px;
+}
+
+.promo-copy p:not(.eyebrow) {
+    max-width: 520px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.promo-quote-form {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 55px 4.4vw 70px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.promo-quote-form label {
+    display: grid;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.promo-quote-form input,
+.promo-quote-form select,
+.promo-quote-form textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #151619;
+    color: var(--cream);
+    padding: 13px;
+}
+
+.promo-quote-form .full {
+    grid-column: 1 / -1;
+}
+
+.promo-quote-form .form-notice {
+    margin: 0;
+    color: var(--sand);
+    align-self: center;
+}
+
+@media (max-width: 760px) {
+    #portafolio .masonry {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 125px;
+    }
+
+    #portafolio .portfolio-item:first-child {
+        grid-column: 1;
+        grid-row: span 2;
+    }
+
+    #portafolio .portfolio-item:nth-child(2),
+    #portafolio .portfolio-item:nth-child(3) {
+        grid-column: 2;
+        grid-row: span 1;
+    }
+
+    #portafolio .portfolio-item:nth-child(n+4) {
+        grid-column: span 1;
+        grid-row: span 2;
+    }
+
+    .connected-services .service-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 125px;
+        gap: 4px;
+    }
+
+    .connected-services .service-grid .service-featured {
+        grid-column: 1;
+        grid-row: span 2;
+    }
+
+    .connected-services .service-grid article:nth-child(2),
+    .connected-services .service-grid article:nth-child(3) {
+        grid-column: 2;
+        grid-row: span 1;
+    }
+
+    .connected-services .service-grid article:nth-child(4) {
+        grid-column: span 1;
+        grid-row: span 2;
+    }
+
+    .connected-services .service-grid article:nth-child(5) {
+        grid-column: span 1;
+        grid-row: span 2;
+    }
+
+    .connected-services .service-grid .service-copy {
+        padding: 12px;
+        background: linear-gradient(180deg, transparent 25%, rgba(0,0,0,.84) 100%);
+    }
+
+    .connected-services .service-grid .service-copy h3 {
+        font-size: 23px;
+    }
+
+    .connected-services .service-grid .service-copy p {
+        margin-bottom: 8px;
+        font-size: 9px;
+        line-height: 1.4;
+    }
+
+    .connected-services .service-grid .text-link {
+        font-size: 8px;
+    }
+
+    .promo-banner {
+        min-height: 620px;
+    }
+
+    .promo-gallery {
+        grid-template-columns: repeat(5, 1fr);
+        opacity: .92;
+    }
+
+    .promo-copy {
+        width: 100%;
+        min-height: 100%;
+        padding: 95px 25px 45px;
+        background: linear-gradient(180deg, rgba(17,18,20,.86), rgba(17,18,20,.72) 55%, rgba(17,18,20,.9));
+    }
+
+    .promo-copy h2 {
+        font-size: 48px;
+    }
+
+    .promo-quote-form {
+        grid-template-columns: 1fr;
+        padding: 40px 25px 55px;
+    }
+
+    .promo-quote-form .full {
+        grid-column: auto;
+    }
+}
+
+/* Ajuste fino: la primera tarjeta de Servicios conectados no debe
+   dominar verticalmente la sección. Mantiene el ancho protagonista,
+   pero con una altura visual controlada. */
+.connected-services .service-grid {
+    grid-auto-rows: 145px;
+}
+
+.connected-services .service-grid .service-featured {
+    grid-column: span 2;
+    grid-row: span 2;
+    height: 295px;
+    align-self: start;
+}
+
+.connected-services .service-grid .service-featured .service-image,
+.connected-services .service-grid .service-featured .service-copy {
+    height: 100%;
+}
+
+@media (max-width: 760px) {
+    .connected-services .service-grid {
+        grid-auto-rows: 105px;
+    }
+
+    .connected-services .service-grid .service-featured {
+        height: 214px;
+    }
+}
