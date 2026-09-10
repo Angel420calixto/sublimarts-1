@@ -19,8 +19,6 @@
      */
 
     const SERVICES_PAGE = "servicios.html";
-    // Reemplaza SOLO este valor por tu número real, con código de país y sin + ni espacios.
-    const WHATSAPP_NUMBER = "569XXXXXXXX";
 
 
     // ============================================================
@@ -99,8 +97,6 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-        injectOptimizationStyles();
-
         setupNavigation();
 
         setupPortfolio();
@@ -116,259 +112,9 @@
         setupImages();
 
         setupFooterYear();
+        setupPromoBackdrops();
 
     });
-
-
-    // ============================================================
-    // ESTILOS DINÁMICOS
-    // ============================================================
-
-    function injectOptimizationStyles() {
-
-        if (
-            document.querySelector(
-                "#sublimarts-js-optimizations"
-            )
-        ) {
-            return;
-        }
-
-
-        const style =
-            document.createElement("style");
-
-
-        style.id =
-            "sublimarts-js-optimizations";
-
-
-        style.textContent = `
-
-            /* ==================================================
-               NAV FIJO
-               ================================================== */
-
-            .site-header {
-                position: fixed !important;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 1000;
-                transition:
-                    background-color .25s ease,
-                    backdrop-filter .25s ease,
-                    box-shadow .25s ease;
-            }
-
-            .site-header.sublimarts-scrolled {
-                background: rgba(17, 18, 20, .94);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                box-shadow: 0 8px 30px rgba(0, 0, 0, .18);
-            }
-
-            html {
-                scroll-padding-top: 90px;
-            }
-
-            section[id] {
-                scroll-margin-top: 90px;
-            }
-
-
-            /* ==================================================
-               PORTAFOLIO
-               ================================================== */
-
-            #portafolio .masonry {
-                grid-auto-flow: dense;
-                align-items: stretch;
-            }
-
-            #portafolio .portfolio-item {
-                min-width: 0;
-                min-height: 0;
-            }
-
-            #portafolio .portfolio-item img {
-                object-fit: contain !important;
-                object-position: center !important;
-                background: #101114;
-            }
-
-            #portafolio .portfolio-item:hover img {
-                transform: scale(1.025);
-            }
-
-            #portafolio .portfolio-item span {
-                z-index: 2;
-                opacity: 1;
-                background:
-                    linear-gradient(
-                        180deg,
-                        transparent 28%,
-                        rgba(0, 0, 0, .80) 100%
-                    );
-                justify-content: flex-end;
-            }
-
-
-            /* ==================================================
-               IMÁGENES GENERALES
-               ================================================== */
-
-            .product-image,
-            .product-card-image,
-            .comparison-image,
-            .category-grid a,
-            .service-grid article > img,
-            .about > div:first-child {
-                background: #101114;
-            }
-
-
-            .product-image img,
-            .product-card-image img,
-            .comparison-image img,
-            .category-grid img,
-            .service-grid article > img,
-            .about > div:first-child img {
-                object-fit: contain !important;
-                object-position: center !important;
-            }
-
-
-            /* ==================================================
-               HERO
-               NO SE MODIFICA
-               ================================================== */
-
-            .hero-image img {
-                object-fit: cover !important;
-            }
-
-
-            /* ==================================================
-               COMPARACIÓN
-               ================================================== */
-
-            .comparison-grid article {
-                position: relative;
-            }
-
-            .comparison-image {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .comparison-grid article .comparison-overlay {
-                position: absolute;
-                inset: auto 0 0;
-                z-index: 3;
-                padding: 48px 25px 22px;
-                pointer-events: none;
-                background:
-                    linear-gradient(
-                        180deg,
-                        transparent 0%,
-                        rgba(0, 0, 0, .88) 100%
-                    );
-            }
-
-            .comparison-grid article .comparison-overlay h3 {
-                margin: 0;
-                color: var(--cream);
-                font-size: 34px;
-                line-height: .95;
-            }
-
-            .comparison-grid article .comparison-overlay .eyebrow {
-                margin-bottom: 7px;
-            }
-
-            .comparison-grid article .comparison-overlay ul {
-                margin: 10px 0 0;
-                padding-left: 18px;
-                color: var(--muted);
-                font-size: 11px;
-                line-height: 1.6;
-            }
-
-
-            /* ==================================================
-               MODAL
-               ================================================== */
-
-            .image-modal img {
-                object-fit: contain !important;
-                object-position: center !important;
-            }
-
-            .image-modal > div {
-                max-height: 94vh;
-            }
-
-
-            /* ==================================================
-               FILTROS
-               ================================================== */
-
-            #portafolio .filters {
-                scrollbar-width: thin;
-                scrollbar-color: var(--sand) transparent;
-            }
-
-
-            /* ==================================================
-               MOBILE
-               ================================================== */
-
-            @media (max-width: 760px) {
-
-                .site-header {
-                    position: fixed !important;
-                }
-
-                html {
-                    scroll-padding-top: 78px;
-                }
-
-                section[id] {
-                    scroll-margin-top: 78px;
-                }
-
-                #portafolio .portfolio-item img {
-                    object-fit: contain !important;
-                }
-
-                .comparison-image {
-                    min-height: 220px;
-                }
-
-                .comparison-grid article .comparison-overlay {
-                    padding: 35px 18px 16px;
-                }
-
-                .comparison-grid article .comparison-overlay h3 {
-                    font-size: 28px;
-                }
-
-                .comparison-grid article .comparison-overlay ul {
-                    font-size: 10px;
-                }
-
-                .image-modal img {
-                    max-height: 55vh !important;
-                }
-            }
-        `;
-
-
-        document.head.appendChild(style);
-    }
 
 
     // ============================================================
@@ -1077,9 +823,6 @@
                             modalImage.alt =
                                 alt;
 
-                            modalImage.style.objectFit =
-                                "contain";
-
                         }
 
 
@@ -1129,9 +872,11 @@
 
                         if (modalAction) {
 
-                            modalAction.href =
+                            const destination =
                                 item.dataset.href ||
                                 `${SERVICES_PAGE}?servicio=${encodeURIComponent(title)}`;
+
+                            modalAction.href = destination;
 
                             modalAction.target =
                                 "_self";
@@ -1265,87 +1010,24 @@
     // WHATSAPP
     // ============================================================
 
+    const WHATSAPP_NUMBER = "56982045756";
+
+    function buildWhatsAppUrl(message) {
+        return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
+
     function setupWhatsApp() {
+        document.querySelectorAll(".wa-link").forEach((link) => {
+            if (link.classList.contains("modal-service-link")) return;
 
-        /*
-         * No se modifica el número.
-         *
-         * Se respeta el href/data-message que ya tenga
-         * cada elemento del HTML.
-         */
+            const message =
+                link.dataset.message ||
+                "Hola SublimArts, quiero más información.";
 
-        document
-            .querySelectorAll(
-                ".wa-link"
-            )
-            .forEach(
-                (link) => {
-
-                    if (
-                        link.classList.contains(
-                            "modal-service-link"
-                        )
-                    ) {
-                        return;
-                    }
-
-
-                    const message =
-                        link.dataset.message;
-
-
-                    /*
-                     * Si el HTML ya tiene un enlace válido
-                     * de WhatsApp, no lo destruimos.
-                     */
-
-                    if (
-                        link.href &&
-                        link.href.includes(
-                            "wa.me"
-                        )
-                    ) {
-
-                        link.target =
-                            "_blank";
-
-                        link.rel =
-                            "noopener noreferrer";
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Si no tiene wa.me, se conserva
-                     * el href existente.
-                     */
-
-                    if (
-                        link.getAttribute(
-                            "href"
-                        ) ===
-                        "#contacto"
-                    ) {
-
-                        /*
-                         * No inventamos el número.
-                         *
-                         * El mensaje queda disponible
-                         * mediante data-message para
-                         * el sistema existente.
-                         */
-
-                        link.dataset.message =
-                            message ||
-                            "Hola SublimArts, quiero más información.";
-
-                    }
-
-                }
-            );
-
+            link.href = buildWhatsAppUrl(message);
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+        });
     }
 
 
@@ -1363,54 +1045,47 @@
             const data = new FormData(form);
             const name = String(data.get("name") || "").trim();
             const email = String(data.get("email") || "").trim();
-            const service = String(data.get("service") || "un servicio").trim();
-            const date = String(data.get("date") || "por definir").trim();
-            const message = String(data.get("message") || "").trim();
-            const image = data.get("image");
-
             const notice = document.querySelector("#form-notice");
             const validEmail = /^\S+@\S+\.\S+$/.test(email);
 
             if (name.length < 2 || !validEmail) {
-                if (notice) {
-                    notice.textContent = "Revisa tu nombre y correo para continuar.";
-                }
+                if (notice) notice.textContent = "Revisa tu nombre y correo para continuar.";
                 return;
             }
 
-            if (!WHATSAPP_NUMBER || WHATSAPP_NUMBER.includes("X")) {
-                if (notice) {
-                    notice.textContent =
-                        "Configura WHATSAPP_NUMBER en index.js antes de enviar.";
-                }
-                return;
-            }
-
-            const imageName =
-                image instanceof File && image.name
-                    ? image.name
-                    : "No se adjuntó imagen";
+            const service = data.get("service") || "un servicio";
+            const date = data.get("date") || "por definir";
+            const message = String(data.get("message") || "").trim();
+            const attachment = data.get("attachment");
+            const fileName = attachment instanceof File && attachment.name
+                ? attachment.name
+                : "No se adjuntó fotografía";
 
             const whatsappMessage =
-                `Hola SublimArts, soy ${name}.%0A` +
-                `Correo: ${email}%0A` +
-                `Quiero cotizar: ${service}.%0A` +
-                `Fecha aproximada: ${date}.%0A` +
-                `Imagen de referencia: ${imageName}.%0A` +
-                `${message ? `Mensaje: ${message}%0A` : ""}` +
-                `%0AEnviaré la imagen de referencia en este mismo chat.`;
+                `Hola SublimArts, soy ${name}.
+` +
+                `Correo: ${email}.
+` +
+                `Quiero cotizar: ${service}.
+` +
+                `Fecha aproximada: ${date}.
+` +
+                `Fotografía seleccionada: ${fileName}.
+` +
+                `${message ? `Mensaje: ${message}` : ""}`;
 
             if (notice) {
-                notice.textContent =
-                    image instanceof File && image.name
-                        ? "Abriendo WhatsApp. Adjunta la imagen seleccionada en el chat antes de enviar."
-                        : "Abriendo WhatsApp.";
+                notice.textContent = "Abriendo WhatsApp con tu solicitud...";
             }
 
-            const url = `https://wa.me/${+56982045756}?text=${whatsappMessage}`;
-            window.open(url, "_blank", "noopener,noreferrer");
+            form.dataset.whatsappMessage = whatsappMessage;
+
+            // wa.me no puede adjuntar automáticamente un archivo local.
+            // El nombre queda informado y el usuario puede adjuntarlo en WhatsApp.
+            window.open(buildWhatsAppUrl(whatsappMessage), "_blank", "noopener,noreferrer");
         });
     }
+
 
     // ============================================================
     // COMPARACIÓN
@@ -1436,58 +1111,10 @@
     // ============================================================
 
     function setupImages() {
-
-        const images =
-            document.querySelectorAll(
-                "img"
-            );
-
-
-        images.forEach(
-            (image) => {
-
-                /*
-                 * El Hero se mantiene intacto.
-                 */
-
-                if (
-                    image.closest(
-                        ".hero"
-                    )
-                ) {
-                    return;
-                }
-
-
-                image.decoding =
-                    "async";
-
-
-                if (
-                    !image.loading
-                ) {
-
-                    image.loading =
-                        "lazy";
-
-                }
-
-
-                /*
-                 * Todas las imágenes fuera del Hero
-                 * conservan su relación de aspecto.
-                 */
-
-                image.style.objectFit =
-                    "contain";
-
-
-                image.style.objectPosition =
-                    "center";
-
-            }
-        );
-
+        document.querySelectorAll("img").forEach((image) => {
+            image.decoding = "async";
+            if (!image.loading) image.loading = "lazy";
+        });
     }
 
 
@@ -1514,3 +1141,30 @@
     }
 
 })();
+
+/* ============================================================
+   PROMO IMAGE BACKDROPS
+   Uses the same source image as the foreground so contain never
+   leaves a visually empty rectangle.
+   ============================================================ */
+function setupPromoBackdrops() {
+    document.querySelectorAll(".promo-gallery figure").forEach((figure) => {
+        const image = figure.querySelector("img");
+        if (!image) return;
+
+        const apply = () => {
+            if (image.currentSrc || image.src) {
+                figure.style.setProperty(
+                    "--promo-bg",
+                    `url("${image.currentSrc || image.src}")`
+                );
+            }
+        };
+
+        if (image.complete) {
+            apply();
+        } else {
+            image.addEventListener("load", apply, { once: true });
+        }
+    });
+}
