@@ -865,49 +865,6 @@ h3 {
 }
 
 /* ============================================================
-   FOOTER
-   ============================================================ */
-
-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 34px 5vw;
-    color: var(--muted);
-    font-size: 10px;
-}
-
-footer div {
-    display: flex;
-    gap: 20px;
-}
-
-footer a:hover {
-    color: var(--sand);
-}
-
-/* ============================================================
-   WHATSAPP
-   ============================================================ */
-
-.floating-whatsapp {
-    position: fixed;
-    right: 21px;
-    bottom: 21px;
-    z-index: 20;
-    width: 49px;
-    height: 49px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: #25d366;
-    color: #112719;
-    font-size: 26px;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
-}
-
-/* ============================================================
    MODAL
    ============================================================ */
 
@@ -1823,3 +1780,67 @@ section[id] {
         height: 214px;
     }
 }
+
+
+/* ============================================================
+   SUBLIMARTS · AJUSTES SOLICITADOS
+   ============================================================ */
+
+/* Las imágenes ocupan visualmente todo su contenedor sin recortarse ni deformarse.
+   No se altera la geometría de los contenedores. */
+.portfolio-item img,
+.product-image img,
+.about > div:first-child img,
+.comparison-image img,
+.product-card-image img,
+.category-grid img,
+.connected-services .service-image img,
+.promo-gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+    object-position: center center !important;
+}
+
+/* Mantener el tamaño/forma de los contenedores */
+.portfolio-item,
+.product-image,
+.about > div:first-child,
+.comparison-image,
+.product-card-image,
+.category-grid a,
+.connected-services .service-grid article,
+.connected-services .service-image,
+.promo-gallery figure {
+    overflow: hidden;
+}
+
+/* El enlace de la imagen del servicio ocupa exactamente su contenedor */
+.connected-services .service-image-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+}
+
+/* El copy queda por encima del enlace de imagen */
+.connected-services .service-copy {
+    z-index: 3;
+}
+
+/* Primera tarjeta: protagonista, pero menos exagerada */
+.connected-services .service-grid {
+    grid-auto-rows: 132px;
+}
+.connected-services .service-grid .service-featured {
+    grid-column: span 2;
+    grid-row: span 2;
+    height: 267px;
+}
+
+/* Evita que las otras imágenes parezcan diminutas: aprovechan el área disponible
+   manteniendo la proporción original. */
+.connected-services .service-grid article:not(.service-featured) .service-image img {
+    padding: 0;
+}
+

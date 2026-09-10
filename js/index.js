@@ -19,6 +19,8 @@
      */
 
     const SERVICES_PAGE = "servicios.html";
+    // Reemplaza SOLO este valor por tu número real, con código de país y sin + ni espacios.
+    const WHATSAPP_NUMBER = "569XXXXXXXX";
 
 
     // ============================================================
@@ -1128,9 +1130,8 @@
                         if (modalAction) {
 
                             modalAction.href =
-                                `${SERVICES_PAGE}?servicio=${encodeURIComponent(
-                                    title
-                                )}`;
+                                item.dataset.href ||
+                                `${SERVICES_PAGE}?servicio=${encodeURIComponent(title)}`;
 
                             modalAction.target =
                                 "_self";
@@ -1353,133 +1354,63 @@
     // ============================================================
 
     function setupQuoteForm() {
+        const form = document.querySelector("#quote-form");
+        if (!form) return;
 
-        const form =
-            document.querySelector(
-                "#quote-form"
-            );
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
 
+            const data = new FormData(form);
+            const name = String(data.get("name") || "").trim();
+            const email = String(data.get("email") || "").trim();
+            const service = String(data.get("service") || "un servicio").trim();
+            const date = String(data.get("date") || "por definir").trim();
+            const message = String(data.get("message") || "").trim();
+            const image = data.get("image");
 
-        if (!form) {
-            return;
-        }
+            const notice = document.querySelector("#form-notice");
+            const validEmail = /^\S+@\S+\.\S+$/.test(email);
 
-
-        form.addEventListener(
-            "submit",
-            (event) => {
-
-                event.preventDefault();
-
-
-                const data =
-                    new FormData(
-                        form
-                    );
-
-
-                const name =
-                    String(
-                        data.get(
-                            "name"
-                        ) ||
-                        ""
-                    ).trim();
-
-
-                const email =
-                    String(
-                        data.get(
-                            "email"
-                        ) ||
-                        ""
-                    ).trim();
-
-
-                const notice =
-                    document.querySelector(
-                        "#form-notice"
-                    );
-
-
-                const validEmail =
-                    /^\S+@\S+\.\S+$/.test(
-                        email
-                    );
-
-
-                if (
-                    name.length < 2 ||
-                    !validEmail
-                ) {
-
-                    if (notice) {
-
-                        notice.textContent =
-                            "Revisa tu nombre y correo para continuar.";
-
-                    }
-
-                    return;
-                }
-
-
-                const service =
-                    data.get(
-                        "service"
-                    ) ||
-                    "un servicio";
-
-
-                const date =
-                    data.get(
-                        "date"
-                    ) ||
-                    "por definir";
-
-
-                const message =
-                    String(
-                        data.get(
-                            "message"
-                        ) ||
-                        ""
-                    ).trim();
-
-
-                const whatsappMessage =
-                    `Hola SublimArts, soy ${name}. ` +
-                    `Quiero cotizar ${service}. ` +
-                    `Fecha aproximada: ${date}. ` +
-                    `${message}`;
-
-
+            if (name.length < 2 || !validEmail) {
                 if (notice) {
-
-                    notice.textContent =
-                        "Tu solicitud está lista para enviar.";
-
+                    notice.textContent = "Revisa tu nombre y correo para continuar.";
                 }
-
-
-                /*
-                 * No se genera un wa.me nuevo aquí porque
-                 * el número real debe permanecer en la
-                 * configuración existente del proyecto.
-                 *
-                 * Si tu formulario original ya tenía su
-                 * integración de WhatsApp, esta función
-                 * conserva su estructura.
-                 */
-
-                form.dataset.whatsappMessage =
-                    whatsappMessage;
-
+                return;
             }
-        );
 
+            if (!WHATSAPP_NUMBER || WHATSAPP_NUMBER.includes("X")) {
+                if (notice) {
+                    notice.textContent =
+                        "Configura WHATSAPP_NUMBER en index.js antes de enviar.";
+                }
+                return;
+            }
+
+            const imageName =
+                image instanceof File && image.name
+                    ? image.name
+                    : "No se adjuntó imagen";
+
+            const whatsappMessage =
+                `Hola SublimArts, soy ${name}.%0A` +
+                `Correo: ${email}%0A` +
+                `Quiero cotizar: ${service}.%0A` +
+                `Fecha aproximada: ${date}.%0A` +
+                `Imagen de referencia: ${imageName}.%0A` +
+                `${message ? `Mensaje: ${message}%0A` : ""}` +
+                `%0AEnviaré la imagen de referencia en este mismo chat.`;
+
+            if (notice) {
+                notice.textContent =
+                    image instanceof File && image.name
+                        ? "Abriendo WhatsApp. Adjunta la imagen seleccionada en el chat antes de enviar."
+                        : "Abriendo WhatsApp.";
+            }
+
+            const url = `https://wa.me/${+56982045756}?text=${whatsappMessage}`;
+            window.open(url, "_blank", "noopener,noreferrer");
+        });
     }
-
 
     // ============================================================
     // COMPARACIÓN
