@@ -1,403 +1,1315 @@
-/* =========================================================
-   AUTOS Y MOTOS — autosMotos.js
-   Visor de 1 producto con hasta 4 perspectivas
-   ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
-    const grid = document.getElementById("grid-catalogo");
-    const buscador = document.getElementById("buscadorCatalogo");
-    const orden = document.getElementById("ordenCatalogo");
-    const vacio = document.getElementById("catalogoVacio");
-    const tabs = document.querySelectorAll(".tab-categoria");
-
     /* =========================================================
-       ELEMENTOS DEL VISOR
-       ========================================================= */
+       CONFIGURACIÓN
+    ========================================================= */
 
-    const visor = document.getElementById("visorCatalogo");
-    const visorImagen = document.getElementById("visorImagen");
-    const visorTitulo = document.getElementById("visorTitulo");
-    const visorContador = document.getElementById("visorContador");
-    const visorAnterior = document.getElementById("visorAnterior");
-    const visorSiguiente = document.getElementById("visorSiguiente");
-    const visorCerrar = document.getElementById("visorCerrar");
-
-    const visorVerDetalles =
-        document.getElementById("visorVerDetalles");
-
-    const visorDetalles =
-        document.getElementById("visorDetalles");
-
-    const visorDetallesTitulo =
-        document.getElementById("visorDetallesTitulo");
-
-    const visorDetallesDescripcion =
-        document.getElementById("visorDetallesDescripcion");
-
-    const visorDetallesCategoria =
-        document.getElementById("visorDetallesCategoria");
-
-    const visorEncargar =
-        document.getElementById("visorEncargar");
-
-    const visorMedidas =
-        document.getElementById("visorMedidas");
-
-    /* =========================================================
-       ESTADO
-       ========================================================= */
-
-    let filtroActual = "todo";
-    let indiceActual = 0;
-    let vistasActuales = [];
-    let tarjetaActual = null;
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    /*
-     * REEMPLAZA ESTE NÚMERO POR EL WHATSAPP REAL DE SUBLIMARTS.
-     * Formato internacional, sin +, espacios ni guiones.
-     */
     const WHATSAPP = "56900000000";
 
 
     /* =========================================================
-       OBTENER LAS 4 VISTAS DE UN VEHÍCULO
-       =========================================================
+       ELEMENTOS GENERALES
+    ========================================================= */
 
-       El HTML utiliza:
+    const body = document.body;
 
-       data-view-1
-       data-view-2
-       data-view-3
-       data-view-4
+    const grid =
+        document.querySelector(".catalogo-grid") ||
+        document.getElementById("grid-catalogo");
 
-       NO usamos dataset.view1 porque el nombre real del
-       atributo contiene guiones.
-    */
+    const barraFiltros =
+        document.querySelector(".barra-filtros");
 
-    function obtenerVistas(tarjeta) {
+    const buscador =
+        document.querySelector(
+            ".barra-filtros input[type='search']"
+        ) ||
+        document.querySelector(
+            ".barra-filtros input[type='text']"
+        ) ||
+        document.getElementById("buscadorCatalogo");
 
-        const vistas = [];
+    const orden =
+        document.querySelector(
+            ".barra-filtros select"
+        ) ||
+        document.getElementById("ordenCatalogo");
 
-        for (let i = 1; i <= 4; i++) {
+    const tabs = Array.from(
+        document.querySelectorAll(
+            ".tab-categoria, .filtro-btn, [data-filtro]"
+        )
+    );
 
-            const url =
-                (tarjeta.getAttribute(`data-view-${i}`) || "")
-                .trim();
-
-            if (url) {
-                vistas.push(url);
-            }
-        }
-
-        /*
-         * Si por alguna razón la tarjeta no tiene data-view,
-         * utilizamos su imagen principal.
-         */
-        if (vistas.length === 0) {
-
-            const imagen =
-                tarjeta.querySelector(
-                    ".tarjeta-cuadro-media img"
-                );
-
-            const src =
-                imagen
-                    ? (imagen.getAttribute("src") || "").trim()
-                    : "";
-
-            if (src) {
-                vistas.push(src);
-            }
-        }
-
-        return vistas;
-    }
+    const vacio =
+        document.querySelector(".catalogo-vacio") ||
+        document.querySelector(".sin-resultados") ||
+        document.querySelector(".grid-catalogo-vacio");
 
 
     /* =========================================================
-       DATOS DEL PRODUCTO
-       ========================================================= */
+       MENÚ MOBILE
+    ========================================================= */
 
-    function obtenerDatosTarjeta(tarjeta) {
+    const sidebar =
+        document.getElementById("sidebar");
 
-        const imagen =
-            tarjeta.querySelector(
-                ".tarjeta-cuadro-media img"
+    const sidebarToggle =
+        document.getElementById("sidebarToggle");
+
+    const sidebarOverlay =
+        document.getElementById("sidebarOverlay");
+
+
+    function actualizarEstadoMenuMobile(abierto) {
+
+        if (!sidebar || !sidebarToggle) {
+            return;
+        }
+
+        const mobile =
+            window.innerWidth <= 900;
+
+        sidebar.classList.toggle(
+            "activo",
+            abierto
+        );
+
+        sidebar.setAttribute(
+            "aria-hidden",
+            mobile
+                ? String(!abierto)
+                : "false"
+        );
+
+        sidebarToggle.setAttribute(
+            "aria-expanded",
+            String(abierto)
+        );
+
+        sidebarToggle.setAttribute(
+            "aria-label",
+            abierto
+                ? "Cerrar menú"
+                : "Abrir menú"
+        );
+
+        if (sidebarOverlay) {
+
+            sidebarOverlay.classList.toggle(
+                "activo",
+                abierto
             );
 
-        const titulo =
-            (
-                tarjeta.dataset.nombre ||
-                tarjeta.querySelector("h3")?.textContent ||
-                "Cuadro"
-            ).trim();
+            sidebarOverlay.setAttribute(
+                "aria-hidden",
+                String(!abierto)
+            );
+        }
 
-        const categoria =
-            (
-                tarjeta.dataset.categoria ||
-                tarjeta.dataset.vehiculo ||
-                "—"
-            ).trim();
+        const icono =
+            sidebarToggle.querySelector("i");
 
-        const tamano =
-            (tarjeta.dataset.tamano || "").trim();
+        if (icono) {
 
-        const descripcion =
-            tarjeta.dataset.descripcion ||
-            tarjeta.querySelector(".tarjeta-meta")?.textContent ||
-            "Cuadro personalizado en alta calidad.";
+            icono.classList.toggle(
+                "fa-bars",
+                !abierto
+            );
 
-        return {
-            titulo,
-            categoria,
-            tamano,
-            descripcion,
-            alt: imagen?.getAttribute("alt") || titulo
-        };
+            icono.classList.toggle(
+                "fa-xmark",
+                abierto
+            );
+
+            icono.classList.toggle(
+                "fa-times",
+                abierto
+            );
+        }
+
+        body.classList.toggle(
+            "menu-mobile-abierto",
+            abierto && mobile
+        );
+    }
+
+
+    function cerrarMenuMobile() {
+        actualizarEstadoMenuMobile(false);
+    }
+
+
+    if (sidebarToggle) {
+
+        sidebarToggle.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const abierto =
+                    sidebar?.classList.contains("activo") ||
+                    false;
+
+                actualizarEstadoMenuMobile(
+                    !abierto
+                );
+            }
+        );
+    }
+
+
+    if (sidebarOverlay) {
+
+        sidebarOverlay.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                cerrarMenuMobile();
+            }
+        );
+    }
+
+
+    if (sidebar) {
+
+        sidebar
+            .querySelectorAll("a")
+            .forEach(enlace => {
+
+                enlace.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            window.innerWidth <= 900
+                        ) {
+                            cerrarMenuMobile();
+                        }
+                    }
+                );
+            });
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape" &&
+                sidebar?.classList.contains("activo")
+            ) {
+
+                cerrarMenuMobile();
+
+                sidebarToggle?.focus();
+            }
+        }
+    );
+
+
+    /* =========================================================
+       FILTROS
+    ========================================================= */
+
+    let filtroActual = "todos";
+
+
+    function normalizar(valor) {
+
+        return String(valor || "")
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            );
+    }
+
+
+    function obtenerTarjetas() {
+
+        if (!grid) {
+            return [];
+        }
+
+        return Array.from(
+            grid.querySelectorAll(
+                ".tarjeta-cuadro"
+            )
+        );
+    }
+
+
+    function obtenerCategoria(tarjeta) {
+
+        return normalizar(
+            tarjeta.dataset.categoria ||
+            tarjeta.dataset.category ||
+            tarjeta.dataset.vehiculo ||
+            ""
+        );
+    }
+
+
+    function obtenerNombre(tarjeta) {
+
+        return normalizar(
+            tarjeta.dataset.nombre ||
+            tarjeta.querySelector(
+                "h2, h3, h4"
+            )?.textContent ||
+            ""
+        );
+    }
+
+
+    function aplicarFiltros() {
+
+        const tarjetas =
+            obtenerTarjetas();
+
+        const textoBusqueda =
+            normalizar(
+                buscador?.value || ""
+            );
+
+        const filtro =
+            normalizar(
+                filtroActual
+            );
+
+        let visibles = 0;
+
+
+        tarjetas.forEach(tarjeta => {
+
+            const categoria =
+                obtenerCategoria(
+                    tarjeta
+                );
+
+            const nombre =
+                obtenerNombre(
+                    tarjeta
+                );
+
+            const contenido =
+                normalizar(
+                    tarjeta.textContent
+                );
+
+
+            const coincideCategoria =
+                filtro === "todos" ||
+                filtro === "todo" ||
+                !filtro ||
+                categoria === filtro ||
+                categoria.includes(filtro);
+
+
+            const coincideBusqueda =
+                !textoBusqueda ||
+                nombre.includes(
+                    textoBusqueda
+                ) ||
+                categoria.includes(
+                    textoBusqueda
+                ) ||
+                contenido.includes(
+                    textoBusqueda
+                );
+
+
+            const mostrar =
+                coincideCategoria &&
+                coincideBusqueda;
+
+
+            tarjeta.hidden =
+                !mostrar;
+
+
+            tarjeta.classList.toggle(
+                "oculto-por-filtro",
+                !mostrar
+            );
+
+            tarjeta.classList.toggle(
+                "tarjeta-filtrada",
+                !mostrar
+            );
+
+
+            if (mostrar) {
+                visibles++;
+            }
+        });
+
+
+        if (vacio) {
+
+            vacio.hidden =
+                visibles > 0;
+        }
+    }
+
+
+    tabs.forEach(tab => {
+
+        tab.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                const valor =
+                    tab.dataset.filtro ||
+                    tab.dataset.categoria ||
+                    tab.textContent ||
+                    "todos";
+
+
+                filtroActual =
+                    normalizar(
+                        valor
+                    );
+
+
+                if (
+                    filtroActual === "todo" ||
+                    filtroActual === "todos" ||
+                    !filtroActual
+                ) {
+
+                    filtroActual =
+                        "todos";
+                }
+
+
+                tabs.forEach(item => {
+
+                    const activo =
+                        item === tab;
+
+                    item.classList.toggle(
+                        "activo",
+                        activo
+                    );
+
+                    item.classList.toggle(
+                        "active",
+                        activo
+                    );
+
+                    item.setAttribute(
+                        "aria-selected",
+                        activo
+                            ? "true"
+                            : "false"
+                    );
+                });
+
+
+                aplicarFiltros();
+            }
+        );
+    });
+
+
+    if (buscador) {
+
+        buscador.addEventListener(
+            "input",
+            aplicarFiltros
+        );
     }
 
 
     /* =========================================================
-       ACTUALIZAR IMAGEN DEL VISOR
-       ========================================================= */
+       ORDENAMIENTO
+    ========================================================= */
 
-    function actualizarVisor() {
+    if (orden) {
 
-        if (!visorImagen || !vistasActuales.length) {
+        orden.addEventListener(
+            "change",
+            () => {
+
+                if (!grid) {
+                    return;
+                }
+
+                const tarjetas =
+                    obtenerTarjetas();
+
+                const valor =
+                    normalizar(
+                        orden.value
+                    );
+
+
+                if (
+                    valor === "az" ||
+                    valor === "nombre-az"
+                ) {
+
+                    tarjetas.sort(
+                        (a, b) =>
+                            obtenerNombre(a)
+                                .localeCompare(
+                                    obtenerNombre(b),
+                                    "es"
+                                )
+                    );
+
+                } else if (
+                    valor === "za" ||
+                    valor === "nombre-za"
+                ) {
+
+                    tarjetas.sort(
+                        (a, b) =>
+                            obtenerNombre(b)
+                                .localeCompare(
+                                    obtenerNombre(a),
+                                    "es"
+                                )
+                    );
+                }
+
+
+                tarjetas.forEach(
+                    tarjeta => {
+                        grid.appendChild(
+                            tarjeta
+                        );
+                    }
+                );
+
+
+                aplicarFiltros();
+
+                recalcularBarraFiltros();
+            }
+        );
+    }
+
+
+    /* =========================================================
+       BARRA DE FILTROS
+       
+       IMPORTANTE:
+       La barra NO queda simplemente sticky.
+       
+       Se conserva en su posición original y, al llegar al
+       límite superior de la pantalla, pasa a fixed mediante
+       la clase .filtro-fijo.
+       
+       Así queda SIEMPRE visible durante el scroll.
+    ========================================================= */
+
+    let alturaBarra = 0;
+    let posicionOriginalBarra = 0;
+    let barraPlaceholder = null;
+    let barraEstaFija = false;
+
+
+    function obtenerAlturaCabeceraMobile() {
+
+        if (window.innerWidth > 900) {
+            return 0;
+        }
+
+        const topbar =
+            document.getElementById(
+                "mobileTopbar"
+            );
+
+        if (topbar) {
+
+            const altura =
+                topbar.getBoundingClientRect().height;
+
+            if (altura > 0) {
+                return Math.ceil(altura);
+            }
+        }
+
+        return window.innerWidth <= 480
+            ? 68
+            : 72;
+    }
+
+
+    function crearPlaceholderBarra() {
+
+        if (
+            !barraFiltros ||
+            barraPlaceholder
+        ) {
             return;
         }
 
-        const url =
-            vistasActuales[indiceActual];
+        barraPlaceholder =
+            document.createElement("div");
 
-        visorImagen.src = url;
+        barraPlaceholder.className =
+            "barra-filtros-placeholder";
 
-        const datos =
-            tarjetaActual
-                ? obtenerDatosTarjeta(tarjetaActual)
-                : null;
+        barraPlaceholder.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-        visorImagen.alt =
-            `${datos ? datos.titulo : "Cuadro"} — vista ${indiceActual + 1}`;
+        barraFiltros.parentNode?.insertBefore(
+            barraPlaceholder,
+            barraFiltros
+        );
+    }
 
-        if (visorTitulo && datos) {
-            visorTitulo.textContent =
-                datos.titulo;
+
+    function medirBarraFiltros() {
+
+        if (!barraFiltros) {
+            return;
         }
 
-        if (visorContador) {
+        const rect =
+            barraFiltros.getBoundingClientRect();
 
-            if (vistasActuales.length > 1) {
+        alturaBarra =
+            Math.ceil(rect.height);
 
-                visorContador.textContent =
-                    `Vista ${indiceActual + 1} de ${vistasActuales.length}`;
+        const estilos =
+            window.getComputedStyle(
+                barraFiltros
+            );
 
-            } else {
+        const margenSuperior =
+            parseFloat(
+                estilos.marginTop
+            ) || 0;
 
-                visorContador.textContent =
-                    "1 vista";
+        const margenInferior =
+            parseFloat(
+                estilos.marginBottom
+            ) || 0;
+
+
+        if (barraPlaceholder) {
+
+            barraPlaceholder.style.height =
+                `${
+                    alturaBarra +
+                    margenSuperior +
+                    margenInferior
+                }px`;
+        }
+    }
+
+
+    function calcularPosicionOriginalBarra() {
+
+        if (!barraFiltros) {
+            return;
+        }
+
+        const estabaFija =
+            barraEstaFija;
+
+
+        if (estabaFija) {
+
+            barraFiltros.classList.remove(
+                "filtro-fijo"
+            );
+
+            if (barraPlaceholder) {
+
+                barraPlaceholder.classList.remove(
+                    "activo"
+                );
             }
         }
+
 
         /*
-         * Si solamente existe una imagen,
-         * ocultamos/desactivamos las flechas.
+         * Medimos la posición REAL dentro del documento.
          */
-        if (visorAnterior) {
+        const rect =
+            barraFiltros.getBoundingClientRect();
 
-            visorAnterior.hidden =
-                vistasActuales.length <= 1;
 
-            visorAnterior.disabled =
-                vistasActuales.length <= 1;
-        }
+        posicionOriginalBarra =
+            rect.top +
+            window.scrollY;
 
-        if (visorSiguiente) {
 
-            visorSiguiente.hidden =
-                vistasActuales.length <= 1;
+        medirBarraFiltros();
 
-            visorSiguiente.disabled =
-                vistasActuales.length <= 1;
+
+        /*
+         * Restauramos inmediatamente el estado fijo
+         * si estaba activo.
+         */
+        if (estabaFija) {
+
+            barraFiltros.classList.add(
+                "filtro-fijo"
+            );
+
+            if (barraPlaceholder) {
+
+                barraPlaceholder.classList.add(
+                    "activo"
+                );
+            }
         }
     }
 
 
-    /* =========================================================
-       ACTUALIZAR DETALLES
-       ========================================================= */
+    function fijarBarraFiltros() {
 
-    function actualizarDetalles() {
-
-        if (!tarjetaActual) {
+        if (
+            !barraFiltros ||
+            barraEstaFija
+        ) {
             return;
         }
 
-        const datos =
-            obtenerDatosTarjeta(tarjetaActual);
 
-        if (visorDetallesTitulo) {
+        crearPlaceholderBarra();
 
-            visorDetallesTitulo.textContent =
-                datos.titulo;
+        medirBarraFiltros();
+
+
+        barraFiltros.classList.add(
+            "filtro-fijo"
+        );
+
+
+        if (barraPlaceholder) {
+
+            barraPlaceholder.style.height =
+                `${alturaBarra}px`;
+
+            barraPlaceholder.classList.add(
+                "activo"
+            );
         }
 
-        if (visorDetallesDescripcion) {
 
-            visorDetallesDescripcion.textContent =
-                datos.descripcion;
+        barraEstaFija = true;
+    }
+
+
+    function liberarBarraFiltros() {
+
+        if (
+            !barraFiltros ||
+            !barraEstaFija
+        ) {
+            return;
         }
 
-        if (visorDetallesCategoria) {
 
-            if (datos.categoria === "autos") {
+        barraFiltros.classList.remove(
+            "filtro-fijo"
+        );
 
-                visorDetallesCategoria.textContent =
-                    "Auto";
 
-            } else if (datos.categoria === "motos") {
+        if (barraPlaceholder) {
 
-                visorDetallesCategoria.textContent =
-                    "Moto";
+            barraPlaceholder.classList.remove(
+                "activo"
+            );
 
-            } else {
+            barraPlaceholder.style.height =
+                "";
+        }
 
-                visorDetallesCategoria.textContent =
-                    datos.categoria;
+
+        barraEstaFija = false;
+    }
+
+
+    function actualizarBarraFiltros() {
+
+        if (!barraFiltros) {
+            return;
+        }
+
+
+        crearPlaceholderBarra();
+
+
+        /*
+         * En mobile el filtro queda debajo del topbar.
+         * En PC queda directamente en la parte superior.
+         */
+        const alturaCabecera =
+            obtenerAlturaCabeceraMobile();
+
+
+        /*
+         * Cuando el scroll alcanza la posición original
+         * menos la altura del encabezado, la barra pasa
+         * a fixed.
+         */
+        const umbral =
+            posicionOriginalBarra -
+            alturaCabecera;
+
+
+        if (
+            window.scrollY >= umbral
+        ) {
+
+            fijarBarraFiltros();
+
+        } else {
+
+            liberarBarraFiltros();
+        }
+
+
+        if (barraEstaFija) {
+
+            medirBarraFiltros();
+        }
+    }
+
+
+    function recalcularBarraFiltros() {
+
+        if (!barraFiltros) {
+            return;
+        }
+
+
+        crearPlaceholderBarra();
+
+
+        /*
+         * Primero obtenemos nuevamente su posición original.
+         */
+        calcularPosicionOriginalBarra();
+
+
+        /*
+         * Después determinamos si debe estar fija.
+         */
+        actualizarBarraFiltros();
+    }
+
+
+    if (barraFiltros) {
+
+        crearPlaceholderBarra();
+
+
+        /*
+         * Esperamos a que el navegador haya terminado
+         * de calcular imágenes, fuentes y layout.
+         */
+        requestAnimationFrame(() => {
+
+            recalcularBarraFiltros();
+        });
+
+
+        window.addEventListener(
+            "scroll",
+            actualizarBarraFiltros,
+            {
+                passive: true
             }
-        }
+        );
 
-        if (visorMedidas) {
 
-            const botones =
-                visorMedidas.querySelectorAll(
-                    "[data-medida]"
+        window.addEventListener(
+            "resize",
+            recalcularBarraFiltros
+        );
+
+
+        window.addEventListener(
+            "orientationchange",
+            () => {
+
+                window.setTimeout(
+                    recalcularBarraFiltros,
+                    150
                 );
+            },
+            {
+                passive: true
+            }
+        );
 
-            botones.forEach(boton => {
 
-                boton.classList.toggle(
-                    "activo",
-                    boton.dataset.medida === datos.tamano
-                );
+        /*
+         * Las imágenes del catálogo pueden modificar
+         * el layout después de cargar.
+         */
+        window.addEventListener(
+            "load",
+            () => {
 
-            });
-        }
+                recalcularBarraFiltros();
+            }
+        );
     }
 
 
     /* =========================================================
        WHATSAPP
-       ========================================================= */
+    ========================================================= */
 
-    function actualizarWhatsApp() {
+    function generarWhatsApp(
+        servicio = "general"
+    ) {
 
-        if (!visorEncargar || !tarjetaActual) {
+        const mensajes = {
+
+            general:
+                "Hola SublimArts, quisiera hacer una consulta.",
+
+            "Autos y Motos":
+                "Hola SublimArts, quisiera cotizar un cuadro de Autos y Motos.",
+
+            "Tu foto, tu cuadro":
+                "Hola SublimArts, quisiera consultar por un cuadro personalizado con mi propia foto.",
+
+            "Cuadros personalizados":
+                "Hola SublimArts, quisiera consultar por un cuadro personalizado."
+        };
+
+
+        const mensaje =
+            mensajes[servicio] ||
+            `Hola SublimArts, quisiera consultar por ${servicio}.`;
+
+
+        return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+    }
+
+
+    document
+        .querySelectorAll(".boton-whatsapp")
+        .forEach(boton => {
+
+            boton.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    const servicio =
+                        boton.dataset.servicio ||
+                        "general";
+
+                    const url =
+                        generarWhatsApp(
+                            servicio
+                        );
+
+
+                    window.open(
+                        url,
+                        "_blank",
+                        "noopener,noreferrer"
+                    );
+                }
+            );
+        });
+
+
+    /* =========================================================
+       VISOR / MODAL
+    ========================================================= */
+
+    const visor =
+        document.getElementById(
+            "visorCatalogo"
+        ) ||
+        document.getElementById(
+            "visorImagen"
+        )?.closest(
+            ".visor-catalogo"
+        );
+
+
+    const visorImg =
+        document.getElementById(
+            "visorImagen"
+        ) ||
+        visor?.querySelector(
+            "img"
+        );
+
+
+    const cerrarVisorBtn =
+        document.getElementById(
+            "visorCerrar"
+        );
+
+
+    const anteriorBtn =
+        document.getElementById(
+            "visorAnterior"
+        );
+
+
+    const siguienteBtn =
+        document.getElementById(
+            "visorSiguiente"
+        );
+
+
+    const visorTitulo =
+        document.getElementById(
+            "visorTitulo"
+        );
+
+
+    const visorContador =
+        document.getElementById(
+            "visorContador"
+        );
+
+
+    const visorVerDetalles =
+        document.getElementById(
+            "visorVerDetalles"
+        );
+
+
+    const visorEncargar =
+        document.getElementById(
+            "visorEncargar"
+        );
+
+
+    const visorDetalles =
+        document.getElementById(
+            "visorDetalles"
+        );
+
+
+    const visorDetallesTitulo =
+        document.getElementById(
+            "visorDetallesTitulo"
+        );
+
+
+    const visorDetallesDescripcion =
+        document.getElementById(
+            "visorDetallesDescripcion"
+        );
+
+
+    const visorDetallesCategoria =
+        document.getElementById(
+            "visorDetallesCategoria"
+        );
+
+
+    const visorMedidas =
+        document.getElementById(
+            "visorMedidas"
+        );
+
+
+    let tarjetaActual = null;
+    let vistasActuales = [];
+    let indiceVista = 0;
+
+
+    function obtenerVistas(tarjeta) {
+
+        const vistas = [];
+
+
+        for (
+            let i = 1;
+            i <= 4;
+            i++
+        ) {
+
+            const vista =
+                tarjeta.getAttribute(
+                    `data-view-${i}`
+                );
+
+
+            if (
+                vista &&
+                vista.trim()
+            ) {
+
+                vistas.push(
+                    vista.trim()
+                );
+            }
+        }
+
+
+        /*
+         * Solo usamos la imagen principal como
+         * respaldo si no existe ninguna data-view.
+         */
+        if (!vistas.length) {
+
+            const img =
+                tarjeta.querySelector(
+                    "img"
+                );
+
+
+            if (img?.src) {
+
+                vistas.push(
+                    img.src
+                );
+            }
+        }
+
+
+        return vistas;
+    }
+
+
+    function obtenerDescripcion(tarjeta) {
+
+        if (!tarjeta) {
+            return "";
+        }
+
+
+        const meta =
+            tarjeta.querySelector(
+                ".tarjeta-meta"
+            )?.textContent?.trim() ||
+            "";
+
+
+        const categoria =
+            tarjeta.dataset.categoria ||
+            tarjeta.dataset.vehiculo ||
+            "";
+
+
+        const nombre =
+            tarjeta.dataset.nombre ||
+            "Cuadro";
+
+
+        return (
+            `${nombre}. ` +
+            `${meta || "Cuadro personalizado en aluminio HD."}`
+        );
+    }
+
+
+    function actualizarEnlaceWhatsAppModal() {
+
+        if (
+            !visorEncargar ||
+            !tarjetaActual
+        ) {
             return;
         }
 
-        const datos =
-            obtenerDatosTarjeta(tarjetaActual);
 
-        const medida =
+        const nombre =
+            tarjetaActual.dataset.nombre ||
+            "este cuadro";
+
+
+        const categoria =
+            tarjetaActual.dataset.categoria ||
+            tarjetaActual.dataset.vehiculo ||
+            "Autos y Motos";
+
+
+        const tamano =
             tarjetaActual.dataset.tamano ||
-            "A definir";
+            "";
 
-        const mensaje =
-            `Hola, quiero cotizar el cuadro "${datos.titulo}". ` +
-            `Tipo: ${datos.categoria}. ` +
-            `Medida: ${medida}. ` +
-            `Me interesa la vista ${indiceActual + 1} ` +
-            `de ${vistasActuales.length}.`;
+
+        let mensaje =
+            `Hola SublimArts, quisiera encargar el cuadro "${nombre}"`;
+
+
+        if (tamano) {
+
+            mensaje +=
+                ` en tamaño ${tamano}`;
+        }
+
+
+        mensaje +=
+            `. Categoría: ${categoria}.`;
+
 
         visorEncargar.href =
             `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
     }
 
 
-    /* =========================================================
-       ABRIR VISOR
-       ========================================================= */
+    function actualizarDetallesModal() {
 
-    function abrirVisor(
-        tarjeta,
-        indiceInicial = 0
-    ) {
-
-        const vistas =
-            obtenerVistas(tarjeta);
-
-        /*
-         * Si no hay ninguna imagen real,
-         * no abrimos el visor.
-         */
-        if (!vistas.length || !visor) {
+        if (!tarjetaActual) {
             return;
         }
+
+
+        const nombre =
+            tarjetaActual.dataset.nombre ||
+            "Cuadro";
+
+
+        const categoria =
+            tarjetaActual.dataset.categoria ||
+            tarjetaActual.dataset.vehiculo ||
+            "Autos y Motos";
+
+
+        if (visorDetallesTitulo) {
+
+            visorDetallesTitulo.textContent =
+                nombre;
+        }
+
+
+        if (visorDetallesDescripcion) {
+
+            visorDetallesDescripcion.textContent =
+                obtenerDescripcion(
+                    tarjetaActual
+                );
+        }
+
+
+        if (visorDetallesCategoria) {
+
+            visorDetallesCategoria.textContent =
+                categoria;
+        }
+
+
+        if (visorMedidas) {
+
+            const tamanoActual =
+                normalizar(
+                    tarjetaActual.dataset.tamano ||
+                    ""
+                );
+
+
+            visorMedidas
+                .querySelectorAll(
+                    "[data-medida]"
+                )
+                .forEach(
+                    boton => {
+
+                        const medida =
+                            normalizar(
+                                boton.dataset.medida
+                            );
+
+
+                        boton.classList.toggle(
+                            "activo",
+                            medida === tamanoActual
+                        );
+                    }
+                );
+        }
+    }
+
+
+    function abrirVisor(tarjeta) {
+
+        if (
+            !visor ||
+            !tarjeta
+        ) {
+            return;
+        }
+
 
         tarjetaActual =
             tarjeta;
 
-        vistasActuales =
-            vistas;
-
-        indiceActual =
-            Math.max(
-                0,
-                Math.min(
-                    indiceInicial,
-                    vistasActuales.length - 1
-                )
-            );
-
-        actualizarVisor();
-        actualizarDetalles();
-        actualizarWhatsApp();
 
         /*
-         * Cada vez que se abre el visor,
-         * los detalles empiezan cerrados.
+         * MUY IMPORTANTE:
+         * Las vistas se obtienen SOLO de esta tarjeta.
+         * Nunca se consulta otra tarjeta del grid.
          */
+        vistasActuales =
+            obtenerVistas(
+                tarjeta
+            );
+
+
+        indiceVista = 0;
+
+
+        if (!vistasActuales.length) {
+            return;
+        }
+
+
+        actualizarVisor();
+
+
+        actualizarDetallesModal();
+
+
+        actualizarEnlaceWhatsAppModal();
+
+
         if (visorDetalles) {
+
             visorDetalles.hidden = true;
         }
 
-        /*
-         * ESTA ES LA CLAVE:
-         * agregamos la clase "activo" que utiliza
-         * el CSS para mostrar el modal.
-         */
-        visor.classList.add("activo");
+
+        visor.classList.add(
+            "activo"
+        );
+
 
         visor.setAttribute(
             "aria-hidden",
             "false"
         );
 
-        document.body.classList.add(
+
+        body.classList.add(
             "visor-abierto"
         );
 
-        document.body.style.overflow =
+
+        body.style.overflow =
             "hidden";
 
-        if (visorCerrar) {
 
-            setTimeout(() => {
-                visorCerrar.focus();
-            }, 0);
-        }
+        cerrarVisorBtn?.focus();
     }
 
-
-    /* =========================================================
-       CERRAR VISOR
-       ========================================================= */
 
     function cerrarVisor() {
 
@@ -405,75 +1317,125 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         visor.classList.remove(
             "activo"
         );
+
 
         visor.setAttribute(
             "aria-hidden",
             "true"
         );
 
-        document.body.classList.remove(
+
+        body.classList.remove(
             "visor-abierto"
         );
 
-        document.body.style.overflow =
+
+        body.style.overflow =
             "";
 
-        if (visorImagen) {
-            visorImagen.src = "";
-        }
 
-        tarjetaActual =
-            null;
-
-        vistasActuales =
-            [];
-
-        indiceActual =
-            0;
+        tarjetaActual = null;
+        vistasActuales = [];
+        indiceVista = 0;
     }
 
 
-    /* =========================================================
-       CAMBIAR VISTA
-       ========================================================= */
-
-    function cambiarVista(
-        direccion
-    ) {
+    function actualizarVisor() {
 
         if (
-            !vistasActuales.length ||
+            !visorImg ||
+            !vistasActuales.length
+        ) {
+            return;
+        }
+
+
+        visorImg.src =
+            vistasActuales[
+                indiceVista
+            ];
+
+
+        const titulo =
+            tarjetaActual?.dataset.nombre ||
+            "Producto";
+
+
+        visorImg.alt =
+            `${titulo} — vista ${indiceVista + 1}`;
+
+
+        if (visorTitulo) {
+
+            visorTitulo.textContent =
+                titulo;
+        }
+
+
+        if (visorContador) {
+
+            visorContador.textContent =
+                `${indiceVista + 1} / ${vistasActuales.length}`;
+        }
+
+
+        if (anteriorBtn) {
+
+            anteriorBtn.disabled =
+                vistasActuales.length <= 1;
+        }
+
+
+        if (siguienteBtn) {
+
+            siguienteBtn.disabled =
+                vistasActuales.length <= 1;
+        }
+    }
+
+
+    function cambiarVista(direccion) {
+
+        if (
             vistasActuales.length <= 1
         ) {
             return;
         }
 
-        /*
-         * IMPORTANTE:
-         * solamente recorremos las imágenes del mismo
-         * vehículo.
-         *
-         * No cambiamos de tarjeta/producto.
-         */
-        indiceActual =
-            (
-                indiceActual +
-                direccion +
-                vistasActuales.length
-            ) %
-            vistasActuales.length;
+
+        indiceVista +=
+            direccion;
+
+
+        if (
+            indiceVista < 0
+        ) {
+
+            indiceVista =
+                vistasActuales.length - 1;
+        }
+
+
+        if (
+            indiceVista >=
+            vistasActuales.length
+        ) {
+
+            indiceVista = 0;
+        }
+
 
         actualizarVisor();
-        actualizarWhatsApp();
     }
 
 
     /* =========================================================
-       CLICK EN LA IMAGEN DE UNA TARJETA
-       ========================================================= */
+       ABRIR MODAL DESDE TARJETA
+    ========================================================= */
 
     if (grid) {
 
@@ -481,94 +1443,33 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             event => {
 
-                const tarjeta =
-                    event.target.closest(
-                        ".tarjeta-cuadro"
-                    );
-
-                if (
-                    !tarjeta ||
-                    !grid.contains(tarjeta)
-                ) {
-                    return;
-                }
-
-                /*
-                 * Solamente abrimos el visor cuando se
-                 * pulsa el área de imagen.
-                 */
                 const media =
                     event.target.closest(
                         ".tarjeta-cuadro-media"
                     );
 
+
                 if (!media) {
                     return;
                 }
 
+
+                const tarjeta =
+                    media.closest(
+                        ".tarjeta-cuadro"
+                    );
+
+
+                if (!tarjeta) {
+                    return;
+                }
+
+
                 event.preventDefault();
 
-                const imagen =
-                    media.querySelector("img");
-
-                if (!imagen) {
-                    return;
-                }
-
-                const vistas =
-                    obtenerVistas(tarjeta);
-
-                if (!vistas.length) {
-                    return;
-                }
-
-                /*
-                 * Buscamos cuál de las vistas corresponde
-                 * a la imagen que el usuario pulsó.
-                 *
-                 * Normalmente será la vista 1, pero esto
-                 * permite que el sistema funcione también
-                 * si posteriormente se muestran otras
-                 * vistas en la tarjeta.
-                 */
-                let indice =
-                    0;
-
-                const srcImagen =
-                    (
-                        imagen.getAttribute("src") ||
-                        ""
-                    ).trim();
-
-                for (
-                    let i = 0;
-                    i < vistas.length;
-                    i++
-                ) {
-
-                    const dataUrl =
-                        (
-                            tarjeta.getAttribute(
-                                `data-view-${i + 1}`
-                            ) ||
-                            ""
-                        ).trim();
-
-                    if (
-                        dataUrl &&
-                        dataUrl === srcImagen
-                    ) {
-
-                        indice =
-                            i;
-
-                        break;
-                    }
-                }
 
                 abrirVisor(
-                    tarjeta,
-                    indice
+                    tarjeta
                 );
             }
         );
@@ -576,64 +1477,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       FLECHA ANTERIOR
-       ========================================================= */
+       CERRAR MODAL
+    ========================================================= */
 
-    if (visorAnterior) {
+    cerrarVisorBtn?.addEventListener(
+        "click",
+        cerrarVisor
+    );
 
-        visorAnterior.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                cambiarVista(-1);
-            }
-        );
-    }
-
-
-    /* =========================================================
-       FLECHA SIGUIENTE
-       ========================================================= */
-
-    if (visorSiguiente) {
-
-        visorSiguiente.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                cambiarVista(1);
-            }
-        );
-    }
-
-
-    /* =========================================================
-       BOTÓN CERRAR
-       ========================================================= */
-
-    if (visorCerrar) {
-
-        visorCerrar.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-                cerrarVisor();
-            }
-        );
-    }
-
-
-    /* =========================================================
-       CERRAR AL HACER CLICK EN EL FONDO
-       ========================================================= */
 
     if (visor) {
 
@@ -641,14 +1492,11 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             event => {
 
-                /*
-                 * Solamente el fondo cierra el visor.
-                 *
-                 * Si se pulsa imagen, flechas, detalles,
-                 * botones, etc., NO se cierra.
-                 */
                 if (
-                    event.target === visor
+                    event.target === visor ||
+                    event.target.closest(
+                        "[data-visor-cerrar]"
+                    )
                 ) {
 
                     cerrarVisor();
@@ -659,19 +1507,136 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       TECLADO
-       ========================================================= */
+       NAVEGACIÓN MODAL
+    ========================================================= */
+
+    anteriorBtn?.addEventListener(
+        "click",
+        () => {
+
+            cambiarVista(-1);
+        }
+    );
+
+
+    siguienteBtn?.addEventListener(
+        "click",
+        () => {
+
+            cambiarVista(1);
+        }
+    );
+
+
+    /* =========================================================
+       DETALLES
+    ========================================================= */
+
+    visorVerDetalles?.addEventListener(
+        "click",
+        () => {
+
+            if (!visorDetalles) {
+                return;
+            }
+
+
+            visorDetalles.hidden =
+                !visorDetalles.hidden;
+
+
+            if (!visorDetalles.hidden) {
+
+                actualizarDetallesModal();
+            }
+        }
+    );
+
+
+    /* =========================================================
+       MEDIDAS
+    ========================================================= */
+
+    if (visorMedidas) {
+
+        visorMedidas
+            .querySelectorAll(
+                "[data-medida]"
+            )
+            .forEach(
+                boton => {
+
+                    boton.addEventListener(
+                        "click",
+                        () => {
+
+                            if (!tarjetaActual) {
+                                return;
+                            }
+
+
+                            const medida =
+                                boton.dataset.medida ||
+                                "";
+
+
+                            visorMedidas
+                                .querySelectorAll(
+                                    "[data-medida]"
+                                )
+                                .forEach(
+                                    item => {
+
+                                        item.classList.toggle(
+                                            "activo",
+                                            item === boton
+                                        );
+                                    }
+                                );
+
+
+                            const nombre =
+                                tarjetaActual.dataset.nombre ||
+                                "este cuadro";
+
+
+                            const categoria =
+                                tarjetaActual.dataset.categoria ||
+                                "Autos y Motos";
+
+
+                            const mensaje =
+                                `Hola SublimArts, quisiera cotizar "${nombre}" en tamaño ${medida}. Categoría: ${categoria}.`;
+
+
+                            if (visorEncargar) {
+
+                                visorEncargar.href =
+                                    `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+                            }
+                        }
+                    );
+                }
+            );
+    }
+
+
+    /* =========================================================
+       TECLADO DEL MODAL
+    ========================================================= */
 
     document.addEventListener(
         "keydown",
         event => {
 
             if (
-                !visor ||
-                !visor.classList.contains("activo")
+                !visor?.classList.contains(
+                    "activo"
+                )
             ) {
                 return;
             }
+
 
             if (
                 event.key === "Escape"
@@ -702,25 +1667,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       SWIPE PARA CELULAR
-       ========================================================= */
+       SWIPE DEL MODAL
+    ========================================================= */
 
-    if (visorImagen) {
+    let touchStartX = 0;
+    let touchStartY = 0;
 
-        visorImagen.addEventListener(
+
+    if (visor) {
+
+        visor.addEventListener(
             "touchstart",
             event => {
 
-                if (!event.touches.length) {
+                const touch =
+                    event.changedTouches[0];
+
+
+                if (!touch) {
                     return;
                 }
 
+
                 touchStartX =
-                    event.touches[0].clientX;
+                    touch.clientX;
+
 
                 touchStartY =
-                    event.touches[0].clientY;
-
+                    touch.clientY;
             },
             {
                 passive: true
@@ -728,32 +1702,31 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        visorImagen.addEventListener(
+        visor.addEventListener(
             "touchend",
             event => {
 
-                if (!event.changedTouches.length) {
+                const touch =
+                    event.changedTouches[0];
+
+
+                if (!touch) {
                     return;
                 }
 
-                const endX =
-                    event.changedTouches[0].clientX;
-
-                const endY =
-                    event.changedTouches[0].clientY;
 
                 const diferenciaX =
-                    endX - touchStartX;
+                    touch.clientX -
+                    touchStartX;
+
 
                 const diferenciaY =
-                    endY - touchStartY;
+                    touch.clientY -
+                    touchStartY;
 
-                /*
-                 * Evitamos interpretar desplazamientos
-                 * verticales como cambio de imagen.
-                 */
+
                 if (
-                    Math.abs(diferenciaX) > 45 &&
+                    Math.abs(diferenciaX) > 50 &&
                     Math.abs(diferenciaX) >
                     Math.abs(diferenciaY)
                 ) {
@@ -764,7 +1737,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             : -1
                     );
                 }
-
             },
             {
                 passive: true
@@ -774,433 +1746,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================================================
-       BOTÓN VER DETALLES
-       ========================================================= */
+       ESTADO INICIAL
+    ========================================================= */
 
-    if (visorVerDetalles) {
+    if (sidebar) {
 
-        visorVerDetalles.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-                if (!visorDetalles) {
-                    return;
-                }
-
-                visorDetalles.hidden =
-                    !visorDetalles.hidden;
-
-                if (
-                    !visorDetalles.hidden
-                ) {
-
-                    actualizarDetalles();
-                }
-            }
+        sidebar.setAttribute(
+            "aria-hidden",
+            window.innerWidth <= 900
+                ? "true"
+                : "false"
         );
     }
 
 
-    /* =========================================================
-       MEDIDAS
-       ========================================================= */
+    if (sidebarOverlay) {
 
-    if (visorMedidas) {
-
-        visorMedidas.addEventListener(
-            "click",
-            event => {
-
-                const boton =
-                    event.target.closest(
-                        "[data-medida]"
-                    );
-
-                if (
-                    !boton ||
-                    !tarjetaActual
-                ) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                const medida =
-                    boton.dataset.medida;
-
-                tarjetaActual.dataset.tamano =
-                    medida;
-
-                visorMedidas
-                    .querySelectorAll(
-                        "[data-medida]"
-                    )
-                    .forEach(btn => {
-
-                        btn.classList.toggle(
-                            "activo",
-                            btn === boton
-                        );
-                    });
-
-                actualizarWhatsApp();
-            }
+        sidebarOverlay.setAttribute(
+            "aria-hidden",
+            "true"
         );
     }
 
 
-    /* =========================================================
-       FILTROS
-       ========================================================= */
+    if (sidebarToggle) {
 
-    function aplicarFiltros() {
+        sidebarToggle.setAttribute(
+            "aria-expanded",
+            "false"
+        );
 
-        if (!grid) {
-            return;
-        }
+        sidebarToggle.setAttribute(
+            "aria-label",
+            "Abrir menú"
+        );
+    }
 
-        const tarjetas =
-            Array.from(
-                grid.querySelectorAll(
-                    ".tarjeta-cuadro"
-                )
+
+    tabs.forEach(tab => {
+
+        const valor =
+            normalizar(
+                tab.dataset.filtro ||
+                tab.dataset.categoria ||
+                tab.textContent
             );
 
-        const termino =
-            (
-                buscador?.value ||
-                ""
-            )
-            .trim()
-            .toLowerCase();
 
-        let visibles =
-            0;
-
-        tarjetas.forEach(
-            tarjeta => {
-
-                const categoria =
-                    (
-                        tarjeta.dataset.categoria ||
-                        ""
-                    ).toLowerCase();
-
-                const nombre =
-                    (
-                        tarjeta.dataset.nombre ||
-                        ""
-                    ).toLowerCase();
-
-                const texto =
-                    tarjeta.textContent.toLowerCase();
-
-                const coincideCategoria =
-                    filtroActual === "todo" ||
-                    categoria === filtroActual;
-
-                const coincideBusqueda =
-                    !termino ||
-                    nombre.includes(termino) ||
-                    texto.includes(termino);
-
-                const mostrar =
-                    coincideCategoria &&
-                    coincideBusqueda;
-
-                tarjeta.hidden =
-                    !mostrar;
-
-                if (mostrar) {
-                    visibles++;
-                }
-            }
-        );
-
-        if (vacio) {
-
-            vacio.hidden =
-                visibles !== 0;
-        }
-    }
+        const activo =
+            valor === "todos" ||
+            valor === "todo";
 
 
-    /* =========================================================
-       TABS AUTOS / MOTOS / TODOS
-       ========================================================= */
-
-    tabs.forEach(
-        tab => {
-
-            tab.addEventListener(
-                "click",
-                () => {
-
-                    filtroActual =
-                        tab.dataset.filtro ||
-                        "todo";
-
-                    tabs.forEach(
-                        item => {
-
-                            const activo =
-                                item === tab;
-
-                            item.classList.toggle(
-                                "activo",
-                                activo
-                            );
-
-                            item.setAttribute(
-                                "aria-selected",
-                                activo
-                                    ? "true"
-                                    : "false"
-                            );
-                        }
-                    );
-
-                    aplicarFiltros();
-                }
-            );
-        }
-    );
-
-
-    /* =========================================================
-       BUSCADOR
-       ========================================================= */
-
-    if (buscador) {
-
-        buscador.addEventListener(
-            "input",
-            aplicarFiltros
-        );
-    }
-
-
-    /* =========================================================
-       ORDENAMIENTO
-       ========================================================= */
-
-    if (orden && grid) {
-
-        orden.addEventListener(
-            "change",
-            () => {
-
-                const tarjetas =
-                    Array.from(
-                        grid.querySelectorAll(
-                            ".tarjeta-cuadro"
-                        )
-                    );
-
-                switch (orden.value) {
-
-                    case "az":
-
-                        tarjetas.sort(
-                            (a, b) =>
-                                (
-                                    a.dataset.nombre ||
-                                    ""
-                                ).localeCompare(
-                                    b.dataset.nombre ||
-                                    "",
-                                    "es",
-                                    {
-                                        sensitivity:
-                                            "base"
-                                    }
-                                )
-                        );
-
-                        break;
-
-
-                    case "za":
-
-                        tarjetas.sort(
-                            (a, b) =>
-                                (
-                                    b.dataset.nombre ||
-                                    ""
-                                ).localeCompare(
-                                    a.dataset.nombre ||
-                                    "",
-                                    "es",
-                                    {
-                                        sensitivity:
-                                            "base"
-                                    }
-                                )
-                        );
-
-                        break;
-
-
-                    case "tamano":
-
-                        tarjetas.sort(
-                            (a, b) =>
-                                (
-                                    a.dataset.tamano ||
-                                    ""
-                                ).localeCompare(
-                                    b.dataset.tamano ||
-                                    "",
-                                    "es",
-                                    {
-                                        numeric:
-                                            true
-                                    }
-                                )
-                        );
-
-                        break;
-
-
-                    case "recientes":
-
-                    default:
-
-                        /*
-                         * Si no hay data-orden, dejamos
-                         * el orden original del HTML.
-                         */
-                        tarjetas.sort(
-                            (a, b) =>
-                                Number(
-                                    a.dataset.orden ||
-                                    0
-                                ) -
-                                Number(
-                                    b.dataset.orden ||
-                                    0
-                                )
-                        );
-
-                        break;
-                }
-
-                tarjetas.forEach(
-                    tarjeta => {
-
-                        grid.appendChild(
-                            tarjeta
-                        );
-                    }
-                );
-
-                aplicarFiltros();
-            }
-        );
-    }
-
-
-    /* =========================================================
-       MENÚ MÓVIL DEL FOOTER
-       ========================================================= */
-
-    const mobileFooterToggle =
-        document.getElementById(
-            "mobileFooterMenuToggle"
-        );
-
-    const mobileFooterMenu =
-        document.getElementById(
-            "mobileFooterMenu"
+        tab.classList.toggle(
+            "activo",
+            activo
         );
 
 
-    if (
-        mobileFooterToggle &&
-        mobileFooterMenu
-    ) {
-
-        mobileFooterToggle.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-                const abierto =
-                    mobileFooterToggle
-                        .getAttribute(
-                            "aria-expanded"
-                        ) === "true";
-
-                mobileFooterToggle.setAttribute(
-                    "aria-expanded",
-                    abierto
-                        ? "false"
-                        : "true"
-                );
-
-                mobileFooterMenu.hidden =
-                    abierto;
-            }
+        tab.classList.toggle(
+            "active",
+            activo
         );
 
 
-        mobileFooterMenu.hidden =
-            mobileFooterToggle.getAttribute(
-                "aria-expanded"
-            ) !== "true";
-    }
-
-
-    /* =========================================================
-       WHATSAPP GENERAL
-       ========================================================= */
-
-    document
-        .querySelectorAll(
-            "[data-servicio]"
-        )
-        .forEach(
-            enlace => {
-
-                enlace.addEventListener(
-                    "click",
-                    event => {
-
-                        const servicio =
-                            enlace.dataset.servicio ||
-                            "Cotización";
-
-                        if (
-                            !enlace.href ||
-                            enlace.getAttribute(
-                                "href"
-                            ) === "#"
-                        ) {
-
-                            event.preventDefault();
-
-                            const mensaje =
-                                `Hola, quiero cotizar: ${servicio}.`;
-
-                            window.open(
-                                `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`,
-                                "_blank",
-                                "noopener,noreferrer"
-                            );
-                        }
-                    }
-                );
-            }
+        tab.setAttribute(
+            "aria-selected",
+            activo
+                ? "true"
+                : "false"
         );
+    });
 
 
-    /* =========================================================
-       INICIO
-       ========================================================= */
+    filtroActual =
+        "todos";
+
 
     aplicarFiltros();
+
+
+    if (visor) {
+
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+
+    /*
+     * Primera medición después de que todo el DOM
+     * esté renderizado.
+     */
+    requestAnimationFrame(() => {
+
+        recalcularBarraFiltros();
+    });
 
 });

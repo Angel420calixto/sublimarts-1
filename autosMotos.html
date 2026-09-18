@@ -20,6 +20,16 @@
 
 <div class="layout-catalogo">
 
+    <div class="mobile-topbar" id="mobileTopbar">
+    <a href="index.html" class="mobile-topbar-logo" aria-label="SublimArts - Inicio">
+        <img src="img/anime-gamer/logo.png" alt="SublimArts" class="sidebar-logo-img">
+    </a>
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+</div>
+
+
     <!-- ============================================
          SIDEBAR
          ============================================ -->
@@ -29,9 +39,6 @@
                 <!-- LOGO SUBLIMARTS: reemplaza el src por tu archivo real -->
                 <img src="img/anime-gamer/logo.png" alt="SublimArts" class="sidebar-logo-img">
             </a>
-            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
-                <i class="fas fa-bars" aria-hidden="true"></i>
-            </button>
         </div>
 
         <nav class="sidebar-nav" aria-label="Navegación del catálogo">
@@ -654,34 +661,49 @@
             </a>
         </section>
 
-        <footer class="catalogo-footer-mobile">
-            <div class="catalogo-footer-mobile-marca">
-                <img src="https://i.pinimg.com/1200x/d6/0f/11/d60f110ef52594dda2d568116ec99498.jpg" alt="SublimArts" class="footer-logo-img">
-                <p>Cuadros personalizados en aluminio HD.</p>
-            </div>
+        <footer class="catalogo-footer" aria-label="Pie de página">
+            <div class="catalogo-footer-grid">
+                <div class="catalogo-footer-brand">
+                    <a href="index.html" class="catalogo-footer-logo" aria-label="SublimArts - Inicio">
+                        <span class="catalogo-footer-logo-mark">SA</span>
+                        <span class="catalogo-footer-logo-text">Sublim<span>Arts</span></span>
+                    </a>
+                    <p>Cuadros personalizados en aluminio HD, preparados para convertir tus imágenes y pasiones en piezas únicas.</p>
+                </div>
 
-            <div class="footer-mobile-menu">
-                <button type="button" id="mobileFooterMenuToggle" class="mobile-footer-menu-toggle" aria-expanded="false" aria-controls="mobileFooterMenu">
-                    <span><i class="fas fa-bars" aria-hidden="true"></i> Menú</span>
-                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                </button>
-                <nav id="mobileFooterMenu" class="mobile-footer-menu" aria-label="Menú móvil">
+                <nav class="catalogo-footer-nav" aria-label="Enlaces del sitio">
+                    <h3>Explorar</h3>
                     <a href="index.html">Inicio</a>
-                    <a href="catalogo.html">anime-gamer</a>
-                    <a href="deportes.html">deportes</a>
-                    <a href="religionEspiritualidad.html">religion-Espiritualidad</a>
+                    <a href="sublimacion.html">Sublimación</a>
+                    <a href="impresionYalbum.html">Álbum e impresiones</a>
+                    <a href="#categorias">Autos y motos</a>
+                </nav>
+
+                <nav class="catalogo-footer-nav" aria-label="Ayuda y contacto">
+                    <h3>Información</h3>
+                    <a href="#que-es">Cómo se hacen</a>
                     <a href="#faq">Preguntas frecuentes</a>
                     <a href="#contacto">Contacto</a>
                 </nav>
-            </div>
 
-            <div class="catalogo-footer-mobile-redes">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
-                <a href="#" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+                <div class="catalogo-footer-contacto">
+                    <h3>Hablemos</h3>
+                    <p>¿Tienes una fotografía o un diseño en mente?</p>
+                    <a href="#" class="boton boton-relleno boton-whatsapp" data-servicio="Cuadros personalizados" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i> Cotizar por WhatsApp
+                    </a>
+                    <div class="catalogo-footer-redes" aria-label="Redes sociales">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+                    </div>
+                </div>
             </div>
-            <p class="catalogo-footer-mobile-copy">Copyright &copy; 2026 SublimArts · Todos los derechos reservados.</p>
+            <div class="catalogo-footer-bottom">
+                <span>© 2026 SublimArts</span>
+                <span>Todos los derechos reservados.</span>
+            </div>
         </footer>
 
     </main>

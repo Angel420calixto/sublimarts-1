@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Catálogo de cuadros en aluminio HD | SublimArts</title>
-    <meta name="description" content="Explora el catálogo completo de cuadros personalizados en aluminio HD de SublimArts: anime, autos, paisajes, religión, retratos y más. Cotiza por WhatsApp.">
+    <title>Anime y Gamer | Cuadros en Aluminio HD | SublimArts</title>
+    <meta name="description" content="Explora la colección Anime y Gamer de SublimArts en cuadros personalizados de aluminio HD. Cotiza por WhatsApp.">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="theme-color" content="#111214">
 
@@ -18,6 +18,15 @@
 
 <a href="#contenido-catalogo" class="skip-link">Saltar al contenido</a>
 
+<div class="mobile-topbar" aria-label="Barra móvil de navegación">
+    <a href="index.html" class="mobile-topbar-logo" aria-label="SublimArts, inicio">
+        <img src="img/logo-sublimarts.png" alt="SublimArts" class="mobile-topbar-logo-img">
+    </a>
+    <button class="mobile-menu-trigger" id="sidebarToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+    </button>
+</div>
+
 <div class="layout-catalogo">
 
     <!-- ============================================
@@ -25,18 +34,9 @@
          ============================================ -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-cabecera">
-            <a href="index.html" class="sidebar-logo">
-                <span class="sidebar-logo-icono" aria-hidden="true">
-                    <svg viewBox="0 0 40 40" width="34" height="34">
-                        <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2.4"/>
-                        <path d="M20 6 A14 14 0 0 1 34 20" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
-                    </svg>
-                </span>
-                <span class="sidebar-logo-texto">SUBLIM<span>ARTS</span></span>
+            <a href="index.html" class="sidebar-logo" aria-label="SublimArts, inicio">
+                <img src="img/logo-sublimarts.png" alt="SublimArts" class="sidebar-logo-img">
             </a>
-            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
-                <i class="fas fa-bars" aria-hidden="true"></i>
-            </button>
         </div>
 
         <nav class="sidebar-nav" aria-label="Navegación del catálogo">
@@ -112,20 +112,12 @@
 
         <!-- BARRA DE FILTROS -->
         <section class="barra-filtros" id="categorias" aria-label="Filtrar catálogo">
-            <div class="tabs-categorias" role="tablist">
-                <button class="tab-categoria activo" role="tab" aria-selected="true" data-filtro="todo">Todos</button>
-                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="anime">Anime y Gamer</button>
-                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="autos">Autos y Motos</button>
-                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="paisajes">Paisajes y Ciudades</button>
-                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="religion">Religión</button>
-                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="retratos">Retratos</button>
+            <div class="tabs-categorias" role="tablist" aria-label="Categoría">
+                <button class="tab-categoria activo" role="tab" aria-selected="true" data-filtro="anime">Anime</button>
+                <button class="tab-categoria" role="tab" aria-selected="false" data-filtro="gamer">Gamer</button>
             </div>
 
             <div class="controles-catalogo">
-                <label class="buscador-catalogo">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                    <input type="search" id="buscadorCatalogo" placeholder="Buscar diseño..." aria-label="Buscar en el catálogo">
-                </label>
                 <label class="orden-catalogo">
                     <span class="visually-hidden">Ordenar por</span>
                     <select id="ordenCatalogo">
@@ -140,304 +132,104 @@
 
         <!-- GRID DE CUADROS -->
         <section class="grid-catalogo" id="grid-catalogo" aria-live="polite">
-
-            <!--
-                CADA TARJETA = una etiqueta <article class="tarjeta-cuadro">.
-                Solo debes cambiar:
-                  - el atributo src de la <img> por la foto real del cuadro
-                  - el alt por una descripción del cuadro
-                  - el texto dentro de <h3> (nombre del diseño)
-                  - el texto de categoría/tamaño en <p class="tarjeta-meta">
-                  - data-categoria si cambias de categoría
-                  - data-nombre y data-tamano se usan para buscar/ordenar
-            -->
-
             <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Samurái" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/06/1d/b1/061db13fd43ae64c8f7f8649d2f865b8.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de guerrero samurái estilo anime" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
                 <h3>Guerrero Samurái</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-            <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Samurái" data-tamano="60x90">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Héroe Shonen" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/c0/7e/1a/c07e1af22693a06ab1d24195f7df3ba9.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de guerrero samurái estilo anime" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
-                <h3>Guerrero Samurái</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <h3>Héroe Shonen</h3>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-            <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Samurái" data-tamano="60x90">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Anime" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/c1/92/03/c1920317c249ef1c3b5873e47ff91952.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de guerrero samurái estilo anime" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
-                <h3>Guerrero Samurái</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <h3>Guerrero Anime</h3>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-            <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Samurái" data-tamano="60x90">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Batalla Anime" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/e3/65/1f/e3651f08c317bd9ded5c1e1fa5b64973.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de guerrero samurái estilo anime" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
-                <h3>Guerrero Samurái</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <h3>Batalla Anime</h3>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-            <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Samurái" data-tamano="60x90">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Guerrero Fantasía" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/1d/85/47/1d85473be510b643ca61efef3b2a8ca6.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de guerrero samurái estilo anime" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
-                <h3>Guerrero Samurái</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <h3>Guerrero Fantasía</h3>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Muscle Car Clásico" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/15/2a/f8/152af857938803a42938059e8d41c481.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto muscle car clásico" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Muscle Car Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Muscle Car Clásico" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/26/6b/93/266b9375d45fe329becc7a07c62c39d9.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto muscle car clásico" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Muscle Car Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Muscle Car Clásico" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/c4/f7/62/c4f7625f1c49cf001e574e8eacf97ac0.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto muscle car clásico" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Muscle Car Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Muscle Car Clásico" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/b2/44/f9/b244f9222ab04284afbf86f18d176d5c.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto muscle car clásico" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Muscle Car Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Muscle Car Clásico" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/ff/c5/da/ffc5da3d2e8234988b0c398c38b1fbe4.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto muscle car clásico" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Muscle Car Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-
-            <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Atardecer en la Cordillera" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de atardecer en la cordillera" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Atardecer en la Cordillera</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-             <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Atardecer en la Cordillera" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/53/f3/06/53f3066007c4a3602b62418e11f51535.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de atardecer en la cordillera" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Atardecer en la Cordillera</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-             <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Atardecer en la Cordillera" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/b1/82/a7/b182a73618400bc153e8d71e49c5a8fe.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de atardecer en la cordillera" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Atardecer en la Cordillera</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-             <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Atardecer en la Cordillera" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/8f/bf/a1/8fbfa1a854263d604ccbf58aad86612b.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de atardecer en la cordillera" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Atardecer en la Cordillera</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-             <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Atardecer en la Cordillera" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/61/70/5a/61705adb273443da5683801d270d8902.jpghttps://i.pinimg.com/1200x/38/8c/35/388c350a6bf128e09124be233bc9a133.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de atardecer en la cordillera" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Atardecer en la Cordillera</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Sagrado Corazón" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/11/0a/47/110a471cdff0a89d739ae9063980d0f9.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de temática religiosa" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Sagrado Corazón</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Sagrado Corazón" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/f2/90/25/f2902510821e08c9ba6768fde4217586.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de temática religiosa" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Sagrado Corazón</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Sagrado Corazón" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/ef/90/2d/ef902df7b6b904a4ea1e73de1ae7b52d.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de temática religiosa" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Sagrado Corazón</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Sagrado Corazón" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/37/3f/72/373f72b4c46e8e1e5e8fbb17b3e00dbe.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de temática religiosa" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Sagrado Corazón</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Sagrado Corazón" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/736x/68/5c/ae/685cae93d310429dad1d629ee4cff9c2.jpghttps://i.pinimg.com/1200x/1b/ef/58/1bef582760240c751c9e2c53f34a6323.jpg" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de temática religiosa" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Sagrado Corazón</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-            
-            <article class="tarjeta-cuadro" data-categoria="retratos" data-nombre="Retrato Familiar" data-tamano="70x100">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD con retrato familiar personalizado" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">70x100</span>
-                </div>
-                <h3>Retrato Familiar</h3>
-                <p class="tarjeta-meta">Retratos personalizados · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Duelo Shonen" data-tamano="50x70">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Duelo Shonen" data-tamano="50x70">
                 <div class="tarjeta-cuadro-media">
                     <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de duelo estilo anime shonen" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">50x70</span>
                 </div>
                 <h3>Duelo Shonen</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
-
-            <article class="tarjeta-cuadro" data-categoria="autos" data-nombre="Moto Café Racer" data-tamano="40x60">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de motocicleta café racer" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">40x60</span>
-                </div>
-                <h3>Moto Café Racer</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="paisajes" data-nombre="Skyline Nocturno" data-tamano="60x90">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de skyline urbano nocturno" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">60x90</span>
-                </div>
-                <h3>Skyline Nocturno</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="retratos" data-nombre="Mascota en HD" data-tamano="30x40">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD con retrato de mascota" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">30x40</span>
-                </div>
-                <h3>Mascota en HD</h3>
-                <p class="tarjeta-meta">Retratos personalizados · Aluminio HD</p>
-            </article>
-
-            <article class="tarjeta-cuadro" data-categoria="religion" data-nombre="Virgen del Carmen" data-tamano="50x70">
-                <div class="tarjeta-cuadro-media">
-                    <img src="" data-viewer="" data-gallery="catalogo"  alt="Cuadro en aluminio HD de la Virgen del Carmen" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">50x70</span>
-                </div>
-                <h3>Virgen del Carmen</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
-            </article>
-
-
-            
-            <!-- Tarjetas adicionales: visibles en la galería y filtrables por categoría -->
-            <article class="tarjeta-cuadro tarjeta-oculta" data-categoria="anime" data-nombre="Cazador de Sombras" data-tamano="60x90">
+<article class="tarjeta-cuadro" data-categoria="anime" data-nombre="Cazador de Sombras" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
                     <img src="https://i.pinimg.com/736x/3a/5b/e3/3a5be32d1cedfbb73d2cc3b72bbeb8bd.jpg" data-viewer="https://i.pinimg.com/736x/3a/5b/e3/3a5be32d1cedfbb73d2cc3b72bbeb8bd.jpg" data-gallery="catalogo"  alt="Cuadro en aluminio HD estilo anime de cazador de sombras" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
                 <h3>Cazador de Sombras</h3>
-                <p class="tarjeta-meta">Anime y Gamer · Aluminio HD</p>
+                <p class="tarjeta-meta">Anime · Aluminio HD</p>
             </article>
 
-            <article class="tarjeta-cuadro tarjeta-oculta" data-categoria="paisajes" data-nombre="Bosque Nativo" data-tamano="40x60">
+            <article class="tarjeta-cuadro" data-categoria="gamer" data-nombre="PlayStation Gamer" data-tamano="40x60">
                 <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-viewer="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-gallery="catalogo"  alt="Cuadro en aluminio HD de bosque nativo del sur de Chile" loading="lazy" width="500" height="650">
+                    <img src="https://i.pinimg.com/736x/4f/b4/6c/4fb46cbcdc51660fb01bdd8528a8c03e.jpg" data-viewer="https://i.pinimg.com/736x/4f/b4/6c/4fb46cbcdc51660fb01bdd8528a8c03e.jpg" data-gallery="catalogo"
+                         alt="Cuadro en aluminio HD de PlayStation Gamer" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">40x60</span>
                 </div>
-                <h3>Bosque Nativo</h3>
-                <p class="tarjeta-meta">Paisajes y Ciudades · Aluminio HD</p>
+                <h3>PlayStation Gamer</h3>
+                <p class="tarjeta-meta">Gamer · Consolas y videojuegos · Aluminio HD</p>
             </article>
 
-            <article class="tarjeta-cuadro tarjeta-oculta" data-categoria="autos" data-nombre="Rally Clásico" data-tamano="50x70">
+            <article class="tarjeta-cuadro" data-categoria="gamer" data-nombre="Zona Gamer" data-tamano="50x70">
                 <div class="tarjeta-cuadro-media">
-                    <img src="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-viewer="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-gallery="catalogo"  alt="Cuadro en aluminio HD de auto de rally clásico" loading="lazy" width="500" height="650">
+                    <img src="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-viewer="https://i.pinimg.com/1200x/de/c9/43/dec943079b4657fa7f1039c8bfc9058f.jpg" data-gallery="catalogo"
+                         alt="Cuadro en aluminio HD de Zona Gamer" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">50x70</span>
                 </div>
-                <h3>Rally Clásico</h3>
-                <p class="tarjeta-meta">Autos y Motos · Aluminio HD</p>
+                <h3>Zona Gamer</h3>
+                <p class="tarjeta-meta">Gamer · Consolas y videojuegos · Aluminio HD</p>
             </article>
 
-            <article class="tarjeta-cuadro tarjeta-oculta" data-categoria="retratos" data-nombre="Recién Casados" data-tamano="70x100">
+            <article class="tarjeta-cuadro" data-categoria="gamer" data-nombre="Consola Retro" data-tamano="40x60">
                 <div class="tarjeta-cuadro-media">
-                    <img src="img/catalogo/retratos-03.jpg" data-viewer="img/catalogo/retratos-03.jpg" data-gallery="catalogo"  alt="Cuadro en aluminio HD con retrato de recién casados" loading="lazy" width="500" height="650">
-                    <span class="tarjeta-badge">70x100</span>
+                    <img src="https://i.pinimg.com/736x/4c/9d/33/4c9d33025308d0d64320293f73c5db78.jpg" data-viewer="https://i.pinimg.com/736x/4c/9d/33/4c9d33025308d0d64320293f73c5db78.jpg" data-gallery="catalogo"
+                         alt="Cuadro en aluminio HD de Consola Retro" loading="lazy" width="500" height="650">
+                    <span class="tarjeta-badge">40x60</span>
                 </div>
-                <h3>Recién Casados</h3>
-                <p class="tarjeta-meta">Retratos personalizados · Aluminio HD</p>
+                <h3>Consola Retro</h3>
+                <p class="tarjeta-meta">Gamer · Consolas y videojuegos · Aluminio HD</p>
             </article>
 
-            <article class="tarjeta-cuadro tarjeta-oculta" data-categoria="religion" data-nombre="Última Cena" data-tamano="60x90">
+            <article class="tarjeta-cuadro" data-categoria="gamer" data-nombre="Gaming Setup" data-tamano="60x90">
                 <div class="tarjeta-cuadro-media">
-                    <img src="http://127.0.0.1:5501/img/anime-gamer/autorojo%20(6).jpeg" data-viewer="img/catalogo/religion-03.jpg" data-gallery="catalogo"  alt="Cuadro en aluminio HD de la última cena" loading="lazy" width="500" height="650">
+                    <img src="https://i.pinimg.com/1200x/3e/ea/ca/3eeacae4a3553cc3ca4883028c252623.jpg" data-viewer="https://i.pinimg.com/1200x/3e/ea/ca/3eeacae4a3553cc3ca4883028c252623.jpg" data-gallery="catalogo"
+                         alt="Cuadro en aluminio HD de Gaming Setup" loading="lazy" width="500" height="650">
                     <span class="tarjeta-badge">60x90</span>
                 </div>
-                <h3>Última Cena</h3>
-                <p class="tarjeta-meta">Religión y Espiritualidad · Aluminio HD</p>
+                <h3>Gaming Setup</h3>
+                <p class="tarjeta-meta">Gamer · Consolas y videojuegos · Aluminio HD</p>
             </article>
-        </section>
+            </section>
+        
 
         <p class="grid-catalogo-vacio" id="catalogoVacio" hidden>No encontramos diseños que coincidan con tu búsqueda.</p>
 
@@ -594,6 +386,6 @@
     </main>
 </div>
 
-<script src="js/catalogo.js" defer></script>
+<script src="js/catlogo.js" defer></script>
 </body>
 </html>

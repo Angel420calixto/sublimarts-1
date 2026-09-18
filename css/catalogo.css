@@ -685,3 +685,560 @@ html, body { overflow-x: hidden; }
     .catalogo-footer-mobile-redes { display: flex; gap: .7rem; }
     .catalogo-footer-mobile-redes a { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--borde-sutil); border-radius: 50%; color: var(--texto-gris); }
 }
+
+
+/* ============================================================
+   ANIME Y GAMER · MENÚ MOBILE
+   ============================================================ */
+
+.mobile-menu-trigger {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .mobile-menu-trigger {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 2500;
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(245,243,240,.16);
+        border-radius: 12px;
+        background: rgba(23,24,27,.96);
+        color: var(--texto-claro);
+        box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-menu-trigger:hover,
+    .mobile-menu-trigger:focus-visible {
+        color: var(--acento);
+        border-color: var(--acento);
+    }
+
+    .mobile-menu-trigger i {
+        font-size: 1.15rem;
+        pointer-events: none;
+    }
+
+    body.menu-abierto {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    .sidebar {
+        width: min(82vw, 320px);
+        z-index: 2450;
+    }
+
+    .sidebar-overlay {
+        z-index: 2400;
+    }
+}
+
+@media (min-width: 901px) {
+    .mobile-menu-trigger {
+        display: none !important;
+    }
+}
+
+
+/* LOGO REAL: reemplaza img/logo-sublimarts.png por tu archivo */
+.sidebar-logo-img {
+    display: block;
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 900px) {
+    .sidebar-cabecera {
+        min-height: 52px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--bg-panel);
+        padding-bottom: .6rem;
+    }
+
+    .sidebar-logo-img {
+        width: 145px;
+        height: auto;
+    }
+
+    .sidebar-toggle {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        border: 1px solid var(--borde-sutil);
+        border-radius: 10px;
+        background: rgba(255,255,255,.025);
+        color: var(--texto-claro);
+        cursor: pointer;
+    }
+
+    .sidebar-toggle:hover,
+    .sidebar-toggle:focus-visible {
+        color: var(--acento);
+        border-color: var(--acento);
+    }
+}
+
+@media (min-width: 901px) {
+    .sidebar-toggle { display: none !important; }
+}
+
+.buscador-catalogo { display: none !important; }
+
+
+/* ============================================================
+   ANIME + GAMER · AJUSTES FINALES
+   Se conserva el comportamiento visual original de la galería.
+   ============================================================ */
+
+/* Las flechas externas de la galería ya no existen. */
+.galeria-carrusel,
+.galeria-flecha {
+    display: none !important;
+}
+
+/* Galería original: tarjetas en filas normales. */
+.grid-catalogo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    width: 100%;
+    overflow: visible;
+}
+
+/* Tarjeta original */
+.tarjeta-cuadro {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    min-width: 0;
+}
+
+/* Área de imagen original: 3:4 */
+.tarjeta-cuadro-media {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    height: auto;
+    background: var(--bg-tarjeta);
+}
+
+/* Imagen original: llena el marco sin deformarse */
+.tarjeta-cuadro-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s ease;
+}
+
+.tarjeta-cuadro:hover .tarjeta-cuadro-media img {
+    transform: scale(1.06);
+}
+
+/* Buscar diseño eliminado */
+.buscador-catalogo {
+    display: none !important;
+}
+
+/* ============================================================
+   BARRA DE FILTROS SIEMPRE VISIBLE
+   ============================================================ */
+
+.barra-filtros {
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    background: rgba(17,18,20,.98);
+    border-bottom: 1px solid var(--borde-sutil);
+    padding: .9rem 0;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+/* ============================================================
+   MOBILE · LOGO + HAMBURGUESA SIEMPRE VISIBLES
+   ============================================================ */
+
+.mobile-topbar {
+    display: none;
+}
+
+@media (max-width: 900px) {
+
+    .mobile-topbar {
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 64px;
+
+        padding: .55rem .8rem;
+
+        z-index: 4000;
+
+        pointer-events: none;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(17,18,20,.98) 0%,
+                rgba(17,18,20,.90) 72%,
+                rgba(17,18,20,0) 100%
+            );
+    }
+
+    .mobile-topbar-logo,
+    .mobile-menu-trigger {
+        pointer-events: auto;
+    }
+
+    .mobile-topbar-logo {
+        display: flex;
+        align-items: center;
+
+        width: 145px;
+        max-width: 55vw;
+
+        height: 48px;
+    }
+
+    .mobile-topbar-logo-img {
+        display: block;
+
+        width: 100%;
+        height: auto;
+
+        max-height: 46px;
+
+        object-fit: contain;
+        object-position: left center;
+    }
+
+    /* Botón limpio, fijo y visible */
+    .mobile-menu-trigger {
+        display: flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        width: 44px;
+        height: 44px;
+
+        flex: 0 0 44px;
+
+        padding: 0;
+
+        border: 1px solid rgba(245,243,240,.20);
+
+        border-radius: 9px;
+
+        background: rgba(23,24,27,.96);
+
+        color: var(--texto-claro);
+
+        box-shadow:
+            0 5px 18px rgba(0,0,0,.38);
+
+        position: relative;
+
+        z-index: 4100;
+    }
+
+    .mobile-menu-trigger i {
+        font-size: 1.15rem;
+        line-height: 1;
+    }
+
+    .mobile-menu-trigger:hover,
+    .mobile-menu-trigger:focus-visible {
+        color: var(--acento);
+        border-color: var(--acento);
+    }
+
+    /* Sidebar móvil */
+    .sidebar {
+        left: -105%;
+
+        width: min(82vw, 320px);
+        max-width: 320px;
+
+        height: 100vh;
+
+        padding-top: 1.4rem;
+
+        z-index: 4500;
+
+        transition: left .3s ease;
+
+        overflow-y: auto;
+    }
+
+    .sidebar.activo {
+        left: 0;
+    }
+
+    .sidebar-cabecera {
+        display: block;
+    }
+
+    /* El logo del sidebar no se duplica en mobile.
+       El logo visible es el de la barra superior. */
+    .sidebar-cabecera .sidebar-logo {
+        display: none;
+    }
+
+    .sidebar-toggle {
+        display: none !important;
+    }
+
+    .sidebar-overlay {
+        z-index: 4400;
+    }
+
+    .contenido-catalogo {
+        margin-left: 0;
+
+        padding-top: 4.8rem;
+    }
+
+    /* Filtro sticky debajo de la barra superior */
+    .barra-filtros {
+        z-index: 3000;
+
+        top: 0;
+    }
+
+    /* La galería NO es horizontal */
+    .grid-catalogo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        grid-template-rows: none;
+
+        grid-auto-flow: row;
+
+        grid-auto-columns: auto;
+
+        gap: .8rem;
+
+        overflow: visible !important;
+    }
+
+    /* Mantener exactamente la proporción original */
+    .tarjeta-cuadro-media {
+        aspect-ratio: 3 / 4;
+
+        height: auto;
+    }
+
+    .tarjeta-cuadro-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .tarjeta-cuadro h3 {
+        font-size: .78rem;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .tarjeta-meta {
+        font-size: .64rem;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .mobile-topbar {
+        height: 62px;
+
+        padding:
+            .5rem
+            .65rem;
+    }
+
+    .mobile-topbar-logo {
+        width: 125px;
+    }
+
+    .mobile-menu-trigger {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+    }
+
+    .contenido-catalogo {
+        padding-top: 4.6rem;
+    }
+
+    .grid-catalogo {
+        grid-template-columns:
+            repeat(2, minmax(0,1fr));
+
+        gap: .65rem;
+    }
+
+    .tarjeta-cuadro-media {
+        aspect-ratio: 3 / 4;
+    }
+}
+
+/* ============================================================
+   MODAL ORIGINAL
+   Las flechas de navegación pertenecen SOLO al modal.
+   ============================================================ */
+
+.visor-catalogo {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.2rem;
+}
+
+.visor-catalogo.activo {
+    display: flex;
+}
+
+.visor-catalogo-fondo {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0,0,0,.88);
+
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.visor-catalogo-panel {
+    position: relative;
+    z-index: 1;
+
+    width: min(1100px, 96vw);
+
+    max-height: 94vh;
+
+    overflow: auto;
+
+    background: var(--bg-panel);
+
+    border: 1px solid var(--borde-sutil);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.55);
+}
+
+.visor-catalogo-media {
+    position: relative;
+
+    min-height: min(70vh, 760px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #0b0c0e;
+}
+
+.visor-catalogo-imagen {
+    width: 100%;
+    height: min(70vh,760px);
+
+    object-fit: contain;
+}
+
+.visor-catalogo-nav {
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 2;
+
+    width: 46px;
+    height: 46px;
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    border-radius: 50%;
+
+    background: rgba(17,18,20,.72);
+
+    color: #fff;
+
+    cursor: pointer;
+}
+
+.visor-catalogo-nav--prev {
+    left: 1rem;
+}
+
+.visor-catalogo-nav--next {
+    right: 1rem;
+}
+
+/* Mobile modal */
+@media (max-width: 640px) {
+
+    .visor-catalogo {
+        padding: 0;
+    }
+
+    .visor-catalogo-panel {
+        width: 100%;
+
+        max-height: 100vh;
+        height: 100vh;
+
+        border-radius: 0;
+    }
+
+    .visor-catalogo-media {
+        min-height: 62vh;
+        height: 62vh;
+    }
+
+    .visor-catalogo-imagen {
+        height: 62vh;
+    }
+
+    .visor-catalogo-nav {
+        width: 40px;
+        height: 40px;
+    }
+}

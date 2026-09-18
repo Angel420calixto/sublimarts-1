@@ -688,118 +688,494 @@ html, body { overflow-x: hidden; }
 
 
 /* ============================================================
-   SUBLIMARTS · CATEGORÍA AUTOS Y MOTOS
-   Overrides mínimos: se conserva el diseño original.
+   SUBLIMARTS · OPTIMIZACIÓN RESPONSIVE FINAL
+   Navegación móvil + filtros + footer
    ============================================================ */
+:root {
+    --z-contenido: 1;
+    --z-filtro: 2000;
+    --z-topbar: 2200;
+    --z-overlay: 2250;
+    --z-menu: 2300;
+    --z-modal: 3000;
+}
 
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { overflow-x: hidden; }
+
+/* Logo real editable: solo cambia el src del img. */
 .sidebar-logo-img {
     width: 145px;
     max-width: 100%;
     height: auto;
     object-fit: contain;
-}
-
-.footer-logo-img {
-    width: 150px;
-    max-width: 75vw;
-    height: auto;
-    object-fit: contain;
-}
-
-/* Las vistas secundarias no son tarjetas independientes. */
-.tarjeta-vista-secundaria {
-    display: none !important;
-}
-
-/* Menú móvil desplegable dentro del footer. */
-.footer-mobile-menu {
-    width: min(360px, 100%);
-}
-
-.mobile-footer-menu-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: .8rem;
-    padding: .8rem 1rem;
-    border: 1px solid var(--borde-sutil);
-    border-radius: var(--radius-md);
-    background: var(--bg-tarjeta);
-    color: var(--texto-claro);
-    cursor: pointer;
-    font: inherit;
-    font-size: .78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-}
-
-.mobile-footer-menu-toggle span {
-    display: flex;
-    align-items: center;
-    gap: .55rem;
-}
-
-.mobile-footer-menu-toggle > i {
-    transition: transform .25s ease;
-}
-
-.mobile-footer-menu-toggle[aria-expanded="true"] > i {
-    transform: rotate(180deg);
-}
-
-.mobile-footer-menu {
-    display: grid;
-    grid-template-rows: 0fr;
-    overflow: hidden;
-    opacity: 0;
-    transition: grid-template-rows .25s ease, opacity .2s ease;
-}
-
-.mobile-footer-menu.activo {
-    grid-template-rows: 1fr;
-    opacity: 1;
-}
-
-.mobile-footer-menu::before {
-    content: "";
-    min-height: 0;
-}
-
-.mobile-footer-menu a {
     display: block;
-    padding: .72rem 1rem;
-    color: var(--texto-gris);
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: uppercase;
+}
+
+/* Oculta cualquier sistema antiguo de menú de footer si quedara en una copia. */
+.footer-mobile-menu,
+.mobile-footer-menu-toggle,
+#mobileFooterMenu,
+#mobileFooterMenuToggle,
+.catalogo-footer-mobile { display: none !important; }
+
+/* Barra de filtros: llega a su posición y JS la mantiene FIJA durante el scroll. */
+.barra-filtros {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: var(--z-filtro) !important;
+    margin-top: 2rem;
+    background: rgba(17,18,20,.98);
     border-bottom: 1px solid var(--borde-sutil);
+    padding: .9rem 0;
+    isolation: isolate;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+.barra-filtros.filtro-fijo {
+    position: fixed !important;
+    top: 0 !important;
+    left: 230px !important;
+    right: 0 !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    z-index: var(--z-filtro) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.24);
+}
+.barra-filtros-placeholder { display: none; }
+.barra-filtros-placeholder.activo { display: block; }
+
+/* Header móvil independiente: siempre visible, sin duplicar el menú. */
+.mobile-topbar {
+    display: none;
 }
 
-.mobile-footer-menu a:hover,
-.mobile-footer-menu a:focus-visible {
+/* Modal siempre por encima de navegación/filtros. */
+.visor-catalogo { z-index: var(--z-modal) !important; }
+
+/* Footer nuevo */
+.catalogo-footer {
+    margin-top: 4rem;
+    padding: 3.2rem 0 1.2rem;
+    border-top: 1px solid var(--borde-sutil);
+    background: linear-gradient(180deg, rgba(25,26,29,.55), var(--bg-panel));
+}
+.catalogo-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(1.5fr, 2fr) repeat(2, minmax(130px, 1fr)) minmax(210px, 1.4fr);
+    gap: 2.5rem;
+    align-items: start;
+}
+.catalogo-footer-brand { max-width: 360px; }
+.catalogo-footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    color: var(--texto-claro);
+    margin-bottom: 1rem;
+}
+.catalogo-footer-logo-mark {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--acento);
+    border-radius: 10px;
     color: var(--acento);
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .08em;
 }
-
-/* Modal: cuatro vistas en el selector inferior si se agrega en el futuro. */
-.visor-catalogo-imagen {
-    user-select: none;
-    -webkit-user-drag: none;
+.catalogo-footer-logo-text {
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    letter-spacing: .03em;
+}
+.catalogo-footer-logo-text span { color: var(--acento); }
+.catalogo-footer-brand p,
+.catalogo-footer-contacto p {
+    margin: 0;
+    color: var(--texto-gris);
+    font-size: .78rem;
+    line-height: 1.75;
+}
+.catalogo-footer-nav,
+.catalogo-footer-contacto { display: flex; flex-direction: column; align-items: flex-start; }
+.catalogo-footer h3 {
+    margin: 0 0 .9rem;
+    color: var(--texto-claro);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+.catalogo-footer-nav a {
+    color: var(--texto-gris);
+    font-size: .78rem;
+    padding: .27rem 0;
+    transition: var(--transicion);
+}
+.catalogo-footer-nav a:hover,
+.catalogo-footer-nav a:focus-visible { color: var(--acento); }
+.catalogo-footer-contacto .boton { margin-top: .9rem; }
+.catalogo-footer-redes {
+    display: flex;
+    gap: .55rem;
+    margin-top: 1rem;
+}
+.catalogo-footer-redes a {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--borde-sutil);
+    border-radius: 50%;
+    color: var(--texto-gris);
+    transition: var(--transicion);
+}
+.catalogo-footer-redes a:hover,
+.catalogo-footer-redes a:focus-visible {
+    color: var(--acento);
+    border-color: var(--acento);
+}
+.catalogo-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--borde-sutil);
+    color: #66666d;
+    font-size: .68rem;
 }
 
 @media (max-width: 900px) {
-    .sidebar-logo-img {
-        width: 135px;
+    body.menu-mobile-abierto { overflow: hidden; }
+    .mobile-topbar {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 max(1rem, env(safe-area-inset-left)) 0 max(1rem, env(safe-area-inset-left));
+        background: rgba(17,18,20,.94);
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        z-index: var(--z-topbar);
     }
+    .mobile-topbar-logo { display: inline-flex; align-items: center; min-width: 0; }
+    .mobile-topbar .sidebar-logo-img { width: 128px; max-height: 48px; }
+    .mobile-topbar .sidebar-toggle {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        margin-right: max(.15rem, env(safe-area-inset-right));
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 12px;
+        background: rgba(25,26,29,.96);
+        color: var(--texto-claro);
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
+    }
+    .mobile-topbar .sidebar-toggle:hover,
+    .mobile-topbar .sidebar-toggle:focus-visible {
+        color: var(--acento);
+        border-color: rgba(182,138,90,.7);
+        background: #202125;
+    }
+    .mobile-topbar .sidebar-toggle:active { transform: scale(.95); }
 
-    .catalogo-footer-mobile {
-        position: relative;
+    .sidebar {
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: min(84vw, 340px) !important;
+        max-width: none !important;
+        height: 100dvh !important;
+        padding: 92px 1.2rem 1.4rem !important;
+        z-index: var(--z-menu) !important;
+        transform: translateX(-105%);
+        transition: transform .28s cubic-bezier(.22,.61,.36,1);
+        box-shadow: 24px 0 60px rgba(0,0,0,.42);
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        overscroll-behavior: contain;
+        pointer-events: none;
     }
+    .sidebar.activo {
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+    .sidebar-cabecera { display: none !important; }
+    .sidebar-nav { padding-top: .4rem; }
+    .sidebar-nav ul { gap: .3rem; }
+    .sidebar-enlace { padding: .85rem .75rem; min-height: 44px; }
+    .sidebar-contacto { margin-top: 1.5rem; }
+    .sidebar-overlay {
+        display: block !important;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.64);
+        z-index: var(--z-overlay) !important;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity .25s ease, visibility .25s ease;
+    }
+    .sidebar-overlay.activo {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .contenido-catalogo {
+        margin-left: 0 !important;
+        padding: 88px 1rem 2.5rem !important;
+        width: 100%;
+        min-width: 0;
+    }
+    .barra-filtros {
+        position: relative !important;
+        top: auto !important;
+        margin: 1.2rem -1rem 1.2rem !important;
+        padding: .7rem 1rem !important;
+        overflow: hidden;
+    }
+    .barra-filtros.filtro-fijo {
+        position: fixed !important;
+        top: 72px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: .7rem 1rem !important;
+    }
+    .tabs-categorias {
+        flex: 1 1 100%;
+        flex-wrap: nowrap !important;
+        gap: 1.25rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        min-width: 0;
+    }
+    .tabs-categorias::-webkit-scrollbar { display: none; }
+    .tab-categoria { flex: 0 0 auto; white-space: nowrap; min-height: 36px; }
+    .controles-catalogo {
+        width: 100%;
+        flex-wrap: nowrap !important;
+        gap: .55rem;
+        min-width: 0;
+    }
+    .buscador-catalogo {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: .52rem .8rem;
+    }
+    .buscador-catalogo input { width: 100% !important; min-width: 0; }
+    .orden-catalogo { flex: 0 0 auto; }
+    .orden-catalogo select { max-width: 145px; padding: .55rem .7rem; }
+
+    .grid-catalogo { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem .75rem; }
+    .tarjeta-cuadro-media { aspect-ratio: 3 / 4; }
+    .tarjeta-cuadro-media img { object-fit: cover; }
+
+    .catalogo-footer { margin-top: 3rem; padding: 2.5rem 0 1rem; width: 100%; }
+    .catalogo-footer-grid { grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(105px, 1fr)); gap: 1.6rem 1.2rem; width: 100%; }
+    .catalogo-footer-brand { grid-column: 1 / -1; max-width: none; }
+    .catalogo-footer-contacto { grid-column: auto; }
+    .catalogo-footer-nav a { font-size: .72rem; }
+    .catalogo-footer-bottom { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; text-align: left; gap: .5rem 1rem; }
+}
+
+@media (max-width: 480px) {
+    .mobile-topbar { height: 68px; }
+    .mobile-topbar .sidebar-logo-img { width: 112px; }
+    .mobile-topbar .sidebar-toggle { width: 42px; height: 42px; border-radius: 11px; }
+    .contenido-catalogo { padding-top: 82px !important; }
+    .barra-filtros { position: relative !important; top: auto !important; }
+    .barra-filtros.filtro-fijo { position: fixed !important; top: 68px !important; left: 0 !important; right: 0 !important; width: 100% !important; }
+    .barra-filtros { padding-left: .8rem !important; padding-right: .8rem !important; }
+    .tabs-categorias { gap: 1rem; }
+    .controles-catalogo { align-items: stretch; }
+    .orden-catalogo select { max-width: 124px; font-size: .7rem; }
+    .grid-catalogo { gap: .85rem .65rem; }
+    .tarjeta-cuadro h3 { font-size: .85rem; }
+    .tarjeta-meta { font-size: .68rem; }
+    .catalogo-footer-grid { grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(90px, 1fr)); gap: 1.4rem .8rem; }
+    .catalogo-footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 359px) {
+    .mobile-topbar .sidebar-logo-img { width: 102px; }
+    .controles-catalogo { flex-direction: column; }
+    .orden-catalogo select { width: 100%; max-width: none; }
 }
 
 @media (min-width: 901px) {
-    .catalogo-footer-mobile {
-        display: none !important;
+    .mobile-topbar { display: none !important; }
+    .sidebar-overlay { display: none !important; }
+    .sidebar { transform: none !important; pointer-events: auto !important; }
+    .catalogo-footer { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* =========================================================
+   CORRECCIÓN FINAL — FILTROS Y FOOTER HORIZONTAL
+   ========================================================= */
+
+/* La barra conserva su posición original hasta que alcanza
+   el borde superior; desde ahí queda fija y visible. */
+.barra-filtros {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+    margin-top: 2rem;
+}
+
+.barra-filtros.filtro-fijo {
+    position: fixed !important;
+    top: 0 !important;
+    margin: 0 !important;
+    z-index: 2000 !important;
+}
+
+.barra-filtros-placeholder {
+    display: none;
+    width: 100%;
+}
+
+.barra-filtros-placeholder.activo {
+    display: block;
+}
+
+/* Footer siempre dispuesto horizontalmente. */
+.catalogo-footer-grid {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(150px, 1fr)) minmax(220px, 1.25fr) !important;
+    align-items: start !important;
+    gap: 2rem !important;
+}
+
+.catalogo-footer-brand {
+    grid-column: auto !important;
+    max-width: 360px;
+}
+
+@media (max-width: 900px) {
+    .barra-filtros.filtro-fijo {
+        top: 72px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
+
+    .catalogo-footer-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 1rem !important;
+        align-items: start !important;
+    }
+
+    .catalogo-footer-brand {
+        grid-column: auto !important;
+        max-width: none !important;
+    }
+
+    .catalogo-footer-nav,
+    .catalogo-footer-contacto {
+        min-width: 0;
+    }
+
+    .catalogo-footer h3 {
+        font-size: .62rem;
+        line-height: 1.25;
+    }
+
+    .catalogo-footer-brand p,
+    .catalogo-footer-contacto p,
+    .catalogo-footer-nav a {
+        font-size: .66rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .catalogo-footer-logo-text {
+        font-size: 1rem;
+    }
+
+    .catalogo-footer-logo-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        font-size: .58rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .barra-filtros.filtro-fijo {
+        top: 68px !important;
+    }
+
+    .catalogo-footer {
+        padding-left: .65rem !important;
+        padding-right: .65rem !important;
+    }
+
+    .catalogo-footer-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: .65rem !important;
+    }
+
+    .catalogo-footer h3 {
+        font-size: .54rem;
+        letter-spacing: .05em;
+        margin-bottom: .55rem;
+    }
+
+    .catalogo-footer-brand p,
+    .catalogo-footer-contacto p,
+    .catalogo-footer-nav a {
+        font-size: .57rem;
+        line-height: 1.35;
+    }
+
+    .catalogo-footer-logo {
+        gap: .3rem;
+        margin-bottom: .6rem;
+    }
+
+    .catalogo-footer-logo-text {
+        font-size: .78rem;
+    }
+
+    .catalogo-footer-logo-mark {
+        width: 24px;
+        height: 24px;
+        font-size: .48rem;
+        border-radius: 6px;
+    }
+
+    .catalogo-footer-redes {
+        gap: .25rem;
+        margin-top: .6rem;
+    }
+
+    .catalogo-footer-redes a {
+        width: 25px;
+        height: 25px;
+        font-size: .65rem;
     }
 }

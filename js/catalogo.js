@@ -2,281 +2,611 @@
     "use strict";
 
     const state = {
-        category: "todo",
-        search: "",
+        category: "anime",
         order: "recientes",
         images: [],
         index: 0,
-        detailsOpen: false,
-        touchStartX: 0
-    };
-
-    const categoryHeroImages = {
-        todo: "https://i.pinimg.com/1200x/79/c5/a6/79c5a6f1320869e2ef5daaf5b161d111.jpg",
-        anime: "https://i.pinimg.com/1200x/79/c5/a6/79c5a6f1320869e2ef5daaf5b161d111.jpg",
-        autos: "https://i.pinimg.com/736x/4c/9d/33/4c9d33025308d0d64320293f73c5db78.jpg",
-        paisajes: "https://i.pinimg.com/1200x/3e/ea/ca/3eeacae4a3553cc3ca4883028c252623.jpg",
-        religion: "https://i.pinimg.com/736x/9c/46/52/9c4652da570fcc7338b967e1f6a2eead.jpg",
-        retratos: "https://i.pinimg.com/1200x/10/09/e4/1009e4ac4417da4cfe2239fcda83a6be.jpg"
-    };
-
-    const categoryHeroTitles = {
-        todo: "Guerrero Samurái", anime: "Guerrero Samurái", autos: "Moto Café Racer",
-        paisajes: "Skyline Nocturno", religion: "Virgen del Carmen", retratos: "Mascota en HD"
-    };
-
-    const categoryLabels = {
-        todo: "Todos", anime: "Anime y Gamer", autos: "Autos y Motos",
-        paisajes: "Paisajes y Ciudades", religion: "Religión", retratos: "Retratos"
+        completeMode: false,
+        touchStartX: null
     };
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-    const cards = $$(".tarjeta-cuadro");
-    const tabs = $$(".tab-categoria");
-    const searchInput = $("#buscadorCatalogo");
-    const orderSelect = $("#ordenCatalogo");
-    const emptyMessage = $("#catalogoVacio");
-    const heroImage = $("#heroCatalogoImagen");
-    const heroTitle = $(".hero-catalogo-contenido h1");
-    const heroTag = $(".hero-catalogo-meta li:nth-child(3)");
 
-    const viewer = $("#visorCatalogo");
-    const viewerImage = $("#visorImagen");
-    const viewerTitle = $("#visorTitulo");
-    const viewerCounter = $("#visorContador");
-    const detailsPanel = $("#visorDetalles");
-    const detailsTitle = $("#visorDetallesTitulo");
-    const detailsDescription = $("#visorDetallesDescripcion");
-    const detailsCategory = $("#visorDetallesCategoria");
-    const orderButton = $("#visorEncargar");
-    const detailsButton = $("#visorVerDetalles");
+    const gallery = $("#galeriaCatalogo");
+    const visor = $("#visorCatalogo");
+    const visorImagen = $("#visorImagen");
+    const visorTitulo = $("#visorTitulo");
+    const visorContador = $("#visorContador");
+    const visorDetalles = $("#visorDetalles");
+    const visorCompleto = $("#visorCompleto");
+
+    const visorAnterior = $("#visorAnterior");
+    const visorSiguiente = $("#visorSiguiente");
+    const visorCerrar = $("#visorCerrar");
+    const visorVerDetalles = $("#visorVerDetalles");
+    const visorVerMas = $("#visorVerMas");
+    const visorEncargar = $("#visorEncargar");
+
+    const ordenCatalogo = $("#ordenCatalogo");
+
+    const sidebar = $("#sidebar");
+    const sidebarToggle = $("#sidebarToggle");
+    const sidebarOverlay = $("#sidebarOverlay");
+
+    /* =========================================================
+       DATOS DE LAS TARJETAS
+       ========================================================= */
 
     function getCardData(card) {
+        if (!card) return null;
+
         const image = $("img", card);
-        const size = card.dataset.tamano || "";
+
         return {
-            card, src: image?.dataset.viewer || image?.currentSrc || image?.src || "",
-            alt: image?.alt || $("h3", card)?.textContent?.trim() || "Cuadro",
-            name: card.dataset.nombre || $("h3", card)?.textContent?.trim() || "Cuadro",
-            category: card.dataset.categoria || "todo", size
+            element: card,
+            title:
+                card.dataset.titulo ||
+                card.dataset.nombre ||
+                $(".tarjeta-cuadro-titulo", card)?.textContent.trim() ||
+                image?.alt ||
+                "Cuadro",
+            category:
+                (card.dataset.categoria || card.dataset.category || "anime")
+                    .trim()
+                    .toLowerCase(),
+            image: image?.currentSrc || image?.src || "",
+            alt: image?.alt || "Cuadro",
+            size: card.dataset.tamano || "",
+            description: card.dataset.descripcion || "",
+            detailsUrl:
+                card.dataset.url ||
+                card.dataset.detalles ||
+                card.querySelector("[data-detalles]")?.getAttribute("href") ||
+                "#",
+            whatsapp:
+                card.dataset.whatsapp ||
+                card.querySelector(".boton-whatsapp")?.getAttribute("href") ||
+                ""
         };
     }
 
-    function matchesSearch(item) {
-        const query = state.search.trim().toLocaleLowerCase("es");
-        if (!query) return true;
-        return [item.name, item.alt, item.category, categoryLabels[item.category] || ""]
-            .some(value => value.toLocaleLowerCase("es").includes(query));
+    function getAllCards() {
+        return $$(".tarjeta-cuadro", gallery);
     }
 
-    function getFilteredPool() {
-        let result = cards.map(getCardData).filter(item => {
-            const categoryMatch = state.category === "todo" || item.category === state.category;
-            return categoryMatch && matchesSearch(item);
-        });
-        if (state.order === "az") result.sort((a,b) => a.name.localeCompare(b.name, "es"));
-        if (state.order === "za") result.sort((a,b) => b.name.localeCompare(a.name, "es"));
-        if (state.order === "tamano") result.sort((a,b) => a.size.localeCompare(b.size, "es", {numeric:true}));
-        return result;
-    }
+    /* =========================================================
+       FILTRO Y ORDEN
+       ========================================================= */
 
-    // En "Todos" se muestran solo 3 por categoría. Al entrar a una categoría
-    // concreta, o al buscar, se muestra todo lo que coincida.
     function getVisibleImages() {
-        const pool = getFilteredPool();
-        if (state.search.trim()) return pool;
-        if (state.category !== "todo") return pool;
+        let cards = getAllCards()
+            .map(getCardData)
+            .filter(Boolean)
+            .filter(card => card.category === state.category);
 
-        const perCategory = new Map();
-        const result = [];
-        pool.forEach(item => {
-            const count = perCategory.get(item.category) || 0;
-            if (count < 3) {
-                result.push(item);
-                perCategory.set(item.category, count + 1);
-            }
-        });
-        return result;
-    }
+        switch (state.order) {
+            case "az":
+                cards.sort((a, b) =>
+                    a.title.localeCompare(b.title, "es", {
+                        sensitivity: "base"
+                    })
+                );
+                break;
 
-    function updateHero(category) {
-        const nextSrc = categoryHeroImages[category] || categoryHeroImages.todo;
-        const nextTitle = categoryHeroTitles[category] || categoryHeroTitles.todo;
-        if (heroImage) {
-            const preloader = new Image();
-            preloader.onload = () => { heroImage.src = nextSrc; heroImage.alt = `Cuadro destacado SublimArts: ${nextTitle}`; };
-            preloader.src = nextSrc;
+            case "za":
+                cards.sort((a, b) =>
+                    b.title.localeCompare(a.title, "es", {
+                        sensitivity: "base"
+                    })
+                );
+                break;
+
+            case "tamano":
+                cards.sort((a, b) =>
+                    (a.size || "").localeCompare(b.size || "", "es", {
+                        numeric: true,
+                        sensitivity: "base"
+                    })
+                );
+                break;
+
+            case "recientes":
+            default:
+                // Mantiene el orden original del HTML.
+                break;
         }
-        if (heroTitle) {
-            const badge = $(".hero-catalogo-badge", heroTitle);
-            heroTitle.firstChild.textContent = `${nextTitle} `;
-            if (badge) heroTitle.appendChild(badge);
-        }
-        if (heroTag) heroTag.innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${categoryLabels[category] || categoryLabels.todo}`;
+
+        return cards;
     }
 
-    function updateTabs(category) {
-        tabs.forEach(tab => {
-            const active = tab.dataset.filtro === category;
-            tab.classList.toggle("activo", active);
-            tab.setAttribute("aria-selected", String(active));
-        });
-    }
+    function filterGallery() {
+        const cards = getAllCards();
 
-    function filterGallery(category = state.category) {
-        state.category = category;
-        updateTabs(category);
-        const visibleItems = getVisibleImages();
-        const visibleCards = new Set(visibleItems.map(item => item.card));
         cards.forEach(card => {
-            const show = visibleCards.has(card);
-            card.hidden = !show;
-            card.classList.toggle("tarjeta-filtrada", !show);
+            const category = (
+                card.dataset.categoria ||
+                card.dataset.category ||
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+            card.hidden = category !== state.category;
         });
-        if (emptyMessage) emptyMessage.hidden = visibleItems.length !== 0;
-        updateHero(category);
-        loadViewerImages();
+
+        $$(".tab-categoria").forEach(tab => {
+            const active =
+                (tab.dataset.filtro || "").toLowerCase() === state.category;
+
+            tab.classList.toggle("activo", active);
+            tab.setAttribute("aria-selected", active ? "true" : "false");
+        });
+
+        state.images = getVisibleImages();
+
+        if (state.images.length === 0) {
+            state.index = 0;
+        } else if (state.index >= state.images.length) {
+            state.index = state.images.length - 1;
+        }
     }
+
+    $$(".tab-categoria").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const category = (tab.dataset.filtro || "").toLowerCase();
+
+            if (!["anime", "gamer"].includes(category)) return;
+
+            state.category = category;
+            state.index = 0;
+
+            filterGallery();
+        });
+    });
+
+    if (ordenCatalogo) {
+        ordenCatalogo.addEventListener("change", event => {
+            state.order = event.target.value;
+            state.index = 0;
+
+            filterGallery();
+        });
+    }
+
+    /* =========================================================
+       MODAL / VISOR
+       ========================================================= */
 
     function loadViewerImages() {
         state.images = getVisibleImages();
-        if (!state.images.length) { state.index = 0; return; }
-        state.index = Math.min(Math.max(state.index, 0), state.images.length - 1);
-    }
 
-    function updateOrderLink(current) {
-        if (!orderButton) return;
-        const message = encodeURIComponent(`Hola, quiero encargar el cuadro "${current.name}". Me interesa la imagen del catálogo y quisiera cotizar las medidas disponibles: 20x30, 30x40 y 40x60 cm.`);
-        const phone = orderButton.dataset.numero || "";
-        if (phone) orderButton.href = `https://wa.me/${phone}?text=${message}`;
-        else orderButton.href = `#encargar-${encodeURIComponent(current.name.toLowerCase().replace(/\s+/g, "-"))}`;
+        if (!state.images.length) {
+            state.index = 0;
+            return;
+        }
+
+        if (state.index < 0) {
+            state.index = state.images.length - 1;
+        }
+
+        if (state.index >= state.images.length) {
+            state.index = 0;
+        }
     }
 
     function renderViewer() {
-        if (!state.images.length) return;
-        const current = state.images[state.index];
-        viewerImage.src = current.src;
-        viewerImage.alt = current.alt;
-        viewerTitle.textContent = current.name;
-        viewerCounter.textContent = `${state.index + 1} / ${state.images.length}`;
-        detailsTitle.textContent = current.name;
-        detailsDescription.textContent = `Cuadro personalizado en aluminio HD. Diseño: ${current.name}. Ideal para exhibir en formato vertical y conservar el detalle de la imagen.`;
-        detailsCategory.textContent = categoryLabels[current.category] || current.category;
-        updateOrderLink(current);
-        const selectedSize = current.size || "";
-        $$("[data-medida]", detailsPanel || document).forEach(button => {
-            button.classList.toggle("activo", button.dataset.medida === selectedSize);
+        if (!visor || !visorImagen || !state.images.length) return;
+
+        const item = state.images[state.index];
+
+        visorImagen.src = item.image;
+        visorImagen.alt = item.alt || item.title;
+
+        if (visorTitulo) {
+            visorTitulo.textContent = item.title;
+        }
+
+        if (visorContador) {
+            visorContador.textContent =
+                `${state.index + 1} / ${state.images.length}`;
+        }
+
+        if (visorDetalles) {
+            const detailsText =
+                item.description ||
+                item.size ||
+                "";
+
+            if (detailsText) {
+                visorDetalles.textContent = detailsText;
+            }
+        }
+
+        if (visorEncargar && item.whatsapp) {
+            visorEncargar.href = item.whatsapp;
+        }
+
+        if (visorVerMas && item.detailsUrl) {
+            visorVerMas.href = item.detailsUrl;
+        }
+
+        if (visorAnterior) {
+            visorAnterior.disabled = state.images.length <= 1;
+        }
+
+        if (visorSiguiente) {
+            visorSiguiente.disabled = state.images.length <= 1;
+        }
+    }
+
+    function renderCompleteGrid() {
+        if (!visorCompleto) return;
+
+        visorCompleto.innerHTML = "";
+
+        state.images.forEach((item, index) => {
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.className = "visor-completo-item";
+            button.dataset.index = index;
+            button.setAttribute(
+                "aria-label",
+                `Ver ${item.title || "imagen"}`
+            );
+
+            const img = document.createElement("img");
+
+            img.src = item.image;
+            img.alt = item.alt || item.title || "Imagen";
+
+            button.appendChild(img);
+            visorCompleto.appendChild(button);
         });
     }
 
-    function openImageViewer(imageOrCard) {
-        const clickedCard = imageOrCard.closest ? imageOrCard.closest(".tarjeta-cuadro") : imageOrCard;
-        if (!clickedCard) return;
+    function openImageViewer(card) {
+        const data = getCardData(card);
+
+        if (!data || !data.image) return;
+
         loadViewerImages();
-        const found = state.images.findIndex(item => item.card === clickedCard);
-        state.index = found >= 0 ? found : 0;
-        if (detailsPanel) detailsPanel.hidden = true;
-        state.detailsOpen = false;
-        viewer.classList.add("activo");
-        viewer.setAttribute("aria-hidden", "false");
-        document.body.classList.add("visor-abierto");
+
+        const foundIndex = state.images.findIndex(
+            item => item.element === card
+        );
+
+        if (foundIndex >= 0) {
+            state.index = foundIndex;
+        } else {
+            state.index = 0;
+        }
+
+        state.completeMode = false;
+
+        if (visorCompleto) {
+            visorCompleto.hidden = true;
+        }
+
+        if (visorDetalles) {
+            visorDetalles.hidden = true;
+        }
+
+        if (visorVerDetalles) {
+            visorVerDetalles.setAttribute("aria-expanded", "false");
+        }
+
         renderViewer();
-        $("#visorCerrar")?.focus();
+
+        if (visor) {
+            visor.classList.add("abierto");
+            visor.setAttribute("aria-hidden", "false");
+            document.body.classList.add("visor-abierto");
+        }
+
+        visorCerrar?.focus();
     }
 
     function closeImageViewer() {
-        viewer.classList.remove("activo");
-        viewer.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("visor-abierto");
-        if (detailsPanel) detailsPanel.hidden = true;
-        state.detailsOpen = false;
-        viewerImage.src = "";
-    }
+        if (!visor) return;
 
-    function toggleDetails() {
-        state.detailsOpen = !state.detailsOpen;
-        if (detailsPanel) detailsPanel.hidden = !state.detailsOpen;
-        if (detailsButton) detailsButton.textContent = state.detailsOpen ? "Ocultar detalles" : "Ver detalles";
+        visor.classList.remove("abierto");
+        visor.setAttribute("aria-hidden", "true");
+
+        document.body.classList.remove("visor-abierto");
+
+        state.completeMode = false;
+        state.touchStartX = null;
     }
 
     function nextImage() {
         if (!state.images.length) return;
-        state.index = (state.index + 1) % state.images.length;
+
+        state.index =
+            (state.index + 1) % state.images.length;
+
         renderViewer();
     }
+
     function previousImage() {
         if (!state.images.length) return;
-        state.index = (state.index - 1 + state.images.length) % state.images.length;
+
+        state.index =
+            (state.index - 1 + state.images.length) %
+            state.images.length;
+
         renderViewer();
     }
 
-    tabs.forEach(tab => tab.addEventListener("click", () => filterGallery(tab.dataset.filtro || "todo")));
-    searchInput?.addEventListener("input", () => { state.search = searchInput.value; filterGallery(state.category); });
-    orderSelect?.addEventListener("change", () => { state.order = orderSelect.value; filterGallery(state.category); });
+    function openCompleteViewer() {
+        loadViewerImages();
 
-    cards.forEach(card => {
+        if (!state.images.length) return;
+
+        state.completeMode = true;
+
+        renderCompleteGrid();
+
+        if (visorCompleto) {
+            visorCompleto.hidden = false;
+        }
+    }
+
+    /* =========================================================
+       CLICK EN LAS TARJETAS
+       ========================================================= */
+
+    getAllCards().forEach(card => {
         const image = $("img", card);
-        image?.addEventListener("click", () => openImageViewer(card));
-        image?.setAttribute("tabindex", "0");
-        image?.addEventListener("keydown", event => {
-            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openImageViewer(card); }
+
+        if (image) {
+            image.addEventListener("click", event => {
+                event.preventDefault();
+                openImageViewer(card);
+            });
+        }
+
+        const trigger =
+            card.querySelector("[data-visor-abrir]") ||
+            card.querySelector(".tarjeta-cuadro-ver") ||
+            card.querySelector(".tarjeta-cuadro-media");
+
+        if (trigger && trigger !== image) {
+            trigger.addEventListener("click", event => {
+                event.preventDefault();
+                openImageViewer(card);
+            });
+        }
+    });
+
+    /* =========================================================
+       CONTROLES DEL MODAL
+       ========================================================= */
+
+    visorCerrar?.addEventListener("click", closeImageViewer);
+
+    visorAnterior?.addEventListener("click", event => {
+        event.preventDefault();
+        previousImage();
+    });
+
+    visorSiguiente?.addEventListener("click", event => {
+        event.preventDefault();
+        nextImage();
+    });
+
+    visorVerMas?.addEventListener("click", event => {
+        if (!state.completeMode) {
+            event.preventDefault();
+            openCompleteViewer();
+        }
+    });
+
+    visorVerDetalles?.addEventListener("click", () => {
+        if (!visorDetalles) return;
+
+        const isHidden = visorDetalles.hidden;
+
+        visorDetalles.hidden = !isHidden;
+
+        visorVerDetalles.setAttribute(
+            "aria-expanded",
+            isHidden ? "true" : "false"
+        );
+    });
+
+    $$("[data-visor-cerrar]").forEach(element => {
+        element.addEventListener("click", closeImageViewer);
+    });
+
+    visorCompleto?.addEventListener("click", event => {
+        const item = event.target.closest(".visor-completo-item");
+
+        if (!item) return;
+
+        const index = Number(item.dataset.index);
+
+        if (!Number.isNaN(index)) {
+            state.index = index;
+            state.completeMode = false;
+
+            visorCompleto.hidden = true;
+
+            renderViewer();
+        }
+    });
+
+    /* =========================================================
+       TECLADO
+       ========================================================= */
+
+    document.addEventListener("keydown", event => {
+        if (!visor?.classList.contains("abierto")) return;
+
+        switch (event.key) {
+            case "Escape":
+                closeImageViewer();
+                break;
+
+            case "ArrowRight":
+                event.preventDefault();
+                nextImage();
+                break;
+
+            case "ArrowLeft":
+                event.preventDefault();
+                previousImage();
+                break;
+        }
+    });
+
+    /* =========================================================
+       SWIPE EN MOBILE
+       ========================================================= */
+
+    if (visor) {
+        visor.addEventListener(
+            "touchstart",
+            event => {
+                if (event.touches.length !== 1) return;
+
+                state.touchStartX = event.touches[0].clientX;
+            },
+            { passive: true }
+        );
+
+        visor.addEventListener(
+            "touchend",
+            event => {
+                if (state.touchStartX === null) return;
+
+                const endX = event.changedTouches[0].clientX;
+                const difference =
+                    endX - state.touchStartX;
+
+                state.touchStartX = null;
+
+                if (Math.abs(difference) < 50) return;
+
+                if (difference < 0) {
+                    nextImage();
+                } else {
+                    previousImage();
+                }
+            },
+            { passive: true }
+        );
+    }
+
+    /* =========================================================
+       MENÚ MOBILE
+       ========================================================= */
+
+    function openSidebar() {
+        if (!sidebar) return;
+
+        sidebar.classList.add("abierto");
+        sidebar.setAttribute("aria-hidden", "false");
+
+        sidebarToggle?.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        document.body.classList.add("menu-abierto");
+    }
+
+    function closeSidebar() {
+        if (!sidebar) return;
+
+        sidebar.classList.remove("abierto");
+        sidebar.setAttribute("aria-hidden", "true");
+
+        sidebarToggle?.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        document.body.classList.remove("menu-abierto");
+    }
+
+    sidebarToggle?.addEventListener("click", () => {
+        const isOpen = sidebar?.classList.contains("abierto");
+
+        if (isOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+
+    sidebarOverlay?.addEventListener("click", closeSidebar);
+
+    $$(".sidebar a").forEach(link => {
+        link.addEventListener("click", () => {
+            closeSidebar();
         });
     });
 
-    $("#visorCerrar")?.addEventListener("click", closeImageViewer);
-    $("[data-visor-cerrar]")?.addEventListener("click", closeImageViewer);
-    $("#visorSiguiente")?.addEventListener("click", nextImage);
-    $("#visorAnterior")?.addEventListener("click", previousImage);
-    detailsButton?.addEventListener("click", toggleDetails);
-
-    viewer?.addEventListener("touchstart", event => { state.touchStartX = event.changedTouches[0].screenX; }, {passive:true});
-    viewer?.addEventListener("touchend", event => {
-        const delta = event.changedTouches[0].screenX - state.touchStartX;
-        if (Math.abs(delta) >= 45) delta < 0 ? nextImage() : previousImage();
-    }, {passive:true});
-
-    $("#visorMedidas")?.addEventListener("click", event => {
-        const button = event.target.closest("[data-medida]");
-        if (!button) return;
-        $$("[data-medida]", $("#visorMedidas")).forEach(item => item.classList.remove("activo"));
-        button.classList.add("activo");
-    });
-
     document.addEventListener("keydown", event => {
-        if (!viewer?.classList.contains("activo")) return;
-        if (event.key === "Escape") closeImageViewer();
-        if (event.key === "ArrowRight") nextImage();
-        if (event.key === "ArrowLeft") previousImage();
+        if (event.key === "Escape") {
+            closeSidebar();
+        }
     });
 
-    // Barra de filtros fija al llegar al borde superior.
-    const barraFiltros = $("#categorias");
-    if (barraFiltros) {
-        const placeholder = document.createElement("div");
-        placeholder.className = "barra-filtros-placeholder";
-        barraFiltros.parentNode.insertBefore(placeholder, barraFiltros);
-        let barraTop = 0, barraAltura = 0, fijada = false;
-        const soltar = () => { fijada = false; barraFiltros.classList.remove("filtro-fijo"); placeholder.classList.remove("activo"); placeholder.style.height = "0px"; };
-        const fijar = () => { barraAltura = barraFiltros.offsetHeight; fijada = true; barraFiltros.classList.add("filtro-fijo"); placeholder.style.height = `${barraAltura}px`; placeholder.classList.add("activo"); };
-        const medir = () => { const was = fijada; if (was) soltar(); barraTop = barraFiltros.getBoundingClientRect().top + window.scrollY; barraAltura = barraFiltros.offsetHeight; if (was && window.scrollY >= barraTop) fijar(); };
-        const actualizar = () => window.scrollY >= barraTop ? (!fijada && fijar()) : (fijada && soltar());
-        medir(); actualizar(); window.addEventListener("scroll", actualizar, {passive:true}); window.addEventListener("resize", medir);
+    /* =========================================================
+       WHATSAPP
+       ========================================================= */
+
+    $$(".boton-whatsapp").forEach(button => {
+        button.addEventListener("click", () => {
+            const message =
+                button.dataset.mensaje ||
+                "Hola, quiero consultar por un diseño de SublimArts.";
+
+            if (
+                button.tagName.toLowerCase() === "a" &&
+                button.getAttribute("href")
+            ) {
+                return;
+            }
+
+            const phone = button.dataset.telefono || "";
+
+            if (!phone) return;
+
+            const url =
+                `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+            window.open(url, "_blank", "noopener,noreferrer");
+        });
+    });
+
+    /* =========================================================
+       INICIALIZACIÓN
+       ========================================================= */
+
+    function initialize() {
+        // Anime es la categoría inicial.
+        state.category = "anime";
+        state.order = ordenCatalogo?.value || "recientes";
+        state.index = 0;
+
+        filterGallery();
+
+        if (sidebar) {
+            sidebar.setAttribute("aria-hidden", "true");
+        }
+
+        if (visor) {
+            visor.setAttribute("aria-hidden", "true");
+        }
     }
 
-    const sidebar = $("#sidebar"), sidebarToggle = $("#sidebarToggle"), sidebarOverlay = $("#sidebarOverlay");
-    function closeSidebar() { sidebar?.classList.remove("activo"); sidebarOverlay?.classList.remove("activo"); sidebarToggle?.setAttribute("aria-expanded", "false"); }
-    sidebarToggle?.addEventListener("click", () => { const open = sidebar.classList.toggle("activo"); sidebarOverlay?.classList.toggle("activo", open); sidebarToggle.setAttribute("aria-expanded", String(open)); });
-    sidebarOverlay?.addEventListener("click", closeSidebar);
-    $$(".sidebar-enlace").forEach(link => link.addEventListener("click", closeSidebar));
-
-    $$(".boton-whatsapp").forEach(button => button.addEventListener("click", event => {
-        const service = button.dataset.servicio || "Cuadros personalizados";
-        const phone = button.dataset.numero || "";
-        if (!phone) { event.preventDefault(); return; }
-        button.href = `https://wa.me/${phone}?text=${encodeURIComponent(`Hola, quiero consultar por ${service}.`)}`;
-    }));
-
-    cards.forEach(card => { card.hidden = false; card.classList.remove("tarjeta-oculta", "tarjeta-filtrada"); });
-    filterGallery("todo");
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initialize);
+    } else {
+        initialize();
+    }
 })();
