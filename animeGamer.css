@@ -34,14 +34,14 @@ h1, h2, h3 { font-family: var(--font-sans); color: var(--texto-claro); font-weig
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 button, select, input { font-family: inherit; }
-.visually-hidden-deportes { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.visually-hidden-anime-gamer { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-.skip-link-deportes {
+.skip-link-anime-gamer {
     position: fixed; left: 1rem; top: -5rem; z-index: 9999;
     background: var(--texto-claro); color: var(--bg-app); padding: .75rem 1rem;
     border-radius: .4rem; font-weight: 700; transition: top .2s ease;
 }
-.skip-link-deportes:focus { top: 1rem; outline: 3px solid var(--acento); }
+.skip-link-anime-gamer:focus { top: 1rem; outline: 3px solid var(--acento); }
 
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
     outline: 2px solid var(--acento); outline-offset: 2px;
@@ -50,12 +50,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* =============================================
    LAYOUT GENERAL
    ============================================= */
-.layout-catalogo-deportes { display: flex; min-height: 100vh; }
+.layout-catalogo-anime-gamer { display: flex; min-height: 100vh; }
 
 /* =============================================
    SIDEBAR
    ============================================= */
-.sidebar-deportes {
+.sidebar-anime-gamer {
     width: 230px; flex-shrink: 0; background: var(--bg-panel);
     border-right: 1px solid var(--borde-sutil);
     display: flex; flex-direction: column; gap: 2.2rem;
@@ -64,253 +64,229 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     z-index: 1000; overflow: hidden;
 }
 
-.sidebar-cabecera-deportes { display: flex; align-items: center; justify-content: space-between; }
-.sidebar-logo-deportes { display: flex; align-items: center; gap: .6rem; color: var(--texto-claro); }
+.sidebar-cabecera-anime-gamer { display: flex; align-items: center; justify-content: space-between; }
+.sidebar-logo-anime-gamer { display: flex; align-items: center; gap: .6rem; color: var(--texto-claro); }
 .sidebar-logo-icono { color: var(--acento); display: flex; }
 .sidebar-logo-texto { font-family: var(--font-serif); font-size: 1.15rem; letter-spacing: .04em; }
 .sidebar-logo-texto span { color: var(--acento); }
-.sidebar-toggle-deportes { display: none; background: none; border: none; color: var(--texto-claro); font-size: 1.3rem; }
+.sidebar-toggle-anime-gamer { display: none; background: none; border: none; color: var(--texto-claro); font-size: 1.3rem; }
 
-.sidebar-nav-deportes ul { list-style: none; display: flex; flex-direction: column; gap: .2rem; }
-.sidebar-enlace-deportes {
+.sidebar-nav-anime-gamer ul { list-style: none; display: flex; flex-direction: column; gap: .2rem; }
+.sidebar-enlace-anime-gamer {
     display: flex; align-items: center; justify-content: space-between; gap: .5rem;
     padding: .7rem .3rem; font-size: .78rem; font-weight: 700; letter-spacing: .08em;
     text-transform: uppercase; color: var(--texto-gris); border-radius: var(--radius-md);
     transition: var(--transicion);
 }
-.sidebar-enlace-deportes i { font-size: .65rem; opacity: .5; transition: var(--transicion); }
-.sidebar-enlace-deportes:hover { color: var(--texto-claro); padding-left: .6rem; }
-.sidebar-enlace--activo-deportes { color: var(--acento); }
-.sidebar-enlace--activo-deportes i { color: var(--acento); opacity: 1; }
+.sidebar-enlace-anime-gamer i { font-size: .65rem; opacity: .5; transition: var(--transicion); }
+.sidebar-enlace-anime-gamer:hover { color: var(--texto-claro); padding-left: .6rem; }
+.sidebar-enlace--activo-anime-gamer { color: var(--acento); }
+.sidebar-enlace--activo-anime-gamer i { color: var(--acento); opacity: 1; }
 
-.sidebar-contacto-deportes {
+.sidebar-contacto-anime-gamer {
     margin-top: auto; display: flex; align-items: center; gap: .8rem;
     padding: .9rem; background: var(--bg-tarjeta); border-radius: var(--radius-md);
     border: 1px solid var(--borde-sutil);
 }
-.sidebar-contacto-avatar-deportes {
+.sidebar-contacto-avatar-anime-gamer {
     width: 40px; height: 40px; border-radius: 50%; background: var(--color-whatsapp);
     color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
 }
-.sidebar-contacto-texto-deportes { display: flex; flex-direction: column; gap: .3rem; }
-.sidebar-contacto-texto-deportes span { font-size: .74rem; color: var(--texto-gris); }
-.sidebar-contacto-texto-deportes a { font-size: .8rem; font-weight: 700; color: var(--texto-claro); }
-.sidebar-contacto-texto-deportes a:hover { color: var(--acento); }
+.sidebar-contacto-texto-anime-gamer { display: flex; flex-direction: column; gap: .3rem; }
+.sidebar-contacto-texto-anime-gamer span { font-size: .74rem; color: var(--texto-gris); }
+.sidebar-contacto-texto-anime-gamer a { font-size: .8rem; font-weight: 700; color: var(--texto-claro); }
+.sidebar-contacto-texto-anime-gamer a:hover { color: var(--acento); }
 
-.sidebar-redes-deportes { display: flex; gap: .8rem; }
-.sidebar-redes-deportes a {
+.sidebar-redes-anime-gamer { display: flex; gap: .8rem; }
+.sidebar-redes-anime-gamer a {
     width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--borde-sutil);
     display: flex; align-items: center; justify-content: center; font-size: .78rem; color: var(--texto-gris);
     transition: var(--transicion);
 }
-.sidebar-redes-deportes a:hover { color: var(--acento); border-color: var(--acento); }
+.sidebar-redes-anime-gamer a:hover { color: var(--acento); border-color: var(--acento); }
 
-.sidebar-copyright-deportes { font-size: .7rem; color: #5c5c62; line-height: 1.6; }
-.sidebar-copyright-deportes strong { color: var(--texto-gris); }
+.sidebar-copyright-anime-gamer { font-size: .7rem; color: #5c5c62; line-height: 1.6; }
+.sidebar-copyright-anime-gamer strong { color: var(--texto-gris); }
 
-.sidebar-overlay-deportes {
+.sidebar-overlay-anime-gamer {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 900;
 }
-.sidebar-overlay-deportes.activo { display: block; }
+.sidebar-overlay-anime-gamer.activo { display: block; }
 
 /* =============================================
    CONTENIDO PRINCIPAL
    ============================================= */
-.contenido-catalogo-deportes {
+.contenido-catalogo-anime-gamer {
     flex: 1; min-width: 0; margin-left: 230px;
     padding: 1.8rem 2rem 3rem;
 }
 
 /* Hero */
-.hero-catalogo-deportes {
+.hero-catalogo-anime-gamer {
     position: relative; border-radius: var(--radius-lg); overflow: hidden;
     height: clamp(300px, 46vw, 460px); background: var(--bg-tarjeta);
 }
-.hero-catalogo-imagen-deportes { width: 100%; height: 100%; object-fit: cover; }
-.hero-catalogo-degradado-deportes {
+.hero-catalogo-imagen-anime-gamer { width: 100%; height: 100%; object-fit: cover; }
+.hero-catalogo-degradado-anime-gamer {
     position: absolute; inset: 0;
     background: linear-gradient(0deg, rgba(17,18,20,.92) 12%, rgba(17,18,20,.15) 55%, rgba(17,18,20,0) 75%);
 }
 
-.hero-catalogo-avatares-deportes {
+.hero-catalogo-avatares-anime-gamer {
     position: absolute; top: 1.4rem; right: 1.6rem; display: flex; align-items: center;
 }
-.hero-avatar-deportes {
+.hero-avatar-anime-gamer {
     width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--bg-app);
     object-fit: cover; margin-left: -12px; background: var(--bg-tarjeta);
 }
-.hero-avatar-deportes:first-child { margin-left: 0; }
-.hero-avatar--mas-deportes {
+.hero-avatar-anime-gamer:first-child { margin-left: 0; }
+.hero-avatar--mas-anime-gamer {
     display: flex; align-items: center; justify-content: center; background: var(--acento);
     color: #fff; font-size: .7rem; font-weight: 800;
 }
 
-.hero-catalogo-contenido-deportes { position: absolute; left: 1.8rem; bottom: 1.8rem; right: 1.8rem; max-width: 560px; }
-.hero-catalogo-contenido-deportes h1 {
+.hero-catalogo-contenido-anime-gamer { position: absolute; left: 1.8rem; bottom: 1.8rem; right: 1.8rem; max-width: 560px; }
+.hero-catalogo-contenido-anime-gamer h1 {
     font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.7rem, 4vw, 2.6rem);
     color: var(--texto-claro); display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
 }
-.hero-catalogo-badge-deportes {
+.hero-catalogo-badge-anime-gamer {
     font-family: var(--font-sans); font-size: .65rem; font-weight: 800; letter-spacing: .05em;
     background: var(--acento); color: #fff; padding: .25rem .55rem; border-radius: 4px;
 }
-.hero-catalogo-meta-deportes {
+.hero-catalogo-meta-anime-gamer {
     list-style: none; display: flex; flex-wrap: wrap; gap: 1.2rem; margin: .8rem 0 1.4rem;
     font-size: .8rem; color: #d8d6d2;
 }
-.hero-catalogo-meta-deportes li { display: flex; align-items: center; gap: .45rem; }
-.hero-catalogo-meta-deportes i { color: var(--acento); }
-.hero-catalogo-acciones-deportes { display: flex; flex-wrap: wrap; gap: .8rem; }
+.hero-catalogo-meta-anime-gamer li { display: flex; align-items: center; gap: .45rem; }
+.hero-catalogo-meta-anime-gamer i { color: var(--acento); }
+.hero-catalogo-acciones-anime-gamer { display: flex; flex-wrap: wrap; gap: .8rem; }
 
-.boton-deportes {
+.boton-anime-gamer {
     display: inline-flex; align-items: center; gap: .55rem; padding: .8rem 1.5rem;
     border-radius: 30px; font-size: .82rem; font-weight: 700; border: 1px solid transparent;
     transition: var(--transicion); white-space: nowrap;
 }
-.boton-deportes:hover { transform: translateY(-2px); }
-.boton-relleno-deportes { background: var(--acento); color: #fff; }
-.boton-relleno-deportes:hover { background: var(--acento-oscuro); }
-.boton-contorno-deportes { border-color: rgba(245,243,240,.35); color: var(--texto-claro); background: rgba(17,18,20,.35); }
-.boton-contorno-deportes:hover { border-color: var(--acento); color: var(--acento); }
-.boton-contorno-claro-deportes { border-color: rgba(255,255,255,.5); color: #fff; }
-.boton-contorno-claro-deportes:hover { border-color: var(--acento); color: var(--acento); }
+.boton-anime-gamer:hover { transform: translateY(-2px); }
+.boton-relleno-anime-gamer { background: var(--acento); color: #fff; }
+.boton-relleno-anime-gamer:hover { background: var(--acento-oscuro); }
+.boton-contorno-anime-gamer { border-color: rgba(245,243,240,.35); color: var(--texto-claro); background: rgba(17,18,20,.35); }
+.boton-contorno-anime-gamer:hover { border-color: var(--acento); color: var(--acento); }
+.boton-contorno-claro-anime-gamer { border-color: rgba(255,255,255,.5); color: #fff; }
+.boton-contorno-claro-anime-gamer:hover { border-color: var(--acento); color: var(--acento); }
 
 /* Barra de filtros */
-.barra-filtros-deportes {
+.barra-filtros-anime-gamer {
     display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
     gap: 1rem; margin: 2rem 0 1.6rem;
     position: relative;
 }
-.tabs-categorias-deportes { display: flex; flex-wrap: wrap; gap: 1.5rem; }
-.tab-categoria-deportes {
+.tabs-categorias-anime-gamer { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+.tab-categoria-anime-gamer {
     background: none; border: none; color: var(--texto-gris); font-size: .8rem; font-weight: 700;
     letter-spacing: .03em; text-transform: uppercase; padding-bottom: .3rem; border-bottom: 2px solid transparent;
     transition: var(--transicion);
 }
-.tab-categoria-deportes:hover { color: var(--texto-claro); }
-.tab-categoria-deportes.activo { color: var(--acento); border-color: var(--acento); }
+.tab-categoria-anime-gamer:hover { color: var(--texto-claro); }
+.tab-categoria-anime-gamer.activo { color: var(--acento); border-color: var(--acento); }
 
-.controles-catalogo-deportes { display: flex; gap: .8rem; flex-wrap: wrap; }
-.buscador-catalogo-deportes {
+.controles-catalogo-anime-gamer { display: flex; gap: .8rem; flex-wrap: wrap; }
+.buscador-catalogo-anime-gamer {
     display: flex; align-items: center; gap: .5rem; background: var(--bg-tarjeta);
     border: 1px solid var(--borde-sutil); border-radius: 30px; padding: .5rem 1rem;
 }
-.buscador-catalogo-deportes i { color: var(--texto-gris); font-size: .82rem; }
-.buscador-catalogo-deportes input {
+.buscador-catalogo-anime-gamer i { color: var(--texto-gris); font-size: .82rem; }
+.buscador-catalogo-anime-gamer input {
     background: none; border: none; color: var(--texto-claro); font-size: .82rem; width: 150px;
 }
-.buscador-catalogo-deportes input::placeholder { color: #6c6c72; }
-.buscador-catalogo-deportes input:focus { outline: none; }
+.buscador-catalogo-anime-gamer input::placeholder { color: #6c6c72; }
+.buscador-catalogo-anime-gamer input:focus { outline: none; }
 
-.orden-catalogo-deportes select {
+.orden-catalogo-anime-gamer select {
     background: var(--bg-tarjeta); border: 1px solid var(--borde-sutil); border-radius: 30px;
     color: var(--texto-gris); font-size: .78rem; padding: .55rem 1rem;
 }
 
 
 /* Filtrado de galería: la tarjeta desaparece completamente al cambiar de categoría. */
-.tarjeta-cuadro-deportes.tarjeta-filtrada,
-.tarjeta-cuadro-deportes.tarjeta-filtrada-deportes,
-.tarjeta-cuadro-deportes[hidden] { display: none !important; }
+.tarjeta-cuadro-anime-gamer.tarjeta-filtrada { display: none !important; }
 
 /* Grid de tarjetas */
-.grid-catalogo-deportes {
+.grid-catalogo-anime-gamer {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem;
 }
-.tarjeta-cuadro-deportes { display: flex; flex-direction: column; gap: .5rem; }
-.tarjeta-cuadro-media-deportes {
+.tarjeta-cuadro-anime-gamer { display: flex; flex-direction: column; gap: .5rem; }
+.tarjeta-cuadro-media-anime-gamer {
     position: relative; border-radius: var(--radius-md); overflow: hidden; aspect-ratio: 3/4;
     background: var(--bg-tarjeta);
 }
-.tarjeta-cuadro-media-deportes img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
-.tarjeta-cuadro-deportes:hover .tarjeta-cuadro-media-deportes img { transform: scale(1.06); }
-.tarjeta-badge-deportes {
+.tarjeta-cuadro-media-anime-gamer img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.tarjeta-cuadro-anime-gamer:hover .tarjeta-cuadro-media-anime-gamer img { transform: scale(1.06); }
+.tarjeta-badge-anime-gamer {
     position: absolute; top: .6rem; left: .6rem; background: var(--acento); color: #fff;
     font-size: .68rem; font-weight: 800; padding: .3rem .55rem; border-radius: 20px;
 }
-.tarjeta-cuadro-deportes h3 { font-size: .95rem; color: var(--texto-claro); font-weight: 700; }
-.tarjeta-meta-deportes { font-size: .74rem; color: var(--texto-gris); }
+.tarjeta-cuadro-anime-gamer h3 { font-size: .95rem; color: var(--texto-claro); font-weight: 700; }
+.tarjeta-meta-anime-gamer { font-size: .74rem; color: var(--texto-gris); }
 
-.grid-catalogo-vacio-deportes { text-align: center; padding: 2.5rem 0; color: var(--texto-gris); font-size: .9rem; }
+.grid-catalogo-vacio-anime-gamer { text-align: center; padding: 2.5rem 0; color: var(--texto-gris); font-size: .9rem; }
 
 
 /* Banner promocional */
-.banner-promo-deportes {
+.banner-promo-anime-gamer {
     position: relative; border-radius: var(--radius-lg); overflow: hidden; height: clamp(200px, 26vw, 280px);
 }
-.banner-promo-imagen-deportes { width: 100%; height: 100%; object-fit: cover; }
-.banner-promo-degradado-deportes { position: absolute; inset: 0; background: rgba(17,18,20,.55); }
-.banner-promo-contenido-deportes {
+.banner-promo-imagen-anime-gamer { width: 100%; height: 100%; object-fit: cover; }
+.banner-promo-degradado-anime-gamer { position: absolute; inset: 0; background: rgba(17,18,20,.55); }
+.banner-promo-contenido-anime-gamer {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
     justify-content: center; gap: 1.2rem; text-align: center; padding: 1.5rem;
 }
-.banner-promo-contenido-deportes h2 {
+.banner-promo-contenido-anime-gamer h2 {
     font-family: var(--font-serif); font-weight: 600; font-size: clamp(1.4rem, 3.4vw, 2.1rem); color: #fff;
 }
-.banner-promo-acciones-deportes { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; }
-
-
-/* ============================================================
-   FILTRO DEPORTES — CLASE REAL USADA POR deportes.js
-   ============================================================ */
-.tarjeta-cuadro-deportes.tarjeta-filtrada-deportes {
-    display: none !important;
-}
-
-/* Las flechas pertenecen al visor del producto actual. */
-.visor-catalogo-nav-deportes {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.visor-catalogo-nav-deportes:disabled {
-    opacity: .55 !important;
-    cursor: default;
-}
+.banner-promo-acciones-anime-gamer { display: flex; flex-wrap: wrap; gap: .9rem; justify-content: center; }
 
 /* =============================================
    RESPONSIVE
    ============================================= */
 @media (min-width: 640px) {
-    .grid-catalogo-deportes { grid-template-columns: repeat(3, 1fr); }
+    .grid-catalogo-anime-gamer { grid-template-columns: repeat(3, 1fr); }
 }
 @media (min-width: 900px) {
-    .grid-catalogo-deportes { grid-template-columns: repeat(4, 1fr); }
+    .grid-catalogo-anime-gamer { grid-template-columns: repeat(4, 1fr); }
 }
 @media (min-width: 1200px) {
-    .grid-catalogo-deportes { grid-template-columns: repeat(5, 1fr); }
+    .grid-catalogo-anime-gamer { grid-template-columns: repeat(5, 1fr); }
 }
 
 @media (max-width: 900px) {
-    .sidebar-deportes {
+    .sidebar-anime-gamer {
         position: fixed; left: -100%; top: 0; bottom: 0; height: 100vh; z-index: 1200; width: 78%; max-width: 300px;
         transition: left .3s ease; box-shadow: 20px 0 40px rgba(0,0,0,.4);
     }
-    .sidebar-deportes.activo { left: 0; }
-    .sidebar-toggle-deportes { display: block; }
-    .contenido-catalogo-deportes { margin-left: 0; padding: 1.2rem 1.1rem 2.4rem; }
-    .layout-catalogo-deportes { display: block; }
+    .sidebar-anime-gamer.activo { left: 0; }
+    .sidebar-toggle-anime-gamer { display: block; }
+    .contenido-catalogo-anime-gamer { margin-left: 0; padding: 1.2rem 1.1rem 2.4rem; }
+    .layout-catalogo-anime-gamer { display: block; }
 }
 
 @media (min-width: 901px) {
-    .sidebar-cabecera-deportes { pointer-events: none; }
-    .sidebar-toggle-deportes { display: none; }
+    .sidebar-cabecera-anime-gamer { pointer-events: none; }
+    .sidebar-toggle-anime-gamer { display: none; }
 }
 
 @media (max-width: 640px) {
-    .hero-catalogo-avatares-deportes { display: none; }
-    .hero-catalogo-meta-deportes { gap: .8rem; }
-    .buscador-catalogo-deportes input { width: 110px; }
+    .hero-catalogo-avatares-anime-gamer { display: none; }
+    .hero-catalogo-meta-anime-gamer { gap: .8rem; }
+    .buscador-catalogo-anime-gamer input { width: 110px; }
 }
 
 
 /* =============================================
    CATEGORÍAS STICKY
    ============================================= */
-.barra-filtros-deportes {
+.barra-filtros-anime-gamer {
     position: sticky;
     top: 0;
     z-index: 2000;
@@ -324,7 +300,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 /* Estado fijo activado por JS al superar la posición original.
    Esto evita que ningún contenedor del layout pueda romper el sticky. */
-.barra-filtros-deportes.filtro-fijo {
+.barra-filtros-anime-gamer.filtro-fijo {
     position: fixed;
     top: 0;
     left: 230px;
@@ -335,28 +311,28 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     box-shadow: 0 8px 24px rgba(0,0,0,.24);
 }
 
-.barra-filtros-placeholder-deportes {
+.barra-filtros-placeholder-anime-gamer {
     display: none;
 }
-.barra-filtros-placeholder-deportes.activo {
+.barra-filtros-placeholder-anime-gamer.activo {
     display: block;
 }
 
 @media (max-width: 900px) {
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         left: 0;
         right: 0;
     }
 }
 
-.tabs-categorias-deportes {
+.tabs-categorias-anime-gamer {
     min-width: 0;
 }
 
 /* =============================================
    VISUALIZADOR / MODAL
    ============================================= */
-.visor-catalogo-deportes {
+.visor-catalogo-anime-gamer {
     position: fixed;
     inset: 0;
     z-index: 3000;
@@ -365,15 +341,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     justify-content: center;
     padding: 1.2rem;
 }
-.visor-catalogo-deportes.activo { display: flex; }
-.visor-catalogo-fondo-deportes {
+.visor-catalogo-anime-gamer.activo { display: flex; }
+.visor-catalogo-fondo-anime-gamer {
     position: absolute;
     inset: 0;
     background: rgba(0,0,0,.88);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
 }
-.visor-catalogo-panel-deportes {
+.visor-catalogo-panel-anime-gamer {
     position: relative;
     z-index: 1;
     width: min(1100px, 96vw);
@@ -384,7 +360,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     border-radius: var(--radius-lg);
     box-shadow: 0 30px 90px rgba(0,0,0,.55);
 }
-.visor-catalogo-cerrar-deportes {
+.visor-catalogo-cerrar-anime-gamer {
     position: absolute;
     top: .8rem;
     right: .8rem;
@@ -397,7 +373,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     color: #fff;
     cursor: pointer;
 }
-.visor-catalogo-media-deportes {
+.visor-catalogo-media-anime-gamer {
     position: relative;
     min-height: min(70vh, 760px);
     display: flex;
@@ -405,12 +381,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     justify-content: center;
     background: #0b0c0e;
 }
-.visor-catalogo-imagen-deportes {
+.visor-catalogo-imagen-anime-gamer {
     width: 100%;
     height: min(70vh, 760px);
     object-fit: contain;
 }
-.visor-catalogo-nav-deportes {
+.visor-catalogo-nav-anime-gamer {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -423,22 +399,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     color: #fff;
     cursor: pointer;
 }
-.visor-catalogo-nav--prev-deportes { left: 1rem; }
-.visor-catalogo-nav--next-deportes { right: 1rem; }
-.visor-catalogo-info-deportes {
+.visor-catalogo-nav--prev-anime-gamer { left: 1rem; }
+.visor-catalogo-nav--next-anime-gamer { right: 1rem; }
+.visor-catalogo-info-anime-gamer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem 1.2rem;
 }
-.visor-catalogo-info-deportes > div {
+.visor-catalogo-info-anime-gamer > div {
     display: flex;
     flex-direction: column;
     gap: .15rem;
 }
-.visor-catalogo-info-deportes strong { color: var(--texto-claro); }
-.visor-catalogo-info-deportes span { font-size: .75rem; color: var(--texto-gris); }
+.visor-catalogo-info-anime-gamer strong { color: var(--texto-claro); }
+.visor-catalogo-info-anime-gamer span { font-size: .75rem; color: var(--texto-gris); }
 .visor-ver-mas { cursor: pointer; border: 0; }
 
 .visor-catalogo-completo {
@@ -452,8 +428,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     gap: 1rem;
     margin-bottom: 1rem;
 }
-.visor-completo-kicker-deportes,
-.catalogo-info-kicker-deportes {
+.visor-completo-kicker-anime-gamer,
+.catalogo-info-kicker-anime-gamer {
     display: block;
     margin-bottom: .35rem;
     color: var(--acento);
@@ -491,95 +467,95 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* =============================================
    DETALLES DEL CUADRO / PEDIDO
    ============================================= */
-.visor-catalogo-acciones-deportes {
+.visor-catalogo-acciones-anime-gamer {
     display: flex; align-items: center; justify-content: flex-end; gap: .65rem; flex-wrap: wrap;
 }
-.visor-detalles-btn-deportes, .visor-encargar-btn-deportes { cursor: pointer; border-width: 1px; }
-.visor-catalogo-detalles-deportes {
+.visor-detalles-btn-anime-gamer, .visor-encargar-btn-anime-gamer { cursor: pointer; border-width: 1px; }
+.visor-catalogo-detalles-anime-gamer {
     border-top: 1px solid var(--borde-sutil);
     padding: 1.25rem 1.2rem 1.4rem;
     background: rgba(255,255,255,.015);
 }
-.visor-detalles-cabecera-deportes { margin-bottom: .9rem; }
-.visor-detalles-cabecera-deportes h2 { font-size: 1.35rem; }
-.visor-detalles-contenido-deportes { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1rem; align-items: start; }
-.visor-detalles-contenido-deportes > p { color: var(--texto-gris); font-size: .85rem; }
-.visor-detalles-bloque-deportes { padding: .9rem; border: 1px solid var(--borde-sutil); border-radius: var(--radius-md); background: var(--bg-tarjeta); }
-.visor-detalles-bloque-deportes > span { display: block; color: var(--texto-gris); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .6rem; }
-.visor-detalles-bloque-deportes > strong { color: var(--texto-claro); font-size: .9rem; }
-.visor-medidas-deportes { display: flex; flex-wrap: wrap; gap: .45rem; }
-.visor-medidas-deportes button { border: 1px solid var(--borde-sutil); background: transparent; color: var(--texto-claro); border-radius: 999px; padding: .5rem .7rem; cursor: pointer; font-size: .72rem; }
-.visor-medidas-deportes button:hover, .visor-medidas-deportes button.activo { border-color: var(--acento); color: var(--acento); }
+.visor-detalles-cabecera-anime-gamer { margin-bottom: .9rem; }
+.visor-detalles-cabecera-anime-gamer h2 { font-size: 1.35rem; }
+.visor-detalles-contenido-anime-gamer { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 1rem; align-items: start; }
+.visor-detalles-contenido-anime-gamer > p { color: var(--texto-gris); font-size: .85rem; }
+.visor-detalles-bloque-anime-gamer { padding: .9rem; border: 1px solid var(--borde-sutil); border-radius: var(--radius-md); background: var(--bg-tarjeta); }
+.visor-detalles-bloque-anime-gamer > span { display: block; color: var(--texto-gris); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .6rem; }
+.visor-detalles-bloque-anime-gamer > strong { color: var(--texto-claro); font-size: .9rem; }
+.visor-medidas-anime-gamer { display: flex; flex-wrap: wrap; gap: .45rem; }
+.visor-medidas-anime-gamer button { border: 1px solid var(--borde-sutil); background: transparent; color: var(--texto-claro); border-radius: 999px; padding: .5rem .7rem; cursor: pointer; font-size: .72rem; }
+.visor-medidas-anime-gamer button:hover, .visor-medidas-anime-gamer button.activo { border-color: var(--acento); color: var(--acento); }
 
 /* =============================================
    INFORMACIÓN / FAQ / CONTACTO
    ============================================= */
-.catalogo-info-deportes,
-.catalogo-faq-deportes,
-.catalogo-contacto-deportes {
+.catalogo-info-anime-gamer,
+.catalogo-faq-anime-gamer,
+.catalogo-contacto-anime-gamer {
     margin-top: 3rem;
 }
-.catalogo-info-deportes {
+.catalogo-info-anime-gamer {
     padding: 2.2rem;
     border: 1px solid var(--borde-sutil);
     border-radius: var(--radius-lg);
     background: var(--bg-panel);
 }
-.catalogo-info-cabecera-deportes {
+.catalogo-info-cabecera-anime-gamer {
     max-width: 720px;
 }
-.catalogo-info-deportes h2,
-.catalogo-faq-deportes h2,
-.catalogo-contacto-deportes h2 {
+.catalogo-info-anime-gamer h2,
+.catalogo-faq-anime-gamer h2,
+.catalogo-contacto-anime-gamer h2 {
     color: var(--texto-claro);
     font-size: clamp(1.5rem, 3vw, 2.2rem);
     margin-bottom: .7rem;
 }
-.catalogo-info-cabecera-deportes p,
-.catalogo-contacto-deportes p {
+.catalogo-info-cabecera-anime-gamer p,
+.catalogo-contacto-anime-gamer p {
     color: var(--texto-gris);
     max-width: 680px;
 }
-.catalogo-info-grid-deportes {
+.catalogo-info-grid-anime-gamer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-top: 1.8rem;
 }
-.catalogo-info-card-deportes {
+.catalogo-info-card-anime-gamer {
     padding: 1.2rem;
     border-radius: var(--radius-md);
     background: var(--bg-tarjeta);
     border: 1px solid var(--borde-sutil);
 }
-.catalogo-info-numero-deportes {
+.catalogo-info-numero-anime-gamer {
     color: var(--acento);
     font-weight: 800;
     font-size: .75rem;
 }
-.catalogo-info-card-deportes h3 { margin: .45rem 0 .35rem; font-size: 1rem; }
-.catalogo-info-card-deportes p { font-size: .78rem; color: var(--texto-gris); }
+.catalogo-info-card-anime-gamer h3 { margin: .45rem 0 .35rem; font-size: 1rem; }
+.catalogo-info-card-anime-gamer p { font-size: .78rem; color: var(--texto-gris); }
 
-.catalogo-faq-deportes {
+.catalogo-faq-anime-gamer {
     max-width: 850px;
 }
-.catalogo-faq-cabecera-deportes { margin-bottom: 1rem; }
-.catalogo-faq-deportes details {
+.catalogo-faq-cabecera-anime-gamer { margin-bottom: 1rem; }
+.catalogo-faq-anime-gamer details {
     border-top: 1px solid var(--borde-sutil);
     padding: 1rem 0;
 }
-.catalogo-faq-deportes details:last-child { border-bottom: 1px solid var(--borde-sutil); }
-.catalogo-faq-deportes summary {
+.catalogo-faq-anime-gamer details:last-child { border-bottom: 1px solid var(--borde-sutil); }
+.catalogo-faq-anime-gamer summary {
     color: var(--texto-claro);
     font-weight: 700;
     cursor: pointer;
 }
-.catalogo-faq-deportes details p {
+.catalogo-faq-anime-gamer details p {
     padding-top: .7rem;
     font-size: .85rem;
     color: var(--texto-gris);
 }
-.catalogo-contacto-deportes {
+.catalogo-contacto-anime-gamer {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -589,29 +565,29 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     background: var(--bg-tarjeta);
     border: 1px solid var(--borde-sutil);
 }
-.catalogo-contacto-deportes p { font-size: .85rem; }
+.catalogo-contacto-anime-gamer p { font-size: .85rem; }
 
 /* =============================================
    MOBILE
    ============================================= */
 @media (max-width: 640px) {
     html, body { overflow-x: hidden; }
-    .contenido-catalogo-deportes { margin-left: 0; padding-left: .8rem; padding-right: .8rem; }
+    .contenido-catalogo-anime-gamer { margin-left: 0; padding-left: .8rem; padding-right: .8rem; }
 
-    .barra-filtros-deportes {
+    .barra-filtros-anime-gamer {
         margin-left: -.8rem;
         margin-right: -.8rem;
         padding: .65rem .8rem .75rem;
         top: 0;
     }
 
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         left: 0;
         right: 0;
         padding-left: .8rem;
         padding-right: .8rem;
     }
-    .tabs-categorias-deportes {
+    .tabs-categorias-anime-gamer {
         flex-wrap: nowrap;
         overflow-x: auto;
         overflow-y: hidden;
@@ -620,71 +596,71 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
         scrollbar-width: thin;
         -webkit-overflow-scrolling: touch;
     }
-    .tab-categoria-deportes {
+    .tab-categoria-anime-gamer {
         flex: 0 0 auto;
         white-space: nowrap;
     }
-    .controles-catalogo-deportes {
+    .controles-catalogo-anime-gamer {
         width: 100%;
         justify-content: space-between;
     }
 
-    .hero-catalogo-contenido-deportes {
+    .hero-catalogo-contenido-anime-gamer {
         left: 1rem;
         right: 1rem;
         bottom: 1rem;
     }
-    .hero-catalogo-meta-deportes {
+    .hero-catalogo-meta-anime-gamer {
         margin-bottom: .7rem;
         gap: .55rem .9rem;
     }
-    .hero-catalogo-meta-deportes li:nth-child(1),
-    .hero-catalogo-meta-deportes li:nth-child(2) {
+    .hero-catalogo-meta-anime-gamer li:nth-child(1),
+    .hero-catalogo-meta-anime-gamer li:nth-child(2) {
         transform: translateY(.35rem);
     }
-    .hero-catalogo-acciones-deportes .boton-relleno-deportes {
+    .hero-catalogo-acciones-anime-gamer .boton-relleno-anime-gamer {
         display: none;
     }
 
-    .visor-catalogo-deportes { padding: 0; }
-    .visor-catalogo-panel-deportes {
+    .visor-catalogo-anime-gamer { padding: 0; }
+    .visor-catalogo-panel-anime-gamer {
         width: 100%;
         max-height: 100vh;
         height: 100vh;
         border-radius: 0;
     }
-    .visor-catalogo-media-deportes {
+    .visor-catalogo-media-anime-gamer {
         min-height: 62vh;
         height: 62vh;
     }
-    .visor-catalogo-imagen-deportes {
+    .visor-catalogo-imagen-anime-gamer {
         height: 62vh;
     }
-    .visor-catalogo-nav-deportes {
+    .visor-catalogo-nav-anime-gamer {
         width: 40px;
         height: 40px;
     }
-    .visor-catalogo-info-deportes {
+    .visor-catalogo-info-anime-gamer {
         padding: .8rem;
     }
-    .visor-catalogo-acciones-deportes { width: 100%; justify-content: stretch; }
-    .visor-catalogo-acciones-deportes .boton-deportes { flex: 1 1 0; text-align: center; }
-    .visor-detalles-contenido-deportes { grid-template-columns: 1fr; }
-    .visor-catalogo-detalles-deportes { padding: 1rem .8rem 1.2rem; }
+    .visor-catalogo-acciones-anime-gamer { width: 100%; justify-content: stretch; }
+    .visor-catalogo-acciones-anime-gamer .boton-anime-gamer { flex: 1 1 0; text-align: center; }
+    .visor-detalles-contenido-anime-gamer { grid-template-columns: 1fr; }
+    .visor-catalogo-detalles-anime-gamer { padding: 1rem .8rem 1.2rem; }
 
     .visor-catalogo-completo { padding: .8rem; }
     .visor-completo-grid {
         grid-template-columns: repeat(2, minmax(0,1fr));
     }
 
-    .catalogo-info-deportes,
-    .catalogo-contacto-deportes {
+    .catalogo-info-anime-gamer,
+    .catalogo-contacto-anime-gamer {
         padding: 1.3rem;
     }
-    .catalogo-info-grid-deportes {
+    .catalogo-info-grid-anime-gamer {
         grid-template-columns: 1fr;
     }
-    .catalogo-contacto-deportes {
+    .catalogo-contacto-anime-gamer {
         flex-direction: column;
         align-items: flex-start;
     }
@@ -711,7 +687,7 @@ html { scroll-behavior: smooth; overflow-x: hidden; }
 body { overflow-x: hidden; }
 
 /* Logo real editable: solo cambia el src del img. */
-.sidebar-logo-img-deportes {
+.sidebar-logo-img-anime-gamer {
     width: 145px;
     max-width: 100%;
     height: auto;
@@ -720,7 +696,7 @@ body { overflow-x: hidden; }
 }
 
 /* Barra de filtros: llega a su posición y JS la mantiene FIJA durante el scroll. */
-.barra-filtros-deportes {
+.barra-filtros-anime-gamer {
     position: relative !important;
     top: auto !important;
     left: auto !important;
@@ -734,7 +710,7 @@ body { overflow-x: hidden; }
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
-.barra-filtros-deportes.filtro-fijo {
+.barra-filtros-anime-gamer.filtro-fijo {
     position: fixed !important;
     top: 0 !important;
     left: 230px !important;
@@ -746,39 +722,39 @@ body { overflow-x: hidden; }
     z-index: var(--z-filtro) !important;
     box-shadow: 0 8px 24px rgba(0,0,0,.24);
 }
-.barra-filtros-placeholder-deportes { display: none; }
-.barra-filtros-placeholder-deportes.activo { display: block; }
+.barra-filtros-placeholder-anime-gamer { display: none; }
+.barra-filtros-placeholder-anime-gamer.activo { display: block; }
 
 /* Header móvil independiente: siempre visible, sin duplicar el menú. */
-.mobile-topbar-deportes {
+.mobile-topbar-anime-gamer {
     display: none;
 }
 
 /* Modal siempre por encima de navegación/filtros. */
-.visor-catalogo-deportes { z-index: var(--z-modal) !important; }
+.visor-catalogo-anime-gamer { z-index: var(--z-modal) !important; }
 
 /* Footer nuevo */
-.catalogo-footer-deportes {
+.catalogo-footer-anime-gamer {
     margin-top: 4rem;
     padding: 3.2rem 0 1.2rem;
     border-top: 1px solid var(--borde-sutil);
     background: linear-gradient(180deg, rgba(25,26,29,.55), var(--bg-panel));
 }
-.catalogo-footer-grid-deportes {
+.catalogo-footer-grid-anime-gamer {
     display: grid;
     grid-template-columns: minmax(1.5fr, 2fr) repeat(2, minmax(130px, 1fr)) minmax(210px, 1.4fr);
     gap: 2.5rem;
     align-items: start;
 }
-.catalogo-footer-brand-deportes { max-width: 360px; }
-.catalogo-footer-logo-deportes {
+.catalogo-footer-brand-anime-gamer { max-width: 360px; }
+.catalogo-footer-logo-anime-gamer {
     display: inline-flex;
     align-items: center;
     gap: .65rem;
     color: var(--texto-claro);
     margin-bottom: 1rem;
 }
-.catalogo-footer-logo-mark-deportes {
+.catalogo-footer-logo-mark-anime-gamer {
     width: 38px;
     height: 38px;
     display: grid;
@@ -790,22 +766,22 @@ body { overflow-x: hidden; }
     font-weight: 800;
     letter-spacing: .08em;
 }
-.catalogo-footer-logo-text-deportes {
+.catalogo-footer-logo-text-anime-gamer {
     font-family: var(--font-serif);
     font-size: 1.55rem;
     letter-spacing: .03em;
 }
-.catalogo-footer-logo-text-deportes span { color: var(--acento); }
-.catalogo-footer-brand-deportes p,
-.catalogo-footer-contacto-deportes p {
+.catalogo-footer-logo-text-anime-gamer span { color: var(--acento); }
+.catalogo-footer-brand-anime-gamer p,
+.catalogo-footer-contacto-anime-gamer p {
     margin: 0;
     color: var(--texto-gris);
     font-size: .78rem;
     line-height: 1.75;
 }
-.catalogo-footer-nav-deportes,
-.catalogo-footer-contacto-deportes { display: flex; flex-direction: column; align-items: flex-start; }
-.catalogo-footer-deportes h3 {
+.catalogo-footer-nav-anime-gamer,
+.catalogo-footer-contacto-anime-gamer { display: flex; flex-direction: column; align-items: flex-start; }
+.catalogo-footer-anime-gamer h3 {
     margin: 0 0 .9rem;
     color: var(--texto-claro);
     font-size: .72rem;
@@ -813,21 +789,21 @@ body { overflow-x: hidden; }
     letter-spacing: .12em;
     text-transform: uppercase;
 }
-.catalogo-footer-nav-deportes a {
+.catalogo-footer-nav-anime-gamer a {
     color: var(--texto-gris);
     font-size: .78rem;
     padding: .27rem 0;
     transition: var(--transicion);
 }
-.catalogo-footer-nav-deportes a:hover,
-.catalogo-footer-nav-deportes a:focus-visible { color: var(--acento); }
-.catalogo-footer-contacto-deportes .boton-deportes { margin-top: .9rem; }
-.catalogo-footer-redes-deportes {
+.catalogo-footer-nav-anime-gamer a:hover,
+.catalogo-footer-nav-anime-gamer a:focus-visible { color: var(--acento); }
+.catalogo-footer-contacto-anime-gamer .boton-anime-gamer { margin-top: .9rem; }
+.catalogo-footer-redes-anime-gamer {
     display: flex;
     gap: .55rem;
     margin-top: 1rem;
 }
-.catalogo-footer-redes-deportes a {
+.catalogo-footer-redes-anime-gamer a {
     width: 34px;
     height: 34px;
     display: grid;
@@ -837,12 +813,12 @@ body { overflow-x: hidden; }
     color: var(--texto-gris);
     transition: var(--transicion);
 }
-.catalogo-footer-redes-deportes a:hover,
-.catalogo-footer-redes-deportes a:focus-visible {
+.catalogo-footer-redes-anime-gamer a:hover,
+.catalogo-footer-redes-anime-gamer a:focus-visible {
     color: var(--acento);
     border-color: var(--acento);
 }
-.catalogo-footer-bottom-deportes {
+.catalogo-footer-bottom-anime-gamer {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -855,7 +831,7 @@ body { overflow-x: hidden; }
 
 @media (max-width: 900px) {
     body.menu-mobile-abierto { overflow: hidden; }
-    .mobile-topbar-deportes {
+    .mobile-topbar-anime-gamer {
         position: fixed;
         inset: 0 0 auto 0;
         height: 72px;
@@ -869,9 +845,9 @@ body { overflow-x: hidden; }
         backdrop-filter: blur(16px);
         z-index: var(--z-topbar);
     }
-    .mobile-topbar-logo-deportes { display: inline-flex; align-items: center; min-width: 0; }
-    .mobile-topbar-deportes .sidebar-logo-img-deportes { width: 128px; max-height: 48px; }
-    .mobile-topbar-deportes .sidebar-toggle-deportes {
+    .mobile-topbar-logo-anime-gamer { display: inline-flex; align-items: center; min-width: 0; }
+    .mobile-topbar-anime-gamer .sidebar-logo-img-anime-gamer { width: 128px; max-height: 48px; }
+    .mobile-topbar-anime-gamer .sidebar-toggle-anime-gamer {
         width: 46px;
         height: 46px;
         display: grid;
@@ -885,15 +861,15 @@ body { overflow-x: hidden; }
         cursor: pointer;
         transition: transform .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
     }
-    .mobile-topbar-deportes .sidebar-toggle-deportes:hover,
-    .mobile-topbar-deportes .sidebar-toggle-deportes:focus-visible {
+    .mobile-topbar-anime-gamer .sidebar-toggle-anime-gamer:hover,
+    .mobile-topbar-anime-gamer .sidebar-toggle-anime-gamer:focus-visible {
         color: var(--acento);
         border-color: rgba(182,138,90,.7);
         background: #202125;
     }
-    .mobile-topbar-deportes .sidebar-toggle-deportes:active { transform: scale(.95); }
+    .mobile-topbar-anime-gamer .sidebar-toggle-anime-gamer:active { transform: scale(.95); }
 
-    .sidebar-deportes {
+    .sidebar-anime-gamer {
         left: 0 !important;
         top: 0 !important;
         bottom: 0 !important;
@@ -910,16 +886,16 @@ body { overflow-x: hidden; }
         overscroll-behavior: contain;
         pointer-events: none;
     }
-    .sidebar-deportes.activo {
+    .sidebar-anime-gamer.activo {
         transform: translateX(0);
         pointer-events: auto;
     }
-    .sidebar-cabecera-deportes { display: none !important; }
-    .sidebar-nav-deportes { padding-top: .4rem; }
-    .sidebar-nav-deportes ul { gap: .3rem; }
-    .sidebar-enlace-deportes { padding: .85rem .75rem; min-height: 44px; }
-    .sidebar-contacto-deportes { margin-top: 1.5rem; }
-    .sidebar-overlay-deportes {
+    .sidebar-cabecera-anime-gamer { display: none !important; }
+    .sidebar-nav-anime-gamer { padding-top: .4rem; }
+    .sidebar-nav-anime-gamer ul { gap: .3rem; }
+    .sidebar-enlace-anime-gamer { padding: .85rem .75rem; min-height: 44px; }
+    .sidebar-contacto-anime-gamer { margin-top: 1.5rem; }
+    .sidebar-overlay-anime-gamer {
         display: block !important;
         position: fixed;
         inset: 0;
@@ -930,25 +906,25 @@ body { overflow-x: hidden; }
         pointer-events: none;
         transition: opacity .25s ease, visibility .25s ease;
     }
-    .sidebar-overlay-deportes.activo {
+    .sidebar-overlay-anime-gamer.activo {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
     }
-    .contenido-catalogo-deportes {
+    .contenido-catalogo-anime-gamer {
         margin-left: 0 !important;
         padding: 88px 1rem 2.5rem !important;
         width: 100%;
         min-width: 0;
     }
-    .barra-filtros-deportes {
+    .barra-filtros-anime-gamer {
         position: relative !important;
         top: auto !important;
         margin: 1.2rem -1rem 1.2rem !important;
         padding: .7rem 1rem !important;
         overflow: hidden;
     }
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         position: fixed !important;
         top: 72px !important;
         left: 0 !important;
@@ -957,7 +933,7 @@ body { overflow-x: hidden; }
         margin: 0 !important;
         padding: .7rem 1rem !important;
     }
-    .tabs-categorias-deportes {
+    .tabs-categorias-anime-gamer {
         flex: 1 1 100%;
         flex-wrap: nowrap !important;
         gap: 1.25rem;
@@ -967,64 +943,64 @@ body { overflow-x: hidden; }
         -webkit-overflow-scrolling: touch;
         min-width: 0;
     }
-    .tabs-categorias-deportes::-webkit-scrollbar { display: none; }
-    .tab-categoria-deportes { flex: 0 0 auto; white-space: nowrap; min-height: 36px; }
-    .controles-catalogo-deportes {
+    .tabs-categorias-anime-gamer::-webkit-scrollbar { display: none; }
+    .tab-categoria-anime-gamer { flex: 0 0 auto; white-space: nowrap; min-height: 36px; }
+    .controles-catalogo-anime-gamer {
         width: 100%;
         flex-wrap: nowrap !important;
         gap: .55rem;
         min-width: 0;
     }
-    .buscador-catalogo-deportes {
+    .buscador-catalogo-anime-gamer {
         flex: 1 1 auto;
         min-width: 0;
         padding: .52rem .8rem;
     }
-    .buscador-catalogo-deportes input { width: 100% !important; min-width: 0; }
-    .orden-catalogo-deportes { flex: 0 0 auto; }
-    .orden-catalogo-deportes select { max-width: 145px; padding: .55rem .7rem; }
+    .buscador-catalogo-anime-gamer input { width: 100% !important; min-width: 0; }
+    .orden-catalogo-anime-gamer { flex: 0 0 auto; }
+    .orden-catalogo-anime-gamer select { max-width: 145px; padding: .55rem .7rem; }
 
-    .grid-catalogo-deportes { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem .75rem; }
-    .tarjeta-cuadro-media-deportes { aspect-ratio: 3 / 4; }
-    .tarjeta-cuadro-media-deportes img { object-fit: cover; }
+    .grid-catalogo-anime-gamer { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem .75rem; }
+    .tarjeta-cuadro-media-anime-gamer { aspect-ratio: 3 / 4; }
+    .tarjeta-cuadro-media-anime-gamer img { object-fit: cover; }
 
-    .catalogo-footer-deportes { margin-top: 3rem; padding: 2.5rem 0 1rem; width: 100%; }
-    .catalogo-footer-grid-deportes { grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(105px, 1fr)); gap: 1.6rem 1.2rem; width: 100%; }
-    .catalogo-footer-brand-deportes { grid-column: 1 / -1; max-width: none; }
-    .catalogo-footer-contacto-deportes { grid-column: auto; }
-    .catalogo-footer-nav-deportes a { font-size: .72rem; }
-    .catalogo-footer-bottom-deportes { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; text-align: left; gap: .5rem 1rem; }
+    .catalogo-footer-anime-gamer { margin-top: 3rem; padding: 2.5rem 0 1rem; width: 100%; }
+    .catalogo-footer-grid-anime-gamer { grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(105px, 1fr)); gap: 1.6rem 1.2rem; width: 100%; }
+    .catalogo-footer-brand-anime-gamer { grid-column: 1 / -1; max-width: none; }
+    .catalogo-footer-contacto-anime-gamer { grid-column: auto; }
+    .catalogo-footer-nav-anime-gamer a { font-size: .72rem; }
+    .catalogo-footer-bottom-anime-gamer { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; text-align: left; gap: .5rem 1rem; }
 }
 
 @media (max-width: 480px) {
-    .mobile-topbar-deportes { height: 68px; }
-    .mobile-topbar-deportes .sidebar-logo-img-deportes { width: 112px; }
-    .mobile-topbar-deportes .sidebar-toggle-deportes { width: 42px; height: 42px; border-radius: 11px; }
-    .contenido-catalogo-deportes { padding-top: 82px !important; }
-    .barra-filtros-deportes { position: relative !important; top: auto !important; }
-    .barra-filtros-deportes.filtro-fijo { position: fixed !important; top: 68px !important; left: 0 !important; right: 0 !important; width: 100% !important; }
-    .barra-filtros-deportes { padding-left: .8rem !important; padding-right: .8rem !important; }
-    .tabs-categorias-deportes { gap: 1rem; }
-    .controles-catalogo-deportes { align-items: stretch; }
-    .orden-catalogo-deportes select { max-width: 124px; font-size: .7rem; }
-    .grid-catalogo-deportes { gap: .85rem .65rem; }
-    .tarjeta-cuadro-deportes h3 { font-size: .85rem; }
-    .tarjeta-meta-deportes { font-size: .68rem; }
-    .catalogo-footer-grid-deportes { grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(90px, 1fr)); gap: 1.4rem .8rem; }
-    .catalogo-footer-brand-deportes { grid-column: 1 / -1; }
+    .mobile-topbar-anime-gamer { height: 68px; }
+    .mobile-topbar-anime-gamer .sidebar-logo-img-anime-gamer { width: 112px; }
+    .mobile-topbar-anime-gamer .sidebar-toggle-anime-gamer { width: 42px; height: 42px; border-radius: 11px; }
+    .contenido-catalogo-anime-gamer { padding-top: 82px !important; }
+    .barra-filtros-anime-gamer { position: relative !important; top: auto !important; }
+    .barra-filtros-anime-gamer.filtro-fijo { position: fixed !important; top: 68px !important; left: 0 !important; right: 0 !important; width: 100% !important; }
+    .barra-filtros-anime-gamer { padding-left: .8rem !important; padding-right: .8rem !important; }
+    .tabs-categorias-anime-gamer { gap: 1rem; }
+    .controles-catalogo-anime-gamer { align-items: stretch; }
+    .orden-catalogo-anime-gamer select { max-width: 124px; font-size: .7rem; }
+    .grid-catalogo-anime-gamer { gap: .85rem .65rem; }
+    .tarjeta-cuadro-anime-gamer h3 { font-size: .85rem; }
+    .tarjeta-meta-anime-gamer { font-size: .68rem; }
+    .catalogo-footer-grid-anime-gamer { grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(90px, 1fr)); gap: 1.4rem .8rem; }
+    .catalogo-footer-brand-anime-gamer { grid-column: 1 / -1; }
 }
 
 @media (max-width: 359px) {
-    .mobile-topbar-deportes .sidebar-logo-img-deportes { width: 102px; }
-    .controles-catalogo-deportes { flex-direction: column; }
-    .orden-catalogo-deportes select { width: 100%; max-width: none; }
+    .mobile-topbar-anime-gamer .sidebar-logo-img-anime-gamer { width: 102px; }
+    .controles-catalogo-anime-gamer { flex-direction: column; }
+    .orden-catalogo-anime-gamer select { width: 100%; max-width: none; }
 }
 
 @media (min-width: 901px) {
-    .mobile-topbar-deportes { display: none !important; }
-    .sidebar-overlay-deportes { display: none !important; }
-    .sidebar-deportes { transform: none !important; pointer-events: auto !important; }
-    .catalogo-footer-deportes { display: block; }
+    .mobile-topbar-anime-gamer { display: none !important; }
+    .sidebar-overlay-anime-gamer { display: none !important; }
+    .sidebar-anime-gamer { transform: none !important; pointer-events: auto !important; }
+    .catalogo-footer-anime-gamer { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1038,7 +1014,7 @@ body { overflow-x: hidden; }
 
 /* La barra conserva su posición original hasta que alcanza
    el borde superior; desde ahí queda fija y visible. */
-.barra-filtros-deportes {
+.barra-filtros-anime-gamer {
     position: relative !important;
     left: auto !important;
     right: auto !important;
@@ -1046,77 +1022,77 @@ body { overflow-x: hidden; }
     margin-top: 2rem;
 }
 
-.barra-filtros-deportes.filtro-fijo {
+.barra-filtros-anime-gamer.filtro-fijo {
     position: fixed !important;
     top: 0 !important;
     margin: 0 !important;
     z-index: 2000 !important;
 }
 
-.barra-filtros-placeholder-deportes {
+.barra-filtros-placeholder-anime-gamer {
     display: none;
     width: 100%;
 }
 
-.barra-filtros-placeholder-deportes.activo {
+.barra-filtros-placeholder-anime-gamer.activo {
     display: block;
 }
 
 /* Footer siempre dispuesto horizontalmente. */
-.catalogo-footer-grid-deportes {
+.catalogo-footer-grid-anime-gamer {
     display: grid !important;
     grid-template-columns: minmax(220px, 1.4fr) repeat(2, minmax(150px, 1fr)) minmax(220px, 1.25fr) !important;
     align-items: start !important;
     gap: 2rem !important;
 }
 
-.catalogo-footer-brand-deportes {
+.catalogo-footer-brand-anime-gamer {
     grid-column: auto !important;
     max-width: 360px;
 }
 
 @media (max-width: 900px) {
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         top: 72px !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
     }
 
-    .catalogo-footer-grid-deportes {
+    .catalogo-footer-grid-anime-gamer {
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
         gap: 1rem !important;
         align-items: start !important;
     }
 
-    .catalogo-footer-brand-deportes {
+    .catalogo-footer-brand-anime-gamer {
         grid-column: auto !important;
         max-width: none !important;
     }
 
-    .catalogo-footer-nav-deportes,
-    .catalogo-footer-contacto-deportes {
+    .catalogo-footer-nav-anime-gamer,
+    .catalogo-footer-contacto-anime-gamer {
         min-width: 0;
     }
 
-    .catalogo-footer-deportes h3 {
+    .catalogo-footer-anime-gamer h3 {
         font-size: .62rem;
         line-height: 1.25;
     }
 
-    .catalogo-footer-brand-deportes p,
-    .catalogo-footer-contacto-deportes p,
-    .catalogo-footer-nav-deportes a {
+    .catalogo-footer-brand-anime-gamer p,
+    .catalogo-footer-contacto-anime-gamer p,
+    .catalogo-footer-nav-anime-gamer a {
         font-size: .66rem;
         line-height: 1.45;
         overflow-wrap: anywhere;
     }
 
-    .catalogo-footer-logo-text-deportes {
+    .catalogo-footer-logo-text-anime-gamer {
         font-size: 1rem;
     }
 
-    .catalogo-footer-logo-mark-deportes {
+    .catalogo-footer-logo-mark-anime-gamer {
         width: 30px;
         height: 30px;
         border-radius: 8px;
@@ -1125,55 +1101,55 @@ body { overflow-x: hidden; }
 }
 
 @media (max-width: 480px) {
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         top: 68px !important;
     }
 
-    .catalogo-footer-deportes {
+    .catalogo-footer-anime-gamer {
         padding-left: .65rem !important;
         padding-right: .65rem !important;
     }
 
-    .catalogo-footer-grid-deportes {
+    .catalogo-footer-grid-anime-gamer {
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
         gap: .65rem !important;
     }
 
-    .catalogo-footer-deportes h3 {
+    .catalogo-footer-anime-gamer h3 {
         font-size: .54rem;
         letter-spacing: .05em;
         margin-bottom: .55rem;
     }
 
-    .catalogo-footer-brand-deportes p,
-    .catalogo-footer-contacto-deportes p,
-    .catalogo-footer-nav-deportes a {
+    .catalogo-footer-brand-anime-gamer p,
+    .catalogo-footer-contacto-anime-gamer p,
+    .catalogo-footer-nav-anime-gamer a {
         font-size: .57rem;
         line-height: 1.35;
     }
 
-    .catalogo-footer-logo-deportes {
+    .catalogo-footer-logo-anime-gamer {
         gap: .3rem;
         margin-bottom: .6rem;
     }
 
-    .catalogo-footer-logo-text-deportes {
+    .catalogo-footer-logo-text-anime-gamer {
         font-size: .78rem;
     }
 
-    .catalogo-footer-logo-mark-deportes {
+    .catalogo-footer-logo-mark-anime-gamer {
         width: 24px;
         height: 24px;
         font-size: .48rem;
         border-radius: 6px;
     }
 
-    .catalogo-footer-redes-deportes {
+    .catalogo-footer-redes-anime-gamer {
         gap: .25rem;
         margin-top: .6rem;
     }
 
-    .catalogo-footer-redes-deportes a {
+    .catalogo-footer-redes-anime-gamer a {
         width: 25px;
         height: 25px;
         font-size: .65rem;
@@ -1186,57 +1162,48 @@ body { overflow-x: hidden; }
    ========================================================= */
 
 /* Estado real utilizado por el JS */
-.sidebar-deportes.activo { left: 0 !important; }
-.sidebar-overlay-deportes.activo {
+.sidebar-anime-gamer.activo { left: 0 !important; }
+.sidebar-overlay-anime-gamer.activo {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
 }
 
 /* Modal: un único estado activo */
-.visor-catalogo-deportes.activo {
+.visor-catalogo-anime-gamer.activo {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
 }
 
-.visor-catalogo-detalles-deportes[hidden] {
+.visor-catalogo-detalles-anime-gamer[hidden] {
     display: none !important;
 }
-.visor-catalogo-detalles-deportes.abierto-deportes {
+.visor-catalogo-detalles-anime-gamer.abierto-anime-gamer {
     display: block !important;
 }
 
-.visor-catalogo-nav-deportes {
+.visor-catalogo-nav-anime-gamer {
     pointer-events: auto !important;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
-.visor-catalogo-nav-deportes:disabled {
-    opacity: 1;
-    cursor: pointer;
-}
-
-/* Las flechas permanecen visibles en el modal. */
-.visor-catalogo-nav-deportes {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    visibility: visible !important;
-    opacity: 1 !important;
+.visor-catalogo-nav-anime-gamer:disabled {
+    opacity: .45;
+    cursor: default;
 }
 
 /* Barra de filtros: una sola arquitectura fixed controlada por JS. */
-.barra-filtros-deportes {
+.barra-filtros-anime-gamer {
     position: relative !important;
     top: auto !important;
     left: auto !important;
     right: auto !important;
 }
 
-.barra-filtros-deportes.filtro-fijo {
+.barra-filtros-anime-gamer.filtro-fijo {
     position: fixed !important;
     top: 0 !important;
     left: 230px !important;
@@ -1246,11 +1213,11 @@ body { overflow-x: hidden; }
     z-index: 2000 !important;
 }
 
-.barra-filtros-placeholder-deportes {
+.barra-filtros-placeholder-anime-gamer {
     display: none !important;
     width: 100%;
 }
-.barra-filtros-placeholder-deportes.activo {
+.barra-filtros-placeholder-anime-gamer.activo {
     display: block !important;
 }
 
@@ -1258,14 +1225,14 @@ body { overflow-x: hidden; }
    FOOTER MOBILE — estilo limpio tipo footer principal
    ========================================================= */
 @media (max-width: 900px) {
-    .barra-filtros-deportes.filtro-fijo {
+    .barra-filtros-anime-gamer.filtro-fijo {
         top: 68px !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
     }
 
-    .catalogo-footer-deportes {
+    .catalogo-footer-anime-gamer {
         width: calc(100% + 2rem) !important;
         margin-left: -1rem !important;
         margin-top: 3.5rem !important;
@@ -1274,16 +1241,16 @@ body { overflow-x: hidden; }
         background: var(--bg-panel);
     }
 
-    .catalogo-footer-grid-deportes {
+    .catalogo-footer-grid-anime-gamer {
         display: grid !important;
         grid-template-columns: 1fr !important;
         gap: 2rem !important;
         width: 100% !important;
     }
 
-    .catalogo-footer-brand-deportes,
-    .catalogo-footer-nav-deportes,
-    .catalogo-footer-contacto-deportes {
+    .catalogo-footer-brand-anime-gamer,
+    .catalogo-footer-nav-anime-gamer,
+    .catalogo-footer-contacto-anime-gamer {
         grid-column: auto !important;
         width: 100%;
         max-width: none !important;
@@ -1291,55 +1258,55 @@ body { overflow-x: hidden; }
         align-items: flex-start;
     }
 
-    .catalogo-footer-brand-deportes {
+    .catalogo-footer-brand-anime-gamer {
         padding-bottom: 1.2rem;
         border-bottom: 1px solid var(--borde-sutil);
     }
 
-    .catalogo-footer-brand-deportes p {
+    .catalogo-footer-brand-anime-gamer p {
         max-width: 520px;
         margin-top: .8rem;
         font-size: .76rem !important;
         line-height: 1.65 !important;
     }
 
-    .catalogo-footer-nav-deportes {
+    .catalogo-footer-nav-anime-gamer {
         gap: .5rem;
     }
 
-    .catalogo-footer-deportes h3 {
+    .catalogo-footer-anime-gamer h3 {
         font-size: .72rem !important;
         letter-spacing: .12em;
         margin-bottom: .45rem;
     }
 
-    .catalogo-footer-nav-deportes a,
-    .catalogo-footer-contacto-deportes p {
+    .catalogo-footer-nav-anime-gamer a,
+    .catalogo-footer-contacto-anime-gamer p {
         font-size: .76rem !important;
         line-height: 1.5 !important;
     }
 
-    .catalogo-footer-contacto-deportes {
+    .catalogo-footer-contacto-anime-gamer {
         padding-top: .2rem;
     }
 
-    .catalogo-footer-contacto-deportes .boton-deportes {
+    .catalogo-footer-contacto-anime-gamer .boton-anime-gamer {
         width: auto;
         max-width: 100%;
     }
 
-    .catalogo-footer-redes-deportes {
+    .catalogo-footer-redes-anime-gamer {
         margin-top: .9rem !important;
         gap: .55rem !important;
     }
 
-    .catalogo-footer-redes-deportes a {
+    .catalogo-footer-redes-anime-gamer a {
         width: 36px !important;
         height: 36px !important;
         font-size: .8rem !important;
     }
 
-    .catalogo-footer-bottom-deportes {
+    .catalogo-footer-bottom-anime-gamer {
         margin-top: 2rem;
         padding-top: 1rem;
         border-top: 1px solid var(--borde-sutil);
@@ -1354,19 +1321,19 @@ body { overflow-x: hidden; }
 }
 
 @media (max-width: 480px) {
-    .barra-filtros-deportes.filtro-fijo { top: 68px !important; }
+    .barra-filtros-anime-gamer.filtro-fijo { top: 68px !important; }
 
-    .catalogo-footer-deportes {
+    .catalogo-footer-anime-gamer {
         padding: 2.4rem 1rem 1rem !important;
     }
 
-    .catalogo-footer-grid-deportes {
+    .catalogo-footer-grid-anime-gamer {
         gap: 1.7rem !important;
     }
 
-    .catalogo-footer-brand-deportes p,
-    .catalogo-footer-nav-deportes a,
-    .catalogo-footer-contacto-deportes p {
+    .catalogo-footer-brand-anime-gamer p,
+    .catalogo-footer-nav-anime-gamer a,
+    .catalogo-footer-contacto-anime-gamer p {
         font-size: .72rem !important;
     }
 }

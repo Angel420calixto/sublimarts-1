@@ -1,1778 +1,1295 @@
-/* =========================================================
-   SUBLIMARTS · DEPORTES — deportes.js
-   Catálogo con filtros, buscador, ordenamiento y visor de 4 vistas
-   ========================================================= */
+(() => {
+  "use strict";
 
-(function () {
-    "use strict";
+  document.addEventListener("DOMContentLoaded", () => {
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-    document.addEventListener("DOMContentLoaded", function () {
+    const grid = $("#grid-catalogo-deportes");
+    const cards = $$(".tarjeta-cuadro-deportes", grid || document);
+    const tabs = $$(".tab-categoria-deportes");
+    const search = $("#buscadorCatalogo-deportes");
+    const order = $("#ordenCatalogo-deportes");
+    const empty = $("#catalogoVacio-deportes");
 
-        /* =====================================================
-           ELEMENTOS PRINCIPALES
-           ===================================================== */
+    const viewer = $("#visorCatalogo-deportes");
+    const viewerImage = $("#visorImagen-deportes");
+    const viewerTitle = $("#visorTitulo-deportes");
+    const viewerCounter = $("#visorContador-deportes");
+    const previous = $("#visorAnterior-deportes");
+    const next = $("#visorSiguiente-deportes");
+    const close = $("#visorCerrar-deportes");
+    const details = $("#visorDetalles-deportes");
+    const detailsButton = $("#visorVerDetalles-deportes");
+    const detailsTitle = $("#visorDetallesTitulo-deportes");
+    const detailsDescription = $("#visorDetallesDescripcion-deportes");
+    const detailsCategory = $("#visorDetallesCategoria-deportes");
+    const measures = $("#visorMedidas-deportes");
+    const orderButton = $("#visorEncargar-deportes");
 
-        var grid = document.getElementById("grid-catalogo");
-        var buscador = document.getElementById("buscadorCatalogo");
-        var orden = document.getElementById("ordenCatalogo");
-        var vacio = document.getElementById("catalogoVacio");
-        var tabs = document.querySelectorAll(".tab-categoria");
+    const sidebar = $("#sidebar-deportes");
+    const menuButton = $("#sidebarToggle-deportes");
+    const overlay = $("#sidebarOverlay-deportes");
 
+    const filterBar = $("#categorias-deportes");
+    const heroImage = $("#heroCatalogoImagen-deportes");
+    const heroTitle = $(".hero-catalogo-contenido-deportes h1");
+    const heroTag = $(".hero-catalogo-meta-deportes li:nth-child(3)");
 
-        /* =====================================================
-           ELEMENTOS DEL VISOR
-           ===================================================== */
+    const state = {
+      category: "todo",
+      search: "",
+      order: "recientes",
+      card: null,
+      views: [],
+      index: 0,
+      touchX: 0,
+      touchY: 0
+    };
 
-        var visor = document.getElementById("visorCatalogo");
-        var visorImagen = document.getElementById("visorImagen");
-        var visorTitulo = document.getElementById("visorTitulo");
-        var visorContador = document.getElementById("visorContador");
+    const labels = {
+      todo: "Deportes",
+      futbol: "Fútbol",
+      basquetbol: "Básquetbol",
+      tenis: "Tenis",
+      motor: "Motor"
+    };
 
-        var visorAnterior = document.getElementById("visorAnterior");
-        var visorSiguiente = document.getElementById("visorSiguiente");
-        var visorCerrar = document.getElementById("visorCerrar");
+    const heroImages = {
+      todo:
+        "https://i.pinimg.com/1200x/56/84/16/568416fd1ebe1e7c329dc0c8e15b076c.jpg",
 
-        var visorVerDetalles =
-            document.getElementById("visorVerDetalles");
+      futbol:
+        "https://i.pinimg.com/1200x/56/84/16/568416fd1ebe1e7c329dc0c8e15b076c.jpg",
 
-        var visorDetalles =
-            document.getElementById("visorDetalles");
+      basquetbol:
+        "https://i.pinimg.com/1200x/ea/c3/b9/eac3b9a36fe474e31db8c89a40ce9645.jpg",
 
-        var visorDetallesTitulo =
-            document.getElementById("visorDetallesTitulo");
+      tenis:
+        "https://i.pinimg.com/1200x/ea/7e/7e/ea7e7e556a834a2f7ab3f40d8ca43094.jpg",
 
-        var visorDetallesDescripcion =
-            document.getElementById("visorDetallesDescripcion");
+      motor:
+        "https://i.pinimg.com/1200x/df/e9/22/dfe9223d5f628e18a02b2e64cfce0342.jpg"
+    };
 
-        var visorDetallesCategoria =
-            document.getElementById("visorDetallesCategoria");
+    function normalize(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
 
-        var visorEncargar =
-            document.getElementById("visorEncargar");
+    /* =====================================================
+       DEPORTES USA SOLO data-categoria
+       ===================================================== */
 
-        var visorMedidas =
-            document.getElementById("visorMedidas");
+    function categoryOf(card) {
+      return normalize(
+        card?.dataset.categoria || ""
+      );
+    }
 
+    function nameOf(card) {
+      return (
+        card?.dataset.nombre ||
+        $("h3", card)?.textContent ||
+        "Cuadro"
+      ).trim();
+    }
 
-        /* =====================================================
-           MENÚ LATERAL MÓVIL
-           ===================================================== */
+    function sizeOf(card) {
+      return String(
+        card?.dataset.tamano || ""
+      ).trim();
+    }
 
-        var sidebar =
-            document.getElementById("sidebar");
+    function textOf(card) {
+      return normalize(
+        [
+          nameOf(card),
+          categoryOf(card),
+          labels[categoryOf(card)] || "",
+          sizeOf(card),
+          card?.textContent || ""
+        ].join(" ")
+      );
+    }
 
-        var sidebarToggle =
-            document.getElementById("sidebarToggle");
+    /* =====================================================
+       VISTAS DEL PRODUCTO
+       ===================================================== */
 
-        var sidebarOverlay =
-            document.getElementById("sidebarOverlay");
+    function viewsOf(card) {
+      if (!card) return [];
 
-        var sidebarLinks =
-            document.querySelectorAll(".sidebar-enlace");
+      const views = [];
+      const used = new Set();
 
+      for (let i = 1; i <= 4; i++) {
+        const url = String(
+          card.getAttribute(`data-view-${i}`) || ""
+        ).trim();
 
-        /* =====================================================
-           ESTADO
-           ===================================================== */
-
-        var filtroActual = "todo";
-
-        var indiceActual = 0;
-
-        var vistasActuales = [];
-
-        var tarjetaActual = null;
-
-        var touchStartX = 0;
-
-        var touchStartY = 0;
-
-
-        /* =====================================================
-           WHATSAPP
-           
-           REEMPLAZA ESTE NÚMERO POR EL WHATSAPP REAL.
-           Formato:
-           569XXXXXXXX
-           
-           Sin +, espacios ni guiones.
-           ===================================================== */
-
-        var WHATSAPP = "56900000000";
-
-
-        /* =====================================================
-           NOMBRES DE LAS CATEGORÍAS
-           ===================================================== */
-
-        var NOMBRES_CATEGORIAS = {
-
-            todo: "Todos",
-
-            futbol: "Fútbol",
-
-            basquetbol: "Básquetbol",
-
-            tenis: "Tenis",
-
-            voleibol: "Vóleibol",
-
-            boxeo: "Boxeo",
-
-            formula1: "Fórmula 1"
-
-        };
-
-
-        /* =====================================================
-           NORMALIZAR TEXTO
-           Permite buscar sin importar tildes o mayúsculas.
-           ===================================================== */
-
-        function normalizar(valor) {
-
-            return String(valor || "")
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase()
-                .trim();
-
+        if (url && !used.has(url)) {
+          used.add(url);
+          views.push(url);
         }
+      }
 
+      /* Si no hay data-view, usa la imagen principal */
 
-        /* =====================================================
-           OBTENER LAS 4 VISTAS DEL MISMO DISEÑO
-           
-           El HTML utiliza:
-           
-           data-view-1
-           data-view-2
-           data-view-3
-           data-view-4
-           
-           IMPORTANTE:
-           No utilizamos dataset.view1 porque los atributos
-           reales tienen guiones.
-           ===================================================== */
+      if (!views.length) {
+        const img = $("img", card);
 
-        function obtenerVistas(tarjeta) {
+        const src = String(
+          img?.currentSrc ||
+          img?.src ||
+          ""
+        ).trim();
 
-            var vistas = [];
-
-            var i;
-
-            for (i = 1; i <= 4; i += 1) {
-
-                var url =
-                    (
-                        tarjeta.getAttribute(
-                            "data-view-" + i
-                        ) || ""
-                    ).trim();
-
-
-                if (url) {
-
-                    vistas.push(url);
-
-                }
-
-            }
-
-
-            /* =================================================
-               RESPALDO:
-               Si no existen data-view, utiliza la imagen
-               principal de la tarjeta.
-               ================================================= */
-
-            if (!vistas.length) {
-
-                var imagen =
-                    tarjeta.querySelector(
-                        ".tarjeta-cuadro-media img"
-                    );
-
-
-                if (imagen) {
-
-                    var src =
-                        (
-                            imagen.getAttribute("src") || ""
-                        ).trim();
-
-
-                    if (src) {
-
-                        vistas.push(src);
-
-                    }
-
-                }
-
-            }
-
-
-            /* Nunca superar las 4 vistas */
-
-            return vistas.slice(0, 4);
-
+        if (src) {
+          views.push(src);
         }
+      }
 
+      return views.slice(0, 4);
+    }
 
-        /* =====================================================
-           OBTENER DATOS DE LA TARJETA
-           ===================================================== */
+    /* =====================================================
+       BUSCADOR
+       ===================================================== */
 
-        function obtenerDatos(tarjeta) {
+    function matchesSearch(card) {
+      if (!state.search) {
+        return true;
+      }
 
-            var imagen =
-                tarjeta.querySelector(
-                    ".tarjeta-cuadro-media img"
-                );
+      return textOf(card).includes(
+        normalize(state.search)
+      );
+    }
 
+    /* =====================================================
+       FILTRO + ORDEN
+       ===================================================== */
 
-            var tituloEl =
-                tarjeta.querySelector("h3");
+    function filteredCards() {
+      let result = cards.filter(card => {
 
+        const categoria =
+          categoryOf(card);
 
-            var metaEl =
-                tarjeta.querySelector(".tarjeta-meta");
+        const coincideCategoria =
+          state.category === "todo" ||
+          categoria === state.category;
 
+        return (
+          coincideCategoria &&
+          matchesSearch(card)
+        );
+      });
 
-            return {
-
-                titulo:
-                    (
-                        tarjeta.getAttribute("data-nombre") ||
-                        (
-                            tituloEl
-                                ? tituloEl.textContent
-                                : "Cuadro"
-                        )
-                    ).trim(),
-
-
-                categoria:
-                    (
-                        tarjeta.getAttribute("data-categoria") ||
-                        ""
-                    ).trim(),
-
-
-                tamano:
-                    (
-                        tarjeta.getAttribute("data-tamano") ||
-                        ""
-                    ).trim(),
-
-
-                descripcion:
-                    tarjeta.getAttribute("data-descripcion") ||
-                    (
-                        metaEl
-                            ? metaEl.textContent.trim()
-                            : "Diseño deportivo en aluminio HD."
-                    ),
-
-
-                alt:
-                    imagen
-                        ? (
-                            imagen.getAttribute("alt") || ""
-                        )
-                        : ""
-
-            };
-
-        }
-
-
-        /* =====================================================
-           ACTUALIZAR ENLACE DE WHATSAPP DEL VISOR
-           ===================================================== */
-
-        function actualizarWhatsApp() {
-
-            if (!visorEncargar || !tarjetaActual) {
-
-                return;
-
+      if (state.order === "az") {
+        result.sort((a, b) =>
+          nameOf(a).localeCompare(
+            nameOf(b),
+            "es",
+            {
+              sensitivity: "base"
             }
+          )
+        );
+      }
 
-
-            var datos =
-                obtenerDatos(tarjetaActual);
-
-
-            var medida =
-                tarjetaActual.getAttribute(
-                    "data-tamano"
-                ) || "A definir";
-
-
-            var categoria =
-                NOMBRES_CATEGORIAS[
-                    datos.categoria
-                ] || datos.categoria;
-
-
-            var mensaje =
-                'Hola, quiero cotizar el diseño deportivo "' +
-                datos.titulo +
-                '". ' +
-                "Categoría: " +
-                categoria +
-                ". " +
-                "Medida: " +
-                medida +
-                ". " +
-                "Me interesa la vista " +
-                (indiceActual + 1) +
-                " de " +
-                vistasActuales.length +
-                ".";
-
-
-            visorEncargar.href =
-                "https://wa.me/" +
-                WHATSAPP +
-                "?text=" +
-                encodeURIComponent(mensaje);
-
-        }
-
-
-        /* =====================================================
-           ACTUALIZAR DETALLES
-           ===================================================== */
-
-        function actualizarDetalles() {
-
-            if (!tarjetaActual) {
-
-                return;
-
+      else if (state.order === "za") {
+        result.sort((a, b) =>
+          nameOf(b).localeCompare(
+            nameOf(a),
+            "es",
+            {
+              sensitivity: "base"
             }
+          )
+        );
+      }
 
-
-            var datos =
-                obtenerDatos(tarjetaActual);
-
-
-            if (visorDetallesTitulo) {
-
-                visorDetallesTitulo.textContent =
-                    datos.titulo;
-
+      else if (state.order === "tamano") {
+        result.sort((a, b) =>
+          sizeOf(a).localeCompare(
+            sizeOf(b),
+            "es",
+            {
+              numeric: true
             }
+          )
+        );
+      }
 
+      return result;
+    }
 
-            if (visorDetallesDescripcion) {
+    /* =====================================================
+       TABS
+       ===================================================== */
 
-                visorDetallesDescripcion.textContent =
-                    datos.descripcion;
+    function updateTabs() {
 
-            }
+      tabs.forEach(tab => {
 
+        const active =
+          normalize(tab.dataset.filtro) ===
+          state.category;
 
-            if (visorDetallesCategoria) {
+        tab.classList.toggle(
+          "activo",
+          active
+        );
 
-                visorDetallesCategoria.textContent =
-                    NOMBRES_CATEGORIAS[
-                        datos.categoria
-                    ] ||
-                    datos.categoria ||
-                    "—";
+        tab.classList.toggle(
+          "activo-deportes",
+          active
+        );
 
-            }
+        tab.setAttribute(
+          "aria-selected",
+          String(active)
+        );
+      });
+    }
 
+    /* =====================================================
+       HERO
+       ===================================================== */
 
-            /* ===============================================
-               MEDIDAS
-               =============================================== */
+    function updateHero() {
 
-            if (visorMedidas) {
+      const src =
+        heroImages[state.category] ||
+        heroImages.todo;
 
-                visorMedidas
-                    .querySelectorAll("[data-medida]")
-                    .forEach(function (boton) {
+      if (heroImage && src) {
 
-                        boton.classList.toggle(
-                            "activo",
-                            boton.getAttribute(
-                                "data-medida"
-                            ) === datos.tamano
-                        );
+        heroImage.src = src;
 
-                    });
+        heroImage.alt =
+          `Diseño destacado de ${
+            labels[state.category] ||
+            "Deportes"
+          }`;
+      }
 
-            }
+      if (heroTitle) {
 
-        }
+        const badge =
+          $(".hero-catalogo-badge-deportes",
+          heroTitle);
 
+        if (badge) {
 
-        /* =====================================================
-           ACTUALIZAR VISOR
-           ===================================================== */
-
-        function actualizarVisor() {
+          [
+            ...heroTitle.childNodes
+          ].forEach(node => {
 
             if (
-                !visorImagen ||
-                !vistasActuales.length
+              node.nodeType ===
+              Node.TEXT_NODE
             ) {
-
-                return;
-
+              node.remove();
             }
+          });
 
+          heroTitle.insertBefore(
+            document.createTextNode(
+              `${labels[state.category]} `
+            ),
+            badge
+          );
 
-            var datos =
-                obtenerDatos(tarjetaActual);
+        } else {
 
-
-            /* Imagen actual */
-
-            visorImagen.src =
-                vistasActuales[indiceActual];
-
-
-            visorImagen.alt =
-                datos.titulo +
-                " — vista " +
-                (indiceActual + 1);
-
-
-            /* Título */
-
-            if (visorTitulo) {
-
-                visorTitulo.textContent =
-                    datos.titulo;
-
-            }
-
-
-            /* Contador */
-
-            if (visorContador) {
-
-                visorContador.textContent =
-                    "Vista " +
-                    (indiceActual + 1) +
-                    " de " +
-                    vistasActuales.length;
-
-            }
-
-
-            /* ===============================================
-               FLECHAS
-               =============================================== */
-
-            var hayVarias =
-                vistasActuales.length > 1;
-
-
-            if (visorAnterior) {
-
-                visorAnterior.hidden =
-                    !hayVarias;
-
-                visorAnterior.disabled =
-                    !hayVarias;
-
-            }
-
-
-            if (visorSiguiente) {
-
-                visorSiguiente.hidden =
-                    !hayVarias;
-
-                visorSiguiente.disabled =
-                    !hayVarias;
-
-            }
-
+          heroTitle.textContent =
+            labels[state.category] ||
+            "Deportes";
         }
+      }
 
+      if (heroTag) {
 
-        /* =====================================================
-           ABRIR VISOR
-           
-           IMPORTANTE:
-           tarjetaActual conserva el producto seleccionado.
-           
-           Las flechas solamente recorren vistasActuales,
-           por lo que jamás saltan a otro diseño.
-           ===================================================== */
+        heroTag.innerHTML =
+          `<i class="fas fa-tag" aria-hidden="true"></i> ${
+            labels[state.category] ||
+            "Deportes"
+          }`;
+      }
+    }
 
-        function abrirVisor(
-            tarjeta,
-            indiceInicial
-        ) {
+    /* =====================================================
+       APLICAR FILTRO
+       ===================================================== */
 
-            var vistas =
-                obtenerVistas(tarjeta);
+    function applyFilter() {
 
+      const filtered =
+        filteredCards();
 
-            if (
-                !visor ||
-                !vistas.length
-            ) {
+      const visible =
+        new Set(filtered);
 
-                return;
+      cards.forEach(card => {
 
-            }
+        const show =
+          visible.has(card);
 
+        card.hidden =
+          !show;
 
-            tarjetaActual =
-                tarjeta;
+        /*
+         * Se fuerza display inline para que
+         * ninguna regla CSS antigua interfiera.
+         */
 
+        card.style.display =
+          show ? "" : "none";
 
-            vistasActuales =
-                vistas;
-
-
-            indiceActual =
-                Math.max(
-                    0,
-                    Math.min(
-                        Number(indiceInicial) || 0,
-                        vistasActuales.length - 1
-                    )
-                );
-
-
-            actualizarVisor();
-
-            actualizarDetalles();
-
-            actualizarWhatsApp();
-
-
-            /* Los detalles comienzan cerrados */
-
-            if (visorDetalles) {
-
-                visorDetalles.hidden =
-                    true;
-
-            }
-
-
-            /* Mostrar visor */
-
-            visor.classList.add("activo");
-
-            visor.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-
-            document.body.classList.add(
-                "visor-abierto"
-            );
-
-
-            document.body.style.overflow =
-                "hidden";
-
-
-            /* Enfocar botón cerrar */
-
-            if (visorCerrar) {
-
-                visorCerrar.focus();
-
-            }
-
-        }
-
-
-        /* =====================================================
-           CERRAR VISOR
-           ===================================================== */
-
-        function cerrarVisor() {
-
-            if (!visor) {
-
-                return;
-
-            }
-
-
-            visor.classList.remove(
-                "activo"
-            );
-
-
-            visor.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-
-
-            document.body.classList.remove(
-                "visor-abierto"
-            );
-
-
-            document.body.style.overflow =
-                "";
-
-
-            if (visorImagen) {
-
-                visorImagen.src =
-                    "";
-
-            }
-
-
-            tarjetaActual =
-                null;
-
-
-            vistasActuales =
-                [];
-
-
-            indiceActual =
-                0;
-
-        }
-
-
-        /* =====================================================
-           CAMBIAR VISTA
-           
-           Solo cambia dentro de las 4 vistas del producto
-           actualmente abierto.
-           ===================================================== */
-
-        function cambiarVista(direccion) {
-
-            if (
-                !vistasActuales.length ||
-                vistasActuales.length < 2
-            ) {
-
-                return;
-
-            }
-
-
-            indiceActual =
-                (
-                    indiceActual +
-                    direccion +
-                    vistasActuales.length
-                ) %
-                vistasActuales.length;
-
-
-            actualizarVisor();
-
-            actualizarWhatsApp();
-
-        }
-
-
-        /* =====================================================
-           CLICK EN IMAGEN DE TARJETA
-           ===================================================== */
-
-        if (grid) {
-
-            grid.addEventListener(
-                "click",
-                function (event) {
-
-                    var media =
-                        event.target.closest
-                            ? event.target.closest(
-                                ".tarjeta-cuadro-media"
-                            )
-                            : null;
-
-
-                    if (
-                        !media ||
-                        !grid.contains(media)
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    var tarjeta =
-                        media.closest(
-                            ".tarjeta-cuadro"
-                        );
-
-
-                    if (!tarjeta) {
-
-                        return;
-
-                    }
-
-
-                    var imagen =
-                        media.querySelector("img");
-
-
-                    if (!imagen) {
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    var vistas =
-                        obtenerVistas(tarjeta);
-
-
-                    var src =
-                        (
-                            imagen.getAttribute("src") ||
-                            ""
-                        ).trim();
-
-
-                    var indice =
-                        0;
-
-
-                    /* =========================================
-                       Determinar qué vista fue pulsada
-                       ========================================= */
-
-                    vistas.forEach(
-                        function (url, i) {
-
-                            if (url === src) {
-
-                                indice = i;
-
-                            }
-
-                        }
-                    );
-
-
-                    abrirVisor(
-                        tarjeta,
-                        indice
-                    );
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           FLECHA ANTERIOR
-           ===================================================== */
-
-        if (visorAnterior) {
-
-            visorAnterior.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-                    cambiarVista(-1);
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           FLECHA SIGUIENTE
-           ===================================================== */
-
-        if (visorSiguiente) {
-
-            visorSiguiente.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-                    cambiarVista(1);
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           BOTÓN X
-           ===================================================== */
-
-        if (visorCerrar) {
-
-            visorCerrar.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    cerrarVisor();
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           CERRAR HACIENDO CLICK EN EL FONDO
-           ===================================================== */
-
-        var fondoVisor =
-            visor
-                ? visor.querySelector(
-                    ".visor-catalogo-fondo"
-                )
-                : null;
-
-
-        if (fondoVisor) {
-
-            fondoVisor.addEventListener(
-                "click",
-                cerrarVisor
-            );
-
-        }
-
-
-        /* =====================================================
-           TECLADO
-           
-           ESC = cerrar
-           ← = vista anterior
-           → = vista siguiente
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    !visor ||
-                    !visor.classList.contains(
-                        "activo"
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    event.key === "Escape"
-                ) {
-
-                    event.preventDefault();
-
-                    cerrarVisor();
-
-                }
-
-
-                if (
-                    event.key === "ArrowLeft"
-                ) {
-
-                    event.preventDefault();
-
-                    cambiarVista(-1);
-
-                }
-
-
-                if (
-                    event.key === "ArrowRight"
-                ) {
-
-                    event.preventDefault();
-
-                    cambiarVista(1);
-
-                }
-
-            }
+        card.classList.toggle(
+          "tarjeta-filtrada-deportes",
+          !show
         );
 
-
-        /* =====================================================
-           SWIPE EN MÓVIL
-           ===================================================== */
-
-        if (visorImagen) {
-
-            visorImagen.addEventListener(
-                "touchstart",
-                function (event) {
-
-                    if (
-                        !event.touches.length
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    touchStartX =
-                        event.touches[0].clientX;
-
-
-                    touchStartY =
-                        event.touches[0].clientY;
-
-                },
-                {
-                    passive: true
-                }
-            );
-
-
-            visorImagen.addEventListener(
-                "touchend",
-                function (event) {
-
-                    if (
-                        !event.changedTouches.length
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    var endX =
-                        event.changedTouches[0].clientX;
-
-
-                    var endY =
-                        event.changedTouches[0].clientY;
-
-
-                    var diferenciaX =
-                        endX - touchStartX;
-
-
-                    var diferenciaY =
-                        endY - touchStartY;
-
-
-                    /* Solo swipe horizontal */
-
-                    if (
-                        Math.abs(diferenciaX) > 45 &&
-                        Math.abs(diferenciaX) >
-                        Math.abs(diferenciaY)
-                    ) {
-
-                        cambiarVista(
-                            diferenciaX < 0
-                                ? 1
-                                : -1
-                        );
-
-                    }
-
-                },
-                {
-                    passive: true
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           BOTÓN VER DETALLES
-           ===================================================== */
-
-        if (visorVerDetalles) {
-
-            visorVerDetalles.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-
-                    if (!visorDetalles) {
-
-                        return;
-
-                    }
-
-
-                    visorDetalles.hidden =
-                        !visorDetalles.hidden;
-
-
-                    if (
-                        !visorDetalles.hidden
-                    ) {
-
-                        actualizarDetalles();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           SELECCIÓN DE MEDIDAS
-           ===================================================== */
-
-        if (visorMedidas) {
-
-            visorMedidas.addEventListener(
-                "click",
-                function (event) {
-
-                    var boton =
-                        event.target.closest
-                            ? event.target.closest(
-                                "[data-medida]"
-                            )
-                            : null;
-
-
-                    if (
-                        !boton ||
-                        !tarjetaActual
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    var medida =
-                        boton.getAttribute(
-                            "data-medida"
-                        );
-
-
-                    tarjetaActual.setAttribute(
-                        "data-tamano",
-                        medida
-                    );
-
-
-                    actualizarDetalles();
-
-                    actualizarWhatsApp();
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           FILTROS
-           
-           Categorías:
-           
-           Todos
-           Fútbol
-           Básquetbol
-           Tenis
-           Vóleibol
-           Boxeo
-           Fórmula 1
-           ===================================================== */
-
-        function aplicarFiltros() {
-
-            if (!grid) {
-
-                return;
-
-            }
-
-
-            var termino =
-                buscador
-                    ? normalizar(
-                        buscador.value
-                    )
-                    : "";
-
-
-            var visibles =
-                0;
-
-
-            grid
-                .querySelectorAll(
-                    ".tarjeta-cuadro"
-                )
-                .forEach(
-                    function (tarjeta) {
-
-                        var categoria =
-                            normalizar(
-                                tarjeta.getAttribute(
-                                    "data-categoria"
-                                )
-                            );
-
-
-                        var nombre =
-                            normalizar(
-                                tarjeta.getAttribute(
-                                    "data-nombre"
-                                )
-                            );
-
-
-                        var texto =
-                            normalizar(
-                                tarjeta.textContent
-                            );
-
-
-                        var coincideCategoria =
-                            filtroActual === "todo" ||
-                            categoria === filtroActual;
-
-
-                        var coincideBusqueda =
-                            !termino ||
-                            nombre.indexOf(
-                                termino
-                            ) !== -1 ||
-                            texto.indexOf(
-                                termino
-                            ) !== -1;
-
-
-                        var mostrar =
-                            coincideCategoria &&
-                            coincideBusqueda;
-
-
-                        tarjeta.hidden =
-                            !mostrar;
-
-
-                        if (mostrar) {
-
-                            visibles += 1;
-
-                        }
-
-                    }
-                );
-
-
-            if (vacio) {
-
-                vacio.hidden =
-                    visibles !== 0;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           BOTONES DE FILTRO
-           ===================================================== */
-
-        tabs.forEach(
-            function (tab) {
-
-                tab.addEventListener(
-                    "click",
-                    function () {
-
-                        filtroActual =
-                            tab.getAttribute(
-                                "data-filtro"
-                            ) ||
-                            "todo";
-
-
-                        tabs.forEach(
-                            function (item) {
-
-                                var activo =
-                                    item === tab;
-
-
-                                item.classList.toggle(
-                                    "activo",
-                                    activo
-                                );
-
-
-                                item.setAttribute(
-                                    "aria-selected",
-                                    activo
-                                        ? "true"
-                                        : "false"
-                                );
-
-                            }
-                        );
-
-
-                        aplicarFiltros();
-
-                    }
-                );
-
-            }
+        card.setAttribute(
+          "aria-hidden",
+          String(!show)
+        );
+      });
+
+      /*
+       * Reordenamos solamente las tarjetas
+       * que corresponden al filtro.
+       */
+
+      if (grid) {
+
+        filtered.forEach(card =>
+          grid.appendChild(card)
         );
 
+        cards
+          .filter(card => !visible.has(card))
+          .forEach(card =>
+            grid.appendChild(card)
+          );
+      }
 
-        /* =====================================================
-           BUSCADOR
-           ===================================================== */
+      if (empty) {
 
-        if (buscador) {
+        empty.hidden =
+          visible.size !== 0;
+      }
 
-            buscador.addEventListener(
-                "input",
-                aplicarFiltros
+      updateTabs();
+      updateHero();
+    }
+
+    /* =====================================================
+       EVENTOS DE FILTRO
+       ===================================================== */
+
+    tabs.forEach(tab => {
+
+      tab.addEventListener(
+        "click",
+        event => {
+
+          event.preventDefault();
+
+          const value =
+            normalize(
+              tab.dataset.filtro ||
+              "todo"
             );
 
+          const categorias = [
+            "todo",
+            "futbol",
+            "basquetbol",
+            "tenis",
+            "motor"
+          ];
+
+          state.category =
+            categorias.includes(value)
+              ? value
+              : "todo";
+
+          applyFilter();
         }
-
-
-        /* =====================================================
-           ORDENAMIENTO
-           
-           Recientes
-           A-Z
-           Z-A
-           Tamaño
-           ===================================================== */
-
-        if (orden && grid) {
-
-            orden.addEventListener(
-                "change",
-                function () {
-
-                    var tarjetas =
-                        Array.from(
-                            grid.querySelectorAll(
-                                ".tarjeta-cuadro"
-                            )
-                        );
-
-
-                    var modo =
-                        orden.value;
-
-
-                    /* =========================================
-                       A-Z
-                       ========================================= */
-
-                    if (modo === "az") {
-
-                        tarjetas.sort(
-                            function (a, b) {
-
-                                return (
-                                    a.getAttribute(
-                                        "data-nombre"
-                                    ) || ""
-                                ).localeCompare(
-                                    b.getAttribute(
-                                        "data-nombre"
-                                    ) || "",
-                                    "es",
-                                    {
-                                        sensitivity:
-                                            "base"
-                                    }
-                                );
-
-                            }
-                        );
-
-                    }
-
-
-                    /* =========================================
-                       Z-A
-                       ========================================= */
-
-                    else if (modo === "za") {
-
-                        tarjetas.sort(
-                            function (a, b) {
-
-                                return (
-                                    b.getAttribute(
-                                        "data-nombre"
-                                    ) || ""
-                                ).localeCompare(
-                                    a.getAttribute(
-                                        "data-nombre"
-                                    ) || "",
-                                    "es",
-                                    {
-                                        sensitivity:
-                                            "base"
-                                    }
-                                );
-
-                            }
-                        );
-
-                    }
-
-
-                    /* =========================================
-                       TAMAÑO
-                       ========================================= */
-
-                    else if (modo === "tamano") {
-
-                        tarjetas.sort(
-                            function (a, b) {
-
-                                return (
-                                    a.getAttribute(
-                                        "data-tamano"
-                                    ) || ""
-                                ).localeCompare(
-                                    b.getAttribute(
-                                        "data-tamano"
-                                    ) || "",
-                                    "es",
-                                    {
-                                        numeric:
-                                            true
-                                    }
-                                );
-
-                            }
-                        );
-
-                    }
-
-
-                    /* =========================================
-                       RECIENTES
-                       ========================================= */
-
-                    else {
-
-                        tarjetas.sort(
-                            function (a, b) {
-
-                                return (
-                                    Number(
-                                        a.getAttribute(
-                                            "data-orden"
-                                        ) || 0
-                                    ) -
-                                    Number(
-                                        b.getAttribute(
-                                            "data-orden"
-                                        ) || 0
-                                    )
-                                );
-
-                            }
-                        );
-
-                    }
-
-
-                    /* Volver a insertar las tarjetas */
-
-                    tarjetas.forEach(
-                        function (tarjeta) {
-
-                            grid.appendChild(
-                                tarjeta
-                            );
-
-                        }
-                    );
-
-
-                    aplicarFiltros();
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           CERRAR SIDEBAR MÓVIL
-           ===================================================== */
-
-        function cerrarSidebar() {
-
-            if (!sidebar) {
-
-                return;
-
-            }
-
-
-            sidebar.classList.remove(
-                "activo"
-            );
-
-
-            if (sidebarOverlay) {
-
-                sidebarOverlay.classList.remove(
-                    "activo"
-                );
-
-            }
-
-
-            if (sidebarToggle) {
-
-                sidebarToggle.setAttribute(
-                    "aria-expanded",
-                    "false"
-                );
-
-
-                sidebarToggle.setAttribute(
-                    "aria-label",
-                    "Abrir menú"
-                );
-
-            }
-
-
-            document.body.classList.remove(
-                "menu-abierto"
-            );
-
-        }
-
-
-        /* =====================================================
-           ABRIR SIDEBAR MÓVIL
-           ===================================================== */
-
-        function abrirSidebar() {
-
-            if (!sidebar) {
-
-                return;
-
-            }
-
-
-            sidebar.classList.add(
-                "activo"
-            );
-
-
-            if (sidebarOverlay) {
-
-                sidebarOverlay.classList.add(
-                    "activo"
-                );
-
-            }
-
-
-            if (sidebarToggle) {
-
-                sidebarToggle.setAttribute(
-                    "aria-expanded",
-                    "true"
-                );
-
-
-                sidebarToggle.setAttribute(
-                    "aria-label",
-                    "Cerrar menú"
-                );
-
-            }
-
-
-            document.body.classList.add(
-                "menu-abierto"
-            );
-
-        }
-
-
-        /* =====================================================
-           BOTÓN HAMBURGUESA
-           ===================================================== */
-
-        if (sidebarToggle) {
-
-            sidebarToggle.addEventListener(
-                "click",
-                function () {
-
-                    if (
-                        sidebar &&
-                        sidebar.classList.contains(
-                            "activo"
-                        )
-                    ) {
-
-                        cerrarSidebar();
-
-                    } else {
-
-                        abrirSidebar();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        /* =====================================================
-           FONDO DE BLOQUEO DEL MENÚ
-           ===================================================== */
-
-        if (sidebarOverlay) {
-
-            sidebarOverlay.addEventListener(
-                "click",
-                cerrarSidebar
-            );
-
-        }
-
-
-        /* =====================================================
-           CERRAR MENÚ AL SELECCIONAR UNA OPCIÓN
-           EN MÓVIL
-           ===================================================== */
-
-        sidebarLinks.forEach(
-            function (link) {
-
-                link.addEventListener(
-                    "click",
-                    function () {
-
-                        if (
-                            window.innerWidth <= 900
-                        ) {
-
-                            cerrarSidebar();
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           ESC TAMBIÉN CIERRA EL MENÚ MÓVIL
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Escape" &&
-                    sidebar &&
-                    sidebar.classList.contains(
-                        "activo"
-                    )
-                ) {
-
-                    cerrarSidebar();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           MENÚ DEL FOOTER MÓVIL
-           ===================================================== */
-
-        var footerToggle =
-            document.getElementById(
-                "mobileFooterMenuToggle"
-            );
-
-
-        var footerMenu =
-            document.getElementById(
-                "mobileFooterMenu"
-            );
-
-
-        if (
-            footerToggle &&
-            footerMenu
-        ) {
-
-            footerToggle.addEventListener(
-                "click",
-                function () {
-
-                    var abierto =
-                        footerToggle.getAttribute(
-                            "aria-expanded"
-                        ) === "true";
-
-
-                    footerToggle.setAttribute(
-                        "aria-expanded",
-                        abierto
-                            ? "false"
-                            : "true"
-                    );
-
-
-                    footerMenu.hidden =
-                        abierto;
-
-                }
-            );
-
-
-            /* Comienza cerrado */
-
-            footerMenu.hidden =
-                true;
-
-        }
-
-
-        /* =====================================================
-           WHATSAPP GENERAL
-           
-           Todos los elementos con:
-           
-           data-servicio="..."
-           
-           abrirán WhatsApp.
-           ===================================================== */
-
-        document
-            .querySelectorAll(
-                "[data-servicio]"
-            )
-            .forEach(
-                function (enlace) {
-
-                    enlace.addEventListener(
-                        "click",
-                        function (event) {
-
-                            var href =
-                                enlace.getAttribute(
-                                    "href"
-                                );
-
-
-                            /*
-                             * Solo intervenimos cuando el enlace
-                             * todavía tiene href="#" o no tiene href.
-                             */
-
-                            if (
-                                !href ||
-                                href === "#"
-                            ) {
-
-                                event.preventDefault();
-
-
-                                var servicio =
-                                    enlace.getAttribute(
-                                        "data-servicio"
-                                    ) ||
-                                    "Cotización";
-
-
-                                var mensaje =
-                                    "Hola, quiero cotizar: " +
-                                    servicio +
-                                    ".";
-
-
-                                window.open(
-                                    "https://wa.me/" +
-                                    WHATSAPP +
-                                    "?text=" +
-                                    encodeURIComponent(
-                                        mensaje
-                                    ),
-                                    "_blank",
-                                    "noopener,noreferrer"
-                                );
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
-
-        /* =====================================================
-           INICIALIZAR CATÁLOGO
-           ===================================================== */
-
-        aplicarFiltros();
-
+      );
     });
 
-}());
+    /* =====================================================
+       BUSCADOR
+       ===================================================== */
+
+    search?.addEventListener(
+      "input",
+      () => {
+
+        state.search =
+          search.value;
+
+        applyFilter();
+      }
+    );
+
+    /* =====================================================
+       ORDEN
+       ===================================================== */
+
+    order?.addEventListener(
+      "change",
+      () => {
+
+        state.order =
+          order.value ||
+          "recientes";
+
+        applyFilter();
+      }
+    );
+
+    /* =====================================================
+       RENDER DEL VISOR
+       ===================================================== */
+
+    function renderViewer() {
+
+      if (
+        !viewerImage ||
+        !state.card ||
+        !state.views.length
+      ) {
+        return;
+      }
+
+      const current =
+        state.views[state.index];
+
+      const name =
+        nameOf(state.card);
+
+      const categoria =
+        categoryOf(state.card);
+
+      viewerImage.src =
+        current;
+
+      viewerImage.alt =
+        `${name} — vista ${
+          state.index + 1
+        }`;
+
+      if (viewerTitle) {
+
+        viewerTitle.textContent =
+          name;
+      }
+
+      if (viewerCounter) {
+
+        viewerCounter.textContent =
+          `${state.index + 1} / ${
+            state.views.length
+          }`;
+      }
+
+      if (detailsTitle) {
+
+        detailsTitle.textContent =
+          name;
+      }
+
+      if (detailsDescription) {
+
+        detailsDescription.textContent =
+          `Cuadro deportivo en aluminio HD. Diseño: ${name}.`;
+      }
+
+      if (detailsCategory) {
+
+        detailsCategory.textContent =
+          labels[categoria] ||
+          "Deportes";
+      }
+
+      /*
+       * Las flechas pertenecen exclusivamente
+       * al producto abierto.
+       */
+
+      if (previous) {
+
+        previous.style.display =
+          "flex";
+
+        previous.disabled =
+          state.views.length <= 1;
+
+        previous.setAttribute(
+          "aria-disabled",
+          String(
+            state.views.length <= 1
+          )
+        );
+      }
+
+      if (next) {
+
+        next.style.display =
+          "flex";
+
+        next.disabled =
+          state.views.length <= 1;
+
+        next.setAttribute(
+          "aria-disabled",
+          String(
+            state.views.length <= 1
+          )
+        );
+      }
+
+      /* Medida activa */
+
+      if (measures) {
+
+        $$(
+          "[data-medida]",
+          measures
+        ).forEach(button => {
+
+          button.classList.toggle(
+            "activo",
+            normalize(
+              button.dataset.medida
+            ) ===
+            normalize(
+              sizeOf(state.card)
+            )
+          );
+        });
+      }
+
+      /* WhatsApp */
+
+      if (orderButton) {
+
+        const phone =
+          String(
+            orderButton.dataset.numero ||
+            document.body.dataset.whatsapp ||
+            ""
+          ).replace(/\D/g, "");
+
+        const message =
+          `Hola, quiero cotizar el cuadro "${name}" ` +
+          `de ${labels[categoria] || "Deportes"}` +
+          `${
+            sizeOf(state.card)
+              ? ` en tamaño ${sizeOf(state.card)}`
+              : ""
+          }. Vengo desde el catálogo de SublimArts.`;
+
+        orderButton.href =
+          phone
+            ? `https://wa.me/${phone}?text=${
+                encodeURIComponent(message)
+              }`
+            : `https://wa.me/?text=${
+                encodeURIComponent(message)
+              }`;
+      }
+    }
+
+    /* =====================================================
+       ABRIR VISOR
+       ===================================================== */
+
+    function openViewer(card) {
+
+      const views =
+        viewsOf(card);
+
+      if (
+        !viewer ||
+        !views.length
+      ) {
+        return;
+      }
+
+      state.card =
+        card;
+
+      state.views =
+        views;
+
+      state.index =
+        0;
+
+      if (details) {
+
+        details.hidden =
+          true;
+      }
+
+      if (detailsButton) {
+
+        detailsButton.textContent =
+          "Ver detalles";
+
+        detailsButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+      }
+
+      renderViewer();
+
+      viewer.classList.add(
+        "activo",
+        "activo-deportes"
+      );
+
+      viewer.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      document.body.classList.add(
+        "visor-abierto"
+      );
+
+      document.body.style.overflow =
+        "hidden";
+
+      close?.focus();
+    }
+
+    /* =====================================================
+       CERRAR VISOR
+       ===================================================== */
+
+    function closeViewer() {
+
+      if (!viewer) {
+        return;
+      }
+
+      viewer.classList.remove(
+        "activo",
+        "activo-deportes"
+      );
+
+      viewer.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "visor-abierto"
+      );
+
+      document.body.style.overflow =
+        "";
+
+      if (viewerImage) {
+
+        viewerImage.removeAttribute(
+          "src"
+        );
+      }
+
+      state.card =
+        null;
+
+      state.views =
+        [];
+
+      state.index =
+        0;
+    }
+
+    /* =====================================================
+       CAMBIAR VISTA
+       ===================================================== */
+
+    function changeView(direction) {
+
+      /*
+       * IMPORTANTE:
+       * Nunca se cambia de producto.
+       */
+
+      if (
+        state.views.length <= 1
+      ) {
+        return;
+      }
+
+      state.index =
+        (
+          state.index +
+          direction +
+          state.views.length
+        ) %
+        state.views.length;
+
+      renderViewer();
+    }
+
+    /* =====================================================
+       TARJETAS
+       ===================================================== */
+
+    cards.forEach(card => {
+
+      card.setAttribute(
+        "tabindex",
+        "0"
+      );
+
+      card.addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target.closest(
+              "a, button"
+            )
+          ) {
+            return;
+          }
+
+          openViewer(card);
+        }
+      );
+
+      card.addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            openViewer(card);
+          }
+        }
+      );
+    });
+
+    /* =====================================================
+       BOTONES VISOR
+       ===================================================== */
+
+    previous?.addEventListener(
+      "click",
+      () => changeView(-1)
+    );
+
+    next?.addEventListener(
+      "click",
+      () => changeView(1)
+    );
+
+    close?.addEventListener(
+      "click",
+      closeViewer
+    );
+
+    viewer?.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target === viewer ||
+          event.target.matches(
+            ".visor-catalogo-fondo-deportes"
+          )
+        ) {
+          closeViewer();
+        }
+      }
+    );
+
+    /* =====================================================
+       DETALLES
+       ===================================================== */
+
+    detailsButton?.addEventListener(
+      "click",
+      () => {
+
+        if (!details) {
+          return;
+        }
+
+        const open =
+          details.hidden;
+
+        details.hidden =
+          !open;
+
+        detailsButton.textContent =
+          open
+            ? "Ocultar detalles"
+            : "Ver detalles";
+
+        detailsButton.setAttribute(
+          "aria-expanded",
+          String(open)
+        );
+      }
+    );
+
+    /* =====================================================
+       MEDIDAS
+       ===================================================== */
+
+    measures?.addEventListener(
+      "click",
+      event => {
+
+        const button =
+          event.target.closest(
+            "[data-medida]"
+          );
+
+        if (!button) {
+          return;
+        }
+
+        $$(
+          "[data-medida]",
+          measures
+        ).forEach(item =>
+          item.classList.remove(
+            "activo"
+          )
+        );
+
+        button.classList.add(
+          "activo"
+        );
+      }
+    );
+
+    /* =====================================================
+       SWIPE
+       ===================================================== */
+
+    viewer?.addEventListener(
+      "touchstart",
+      event => {
+
+        const touch =
+          event.changedTouches[0];
+
+        if (!touch) {
+          return;
+        }
+
+        state.touchX =
+          touch.clientX;
+
+        state.touchY =
+          touch.clientY;
+
+      },
+      {
+        passive: true
+      }
+    );
+
+    viewer?.addEventListener(
+      "touchend",
+      event => {
+
+        const touch =
+          event.changedTouches[0];
+
+        if (!touch) {
+          return;
+        }
+
+        const dx =
+          touch.clientX -
+          state.touchX;
+
+        const dy =
+          touch.clientY -
+          state.touchY;
+
+        if (
+          Math.abs(dx) < 45 ||
+          Math.abs(dx) <= Math.abs(dy)
+        ) {
+          return;
+        }
+
+        changeView(
+          dx < 0
+            ? 1
+            : -1
+        );
+      },
+      {
+        passive: true
+      }
+    );
+
+    /* =====================================================
+       TECLADO
+       ===================================================== */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          !viewer?.classList.contains(
+            "activo"
+          )
+        ) {
+          return;
+        }
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeViewer();
+        }
+
+        if (
+          event.key === "ArrowLeft"
+        ) {
+
+          event.preventDefault();
+
+          changeView(-1);
+        }
+
+        if (
+          event.key === "ArrowRight"
+        ) {
+
+          event.preventDefault();
+
+          changeView(1);
+        }
+      }
+    );
+
+    /* =====================================================
+       MENÚ MÓVIL
+       ===================================================== */
+
+    function openMenu() {
+
+      sidebar?.classList.add(
+        "activo",
+        "activo-deportes"
+      );
+
+      overlay?.classList.add(
+        "activo",
+        "activo-deportes"
+      );
+
+      menuButton?.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      menuButton?.setAttribute(
+        "aria-label",
+        "Cerrar menú"
+      );
+
+      document.body.classList.add(
+        "menu-mobile-abierto",
+        "menu-abierto"
+      );
+
+      const icon =
+        $("i", menuButton);
+
+      icon?.classList.replace(
+        "fa-bars",
+        "fa-xmark"
+      );
+    }
+
+    function closeMenu() {
+
+      sidebar?.classList.remove(
+        "activo",
+        "activo-deportes"
+      );
+
+      overlay?.classList.remove(
+        "activo",
+        "activo-deportes"
+      );
+
+      menuButton?.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      menuButton?.setAttribute(
+        "aria-label",
+        "Abrir menú"
+      );
+
+      document.body.classList.remove(
+        "menu-mobile-abierto",
+        "menu-abierto"
+      );
+
+      const icon =
+        $("i", menuButton);
+
+      icon?.classList.replace(
+        "fa-xmark",
+        "fa-bars"
+      );
+    }
+
+    menuButton?.addEventListener(
+      "click",
+      event => {
+
+        event.preventDefault();
+
+        if (
+          sidebar?.classList.contains(
+            "activo"
+          )
+        ) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      }
+    );
+
+    overlay?.addEventListener(
+      "click",
+      closeMenu
+    );
+
+    $$(".sidebar-enlace-deportes")
+      .forEach(link => {
+
+        link.addEventListener(
+          "click",
+          () => {
+
+            if (
+              window.innerWidth <= 900
+            ) {
+              closeMenu();
+            }
+          }
+        );
+      });
+
+    /* =====================================================
+       ESC MENÚ
+       ===================================================== */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape" &&
+          sidebar?.classList.contains(
+            "activo"
+          )
+        ) {
+          closeMenu();
+        }
+      }
+    );
+
+    /* =====================================================
+       WHATSAPP GENERAL
+       ===================================================== */
+
+    $$(".boton-whatsapp-deportes")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const phone =
+              String(
+                button.dataset.numero ||
+                document.body.dataset.whatsapp ||
+                ""
+              ).replace(
+                /\D/g,
+                ""
+              );
+
+            const service =
+              button.dataset.servicio ||
+              "Cuadros deportivos";
+
+            const message =
+              `Hola, quiero consultar por ${service}.`;
+
+            button.href =
+              phone
+                ? `https://wa.me/${phone}?text=${
+                    encodeURIComponent(
+                      message
+                    )
+                  }`
+                : `https://wa.me/?text=${
+                    encodeURIComponent(
+                      message
+                    )
+                  }`;
+
+            button.target =
+              "_blank";
+
+            button.rel =
+              "noopener noreferrer";
+          }
+        );
+      });
+
+    /* =====================================================
+       BARRA DE FILTRO FIJA
+       ===================================================== */
+
+    if (filterBar) {
+
+      const placeholder =
+        document.createElement(
+          "div"
+        );
+
+      placeholder.className =
+        "barra-filtros-placeholder-deportes";
+
+      filterBar.parentNode.insertBefore(
+        placeholder,
+        filterBar
+      );
+
+      let top = 0;
+      let fixed = false;
+
+      function fix() {
+
+        fixed = true;
+
+        filterBar.classList.add(
+          "filtro-fijo",
+          "filtro-fijo-deportes"
+        );
+
+        placeholder.style.height =
+          `${filterBar.offsetHeight}px`;
+
+        placeholder.classList.add(
+          "activo"
+        );
+      }
+
+      function release() {
+
+        fixed = false;
+
+        filterBar.classList.remove(
+          "filtro-fijo",
+          "filtro-fijo-deportes"
+        );
+
+        placeholder.classList.remove(
+          "activo"
+        );
+
+        placeholder.style.height =
+          "0px";
+      }
+
+      function measure() {
+
+        const wasFixed =
+          fixed;
+
+        if (wasFixed) {
+          release();
+        }
+
+        top =
+          filterBar.getBoundingClientRect()
+            .top +
+          window.scrollY;
+
+        if (
+          wasFixed &&
+          window.scrollY >= top
+        ) {
+          fix();
+        }
+      }
+
+      function update() {
+
+        if (
+          window.scrollY >= top
+        ) {
+          fix();
+        } else {
+          release();
+        }
+      }
+
+      measure();
+      update();
+
+      window.addEventListener(
+        "scroll",
+        update,
+        {
+          passive: true
+        }
+      );
+
+      window.addEventListener(
+        "resize",
+        measure
+      );
+    }
+
+    /* =====================================================
+       INICIO
+       ===================================================== */
+
+    applyFilter();
+
+  });
+
+})();
